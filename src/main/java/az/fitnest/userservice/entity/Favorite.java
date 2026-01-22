@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
+import az.fitnest.userservice.enums.EntityType;
+
 @Entity
 @Table(name = "favorites")
 @Getter
@@ -33,7 +35,5 @@ public class Favorite {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
-    public enum EntityType {
-        GYM, STORE
-    }
+   
 }
