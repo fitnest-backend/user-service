@@ -22,10 +22,6 @@ public class GlobalExceptionHandler {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	
-	/**
-	 * Centralized handler for all BaseException subclasses.
-	 * Following 2025 Spring Boot best practices for exception handling.
-	 */
 	@ExceptionHandler(BaseException.class)
 	public ResponseEntity<ErrorResponse> handleBaseException(BaseException exception, WebRequest request) {
 		logger.warn("BaseException [{}]: {}", exception.getErrorCode(), exception.getMessage());
@@ -35,7 +31,6 @@ public class GlobalExceptionHandler {
 				.code(exception.getErrorCode())
 				.path(request.getDescription(false).replace("uri=", ""));
 		
-		// Handle ValidationException specifically for validation errors
 		if (exception instanceof ValidationException) {
 			ValidationException validationException = (ValidationException) exception;
 			BindingResult result = validationException.getBindingResult();

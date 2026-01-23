@@ -2,10 +2,6 @@ package az.fitnest.userservice.exception;
 
 import org.springframework.http.HttpStatus;
 
-/**
- * Base exception class for all application-specific exceptions.
- * Following 2025 Spring Boot best practices for centralized exception handling.
- */
 public abstract class BaseException extends RuntimeException {
     
     private static final long serialVersionUID = 1L;
