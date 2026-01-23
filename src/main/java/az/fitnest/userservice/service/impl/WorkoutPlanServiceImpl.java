@@ -1,15 +1,15 @@
-package az.fitnest.userservice.service_impl;
+package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
 import az.fitnest.userservice.response.WorkoutPlanResponse;
 import az.fitnest.userservice.response.WorkoutPlanResponses;
-import az.fitnest.userservice.service_inter.WorkoutPlanInter;
+import az.fitnest.userservice.service.WorkoutPlanService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class WorkoutPlanService implements WorkoutPlanInter{
+public class WorkoutPlanServiceImpl implements WorkoutPlanService{
 	
 	@Override
 	public WorkoutPlanResponses getWorkoutPlans() {

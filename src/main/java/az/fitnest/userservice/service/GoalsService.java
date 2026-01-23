@@ -1,9 +1,9 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.request.UpdateBodyRequest;
 import az.fitnest.userservice.request.UpdateGoalsRequest;
 
-public interface GoalsInter {
+public interface GoalsService {
 	
 	void updateMeGoals(UpdateGoalsRequest request);
 	

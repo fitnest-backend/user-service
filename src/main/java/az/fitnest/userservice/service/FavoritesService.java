@@ -1,9 +1,9 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.request.FavoritesRequest;
 import az.fitnest.userservice.response.FavoritesResponses;
 
-public interface FavoritesInter {
+public interface FavoritesService {
 	
 	FavoritesResponses getFavorites();
 	

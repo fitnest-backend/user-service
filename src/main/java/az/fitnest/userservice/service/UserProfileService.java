@@ -1,11 +1,10 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.request.UpdateUserProfileRequest;
 import az.fitnest.userservice.response.SummaryResponse;
 import az.fitnest.userservice.response.UserProfileResponse;
 
-public interface UserProfileInter {
-	
+public interface UserProfileService {
 	
 	SummaryResponse getUserSummary();
 	

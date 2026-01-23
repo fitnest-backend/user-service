@@ -1,15 +1,15 @@
-package az.fitnest.userservice.service_impl;
+package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
 import az.fitnest.userservice.response.NutritionPlanResponse;
 import az.fitnest.userservice.response.NutritionPlanResponses;
-import az.fitnest.userservice.service_inter.NutritionPlansInter;
+import az.fitnest.userservice.service.NutritionPlansService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class NutritionPlansService implements NutritionPlansInter{
+public class NutritionPlansServiceImpl implements NutritionPlansService{
 	
 	
 	@Override

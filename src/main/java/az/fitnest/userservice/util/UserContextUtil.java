@@ -1,31 +1,17 @@
 package az.fitnest.userservice.util;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Component
 public class UserContextUtil {
-
-	    private static final String USER_ID_HEADER = "X-User-Id";
-
-	    public String getCurrentUserId() {
-	        ServletRequestAttributes attributes =
-	                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-	        if (attributes == null) {
-	            throw new IllegalStateException("Request context not found");
-	        }
-
-	        String userId = attributes.getRequest().getHeader(USER_ID_HEADER);
-
-	        if (userId == null || userId.isBlank()) {
-	            throw new IllegalStateException("X-User-Id header is missing");
-	        }
-
-	        return userId;
-	    }
-
-
-
+    
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof Long) {
+            return (Long) authentication.getPrincipal();
+        }
+        throw new IllegalStateException("User not authenticated");
+    }
 }

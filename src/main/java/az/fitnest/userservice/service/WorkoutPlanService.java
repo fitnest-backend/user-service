@@ -1,9 +1,9 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.response.WorkoutPlanResponse;
 import az.fitnest.userservice.response.WorkoutPlanResponses;
 
-public interface WorkoutPlanInter {
+public interface WorkoutPlanService {
 	
 	WorkoutPlanResponses getWorkoutPlans();
 	

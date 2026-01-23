@@ -1,8 +1,8 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.request.UpdatePreferences;
 
-public interface PreferencesInter {
+public interface PreferencesService {
 	
 	void updateMePreferences(UpdatePreferences request);
 

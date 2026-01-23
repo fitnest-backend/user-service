@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import az.fitnest.userservice.request.FavoritesRequest;
 import az.fitnest.userservice.response.FavoritesResponses;
-import az.fitnest.userservice.service_inter.FavoritesInter;
+import az.fitnest.userservice.service.FavoritesService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
@@ -19,23 +19,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FavorotesController {
 
-	private final FavoritesInter favoritesInter;
+	private final FavoritesService favoritesService;
 
 	@GetMapping("/favorites")
 	public ResponseEntity<FavoritesResponses> getFavorites() {
-		FavoritesResponses favorites = favoritesInter.getFavorites();
+		FavoritesResponses favorites = favoritesService.getFavorites();
 		return ResponseEntity.status(HttpStatus.OK).body(favorites);
 	}
 
 	@PostMapping("/favorites")
 	public ResponseEntity<Void> addFavorite(@RequestBody FavoritesRequest request) {
-		favoritesInter.addFavorites(request);
+		favoritesService.addFavorites(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@PostMapping("/favorites/{favoritesId}")
 	public ResponseEntity<Void> deleteFavorite(@PathVariable Long favoritesId) {
-		favoritesInter.deleteFavorites(favoritesId);
+		favoritesService.deleteFavorites(favoritesId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

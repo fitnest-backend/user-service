@@ -1,10 +1,10 @@
-package az.fitnest.userservice.service_inter;
+package az.fitnest.userservice.service;
 
 import az.fitnest.userservice.response.NutritionPlanResponse;
 import az.fitnest.userservice.response.NutritionPlanResponses;
 
 
-public interface NutritionPlansInter {
+public interface NutritionPlansService {
 
 	NutritionPlanResponses getNutritionPlans();
 

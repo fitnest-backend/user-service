@@ -1,15 +1,15 @@
-package az.fitnest.userservice.service_impl;
+package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
 import az.fitnest.userservice.request.UpdateBodyRequest;
 import az.fitnest.userservice.request.UpdateGoalsRequest;
-import az.fitnest.userservice.service_inter.GoalsInter;
+import az.fitnest.userservice.service.GoalsService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class GoalsService implements GoalsInter{
+public class GoalsServiceImpl implements GoalsService{
 	
 	@Override
 	public void updateMeGoals(UpdateGoalsRequest request) {
