@@ -1,4 +1,4 @@
-package az.fitnest.userservice.request;
+package az.fitnest.userservice.dto.request;
 
 import lombok.Data;
 
