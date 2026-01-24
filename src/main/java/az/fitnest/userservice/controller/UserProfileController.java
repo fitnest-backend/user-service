@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import az.fitnest.userservice.request.UpdateUserProfileRequest;
-import az.fitnest.userservice.response.SummaryResponse;
-import az.fitnest.userservice.response.UserProfileResponse;
+import az.fitnest.userservice.dto.request.UpdateUserProfileRequest;
+import az.fitnest.userservice.dto.response.SummaryResponse;
+import az.fitnest.userservice.dto.response.UserProfileResponse;
 import az.fitnest.userservice.service.UserProfileService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package az.fitnest.userservice.service;
 
-import az.fitnest.userservice.response.NutritionPlanResponse;
-import az.fitnest.userservice.response.NutritionPlanResponses;
+import az.fitnest.userservice.dto.response.NutritionPlanResponse;
+import az.fitnest.userservice.dto.response.NutritionPlanResponses;
 
 
 public interface NutritionPlansService {

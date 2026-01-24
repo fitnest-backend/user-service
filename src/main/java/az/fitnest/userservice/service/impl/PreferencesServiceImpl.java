@@ -2,7 +2,7 @@ package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import az.fitnest.userservice.request.UpdatePreferences;
+import az.fitnest.userservice.dto.request.UpdatePreferences;
 import az.fitnest.userservice.service.PreferencesService;
 import lombok.RequiredArgsConstructor;
 

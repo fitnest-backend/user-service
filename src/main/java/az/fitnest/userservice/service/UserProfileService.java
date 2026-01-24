@@ -1,8 +1,8 @@
 package az.fitnest.userservice.service;
 
-import az.fitnest.userservice.request.UpdateUserProfileRequest;
-import az.fitnest.userservice.response.SummaryResponse;
-import az.fitnest.userservice.response.UserProfileResponse;
+import az.fitnest.userservice.dto.request.UpdateUserProfileRequest;
+import az.fitnest.userservice.dto.response.SummaryResponse;
+import az.fitnest.userservice.dto.response.UserProfileResponse;
 
 public interface UserProfileService {
 	

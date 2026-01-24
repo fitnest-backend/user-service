@@ -2,8 +2,8 @@ package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import az.fitnest.userservice.response.NutritionPlanResponse;
-import az.fitnest.userservice.response.NutritionPlanResponses;
+import az.fitnest.userservice.dto.response.NutritionPlanResponse;
+import az.fitnest.userservice.dto.response.NutritionPlanResponses;
 import az.fitnest.userservice.service.NutritionPlansService;
 import lombok.RequiredArgsConstructor;
 

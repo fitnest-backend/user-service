@@ -2,8 +2,8 @@ package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import az.fitnest.userservice.request.FavoritesRequest;
-import az.fitnest.userservice.response.FavoritesResponses;
+import az.fitnest.userservice.dto.request.FavoritesRequest;
+import az.fitnest.userservice.dto.response.FavoritesResponses;
 import az.fitnest.userservice.service.FavoritesService;
 import lombok.RequiredArgsConstructor;
 

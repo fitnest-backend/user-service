@@ -1,6 +1,6 @@
 package az.fitnest.userservice.service;
 
-import az.fitnest.userservice.request.UpdatePreferences;
+import az.fitnest.userservice.dto.request.UpdatePreferences;
 
 public interface PreferencesService {
 	

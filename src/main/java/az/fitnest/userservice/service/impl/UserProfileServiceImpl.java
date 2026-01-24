@@ -2,9 +2,9 @@ package az.fitnest.userservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import az.fitnest.userservice.request.UpdateUserProfileRequest;
-import az.fitnest.userservice.response.SummaryResponse;
-import az.fitnest.userservice.response.UserProfileResponse;
+import az.fitnest.userservice.dto.request.UpdateUserProfileRequest;
+import az.fitnest.userservice.dto.response.SummaryResponse;
+import az.fitnest.userservice.dto.response.UserProfileResponse;
 import az.fitnest.userservice.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 

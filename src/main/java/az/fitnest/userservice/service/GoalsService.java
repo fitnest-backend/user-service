@@ -1,7 +1,7 @@
 package az.fitnest.userservice.service;
 
-import az.fitnest.userservice.request.UpdateBodyRequest;
-import az.fitnest.userservice.request.UpdateGoalsRequest;
+import az.fitnest.userservice.dto.request.UpdateBodyRequest;
+import az.fitnest.userservice.dto.request.UpdateGoalsRequest;
 
 public interface GoalsService {
 	

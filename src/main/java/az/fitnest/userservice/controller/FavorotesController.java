@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import az.fitnest.userservice.request.FavoritesRequest;
-import az.fitnest.userservice.response.FavoritesResponses;
+import az.fitnest.userservice.dto.request.FavoritesRequest;
+import az.fitnest.userservice.dto.response.FavoritesResponses;
 import az.fitnest.userservice.service.FavoritesService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
