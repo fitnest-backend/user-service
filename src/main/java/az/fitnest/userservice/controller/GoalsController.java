@@ -21,7 +21,7 @@ public class GoalsController {
 	private final GoalsService goalsService;
 
 	@PutMapping(path = "/me/goals", consumes = "application/json")
-	public ResponseEntity<Void> updateMeGoals(@RequestBody  UpdateGoalsRequest request) {
+	public ResponseEntity<Void> updateMeGoals(@RequestBody @Valid UpdateGoalsRequest request) {
 		goalsService.updateMeGoals(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
