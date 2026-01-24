@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(path = "/api/v1")
 @RequiredArgsConstructor
-public class FavorotesController {
+public class FavoritesController {
 
 	private final FavoritesService favoritesService;
 

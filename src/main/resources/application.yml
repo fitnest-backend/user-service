@@ -1,21 +1,31 @@
+server:
+  port: 9897
+
 spring:
+  application:
+    name: user-service
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/fit
-    username: postgres
-    password: password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/fitnest}
+    username: ${SPRING_DATASOURCE_USERNAME:fitnest}
+    password: ${SPRING_DATASOURCE_PASSWORD:fitnest}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    open-in-view: false
     properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        format_sql: false
 
-eureka:
-  client:
-    enabled: false 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
-server:
-  port: 9897
-
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN

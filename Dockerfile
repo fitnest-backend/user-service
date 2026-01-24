@@ -3,7 +3,7 @@ FROM gcr.io/distroless/java17-debian12@sha256:fd925ba431f3a6c1f1c8114ce1999ca388
 
 WORKDIR /app
 
-COPY user-service.jar app.jar
+COPY build/libs/user-service.jar app.jar
 
 EXPOSE 8080
 
