@@ -13,12 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableFeignClients
 @EnableJpaAuditing
-//@OpenAPIDefinition(
-//		info = @Info(
-//				title = "User Backend API",
-//				version = "1.0",
-//				description = "User layihəsi üçün qurulmuş Uİ"
-//		))
+
 public class UserServiceApplication {
 
 	public static void main(String[] args) {
