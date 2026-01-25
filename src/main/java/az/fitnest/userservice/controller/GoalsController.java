@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import az.fitnest.userservice.request.UpdateBodyRequest;
-import az.fitnest.userservice.request.UpdateGoalsRequest;
-import az.fitnest.userservice.service_inter.GoalReferenceInter;
+import az.fitnest.userservice.dto.request.UpdateBodyRequest;
+import az.fitnest.userservice.dto.request.UpdateGoalsRequest;
+import az.fitnest.userservice.service.GoalReferenceInter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
@@ -17,18 +17,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GoalsController {
 
-	private final GoalReferenceInter goalsInter;
+	private final GoalReferenceInter goalsService; // saxlanıldı
 
 	@PutMapping("/internal/users/me/goal")
 	public ResponseEntity<Void> updateMeGoals(@RequestBody UpdateGoalsRequest request) {
-		goalsInter.updateMeGoals(request);
+		goalsService.updateMeGoals(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	
 	@PutMapping("/internal/users/me/profile")
 	public ResponseEntity<Void> updateMeBody(@RequestBody UpdateBodyRequest request) {
-		goalsInter.updateMeBody(request);
+		goalsService.updateMeBody(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 

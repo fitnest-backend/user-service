@@ -1,4 +1,3 @@
 eclipse.preferences.version=1
-encoding//src/main/java/az/fitnest/userservice/handler/ExceptionHandlers.java=UTF-8
+encoding//src/main/java/az/fitnest/userservice/controller/GoalsController.java=UTF-8
 encoding//src/main/java/az/fitnest/userservice/security/JwtAuthenticationFilter.java=UTF-8
-encoding//src/main/java/az/fitnest/userservice/service_impl/GoalReferenceService.java=UTF-8

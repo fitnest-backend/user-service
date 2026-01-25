@@ -1,0 +1,12 @@
+package az.fitnest.userservice.dto.response;
+
+import java.util.List;
+
+import lombok.Data;
+
+@Data
+public class FavoritesResponses {
+	
+	List<FavoritesResponse> favorites;
+
+}

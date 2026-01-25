@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import az.fitnest.userservice.request.UpdateGoalsRequest;
 import az.fitnest.userservice.response.NutritionPlanResponse;
 import az.fitnest.userservice.response.NutritionPlanResponses;
-import az.fitnest.userservice.service_inter.NutritionPlansInter;
+import az.fitnest.userservice.service.NutritionPlansService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
@@ -20,23 +20,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NutritionPlanController {
 
-	private final NutritionPlansInter nutritionPlansInter;
+	private final NutritionPlansService nutritionPlansService;
 
 	@GetMapping("/nutrition-plans")
 	public ResponseEntity<NutritionPlanResponses> getNutritionPlans() {
-		NutritionPlanResponses nutritionPlans = nutritionPlansInter.getNutritionPlans();
+		NutritionPlanResponses nutritionPlans = nutritionPlansService.getNutritionPlans();
 		return ResponseEntity.status(HttpStatus.OK).body(nutritionPlans);
 	}
 
 	@GetMapping("/nutrition-plans/{planId}")
 	public ResponseEntity<NutritionPlanResponse> getNutritionPlan(@PathVariable Long planId) {
-		NutritionPlanResponse nutritionPlan = nutritionPlansInter.getNutritionPlan(planId);
+		NutritionPlanResponse nutritionPlan = nutritionPlansService.getNutritionPlan(planId);
 		return ResponseEntity.status(HttpStatus.OK).body(nutritionPlan);
 	}
 	
 	@GetMapping("/nutrition-plans/{planId}/active")
 	public ResponseEntity<Void> getActiveNutritionPlan(@PathVariable Long planId) {
-		 nutritionPlansInter.getActiveNutritionPlan(planId);
+		 nutritionPlansService.getActiveNutritionPlan(planId);
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 

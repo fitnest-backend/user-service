@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import az.fitnest.userservice.request.UpdateUserProfileRequest;
 import az.fitnest.userservice.response.SummaryResponse;
 import az.fitnest.userservice.response.UserProfileResponse;
-import az.fitnest.userservice.service_inter.UserProfileInter;
+import az.fitnest.userservice.service.UserProfileService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
@@ -19,23 +19,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserProfileController {
 
-	private final UserProfileInter userProfileInter;
+	private final UserProfileService userProfileService;
 
 	@GetMapping("/me/summary")
 	public ResponseEntity<SummaryResponse> getUserSummary() {
-		SummaryResponse userSummary = userProfileInter.getUserSummary();
+		SummaryResponse userSummary = userProfileService.getUserSummary();
 		return ResponseEntity.status(HttpStatus.OK).body(userSummary);
 	}
 	
 	@GetMapping("/me")
 	public ResponseEntity<UserProfileResponse> getUserMe() {
-		 UserProfileResponse userMe = userProfileInter.getUserMe();
+		 UserProfileResponse userMe = userProfileService.getUserMe();
 		return ResponseEntity.status(HttpStatus.OK).body(userMe);
 	}
 	
 	@PutMapping("/me")
 	public ResponseEntity<Void> updateUserMe(@RequestBody UpdateUserProfileRequest request) {
-		  userProfileInter.updateUserMe(request);
+		  userProfileService.updateUserMe(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
