@@ -16,11 +16,12 @@ public class GoalReference {
     
     @Id
     @Column(name = "code", nullable = false)
-    private String code;
+    private String goalCode;
     
     @Column(name = "title", nullable = false)
     private String title;
     
     @Column(name = "subtitle")
     private String subtitle;
+    
 }

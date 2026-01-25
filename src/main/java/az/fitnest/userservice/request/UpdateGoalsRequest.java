@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class UpdateGoalsRequest {
 	
-	private String goal;
+	private String goalCode;
 
 }

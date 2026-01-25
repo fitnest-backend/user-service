@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import az.fitnest.userservice.entity.UserProfile;
 
 @Repository
-public interface UserProfileRepository extends JpaRepository<UserProfile, Long>{
+public interface UserProfileRepository extends JpaRepository<UserProfile, Integer>{
 	
 
 }

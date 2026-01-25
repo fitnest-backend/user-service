@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import az.fitnest.userservice.entity.GoalReference;
 
 @Repository
-public interface GoalsRepository extends JpaRepository<GoalReference, String>{
+public interface GoalReferenceRepository extends JpaRepository<GoalReference, String>{
+
+	boolean existsByCode(String goalCode);
 
 }
