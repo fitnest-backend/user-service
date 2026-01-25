@@ -1,6 +1,5 @@
 package az.fitnest.userservice.service_impl;
 
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
