@@ -36,12 +36,6 @@ iam:
   service:
     url: ${IAM_SERVICE_URL:http://localhost:8080}
 
-logging:
-  level:
-    root: INFO
-    org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql: WARN
-
 management:
   endpoints:
     web:
