@@ -24,6 +24,14 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+eureka:
+  client:
+    enabled: false
+
+jwt:
+  secret: ${JWT_SECRET:fitnest_jwt_secret_key_at_least_32_characters_long_for_hs256}
+  issuer: ${JWT_ISSUER:fitnest}
+
 iam:
   service:
     url: ${IAM_SERVICE_URL:http://localhost:8080}
@@ -33,3 +41,12 @@ logging:
     root: INFO
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
