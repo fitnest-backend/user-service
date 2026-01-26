@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import az.fitnest.userservice.util.JwtUtil;
+import az.fitnest.userservice.shared.util.JwtUtil;
 
 import java.io.IOException;
 
