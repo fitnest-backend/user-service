@@ -26,8 +26,8 @@ public class GoalReferenceService {
 	private final GoalReferenceRepository goalReferenceRepository;
 
 	public void updateMeGoals(UpdateGoalsRequest request) {
-		Integer userId = UserContextUtil.getCurrentUserId();
-		UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
+		Long userId = UserContextUtil.getCurrentUserId();
+		UserProfile profile = userProfileRepository.findByUserId(userId).orElseGet(() -> {
 			UserProfile newProfile = new UserProfile();
 			newProfile.setUserId(userId);
 			return newProfile;
@@ -44,8 +44,8 @@ public class GoalReferenceService {
 	}
 
 	public void updateMeBody(UpdateBodyRequest request) {
-		Integer userId = UserContextUtil.getCurrentUserId();
-		UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
+		Long userId = UserContextUtil.getCurrentUserId();
+		UserProfile profile = userProfileRepository.findByUserId(userId).orElseGet(() -> {
 			UserProfile newProfile = new UserProfile();
 			newProfile.setUserId(userId);
 			return newProfile;

@@ -19,7 +19,7 @@ public class UserProfile {
     
     @Id
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
     
     @Column(name = "height_cm")
     private Integer heightCm;

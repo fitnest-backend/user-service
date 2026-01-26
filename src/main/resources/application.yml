@@ -24,6 +24,10 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+iam:
+  service:
+    url: ${IAM_SERVICE_URL:http://localhost:8080}
+
 logging:
   level:
     root: INFO

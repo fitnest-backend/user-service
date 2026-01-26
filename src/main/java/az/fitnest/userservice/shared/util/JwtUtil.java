@@ -1,28 +1,47 @@
 package az.fitnest.userservice.shared.util;
 
-import java.util.function.Function;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-
+@Component
 public class JwtUtil {
 
-	private String secretKey="my_secret_key";
+	@Value("${jwt.secret:my_secret_key_that_is_at_least_32_characters_long}")
+	private String secretKey;
+	
+	@Value("${jwt.issuer:fitnest}")
+	private String issuer;
 
 	private SecretKey getSigningKey() {
 		return Keys.hmacShaKeyFor(secretKey.getBytes());
 	}
 
-	private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-		Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
-		return claimsResolver.apply(claims);
+	public Long getUserIdFromToken(String token) {
+		Claims claims = parseClaims(token);
+		String sub = claims.getSubject();
+		if (sub == null || sub.isBlank()) {
+			throw new IllegalArgumentException("JWT subject (sub) is missing.");
+		}
+		try {
+			return Long.parseLong(sub);
+		} catch (NumberFormatException ex) {
+			throw new IllegalArgumentException("JWT subject (sub) is not a valid Long.");
+		}
 	}
 
-	public Integer getUserIdFromToken(String token) {
-		String userIdStr = extractClaim(token, claims -> claims.get("userId", String.class));
-		return Integer.valueOf(userIdStr);
+	private Claims parseClaims(String token) {
+		Jws<Claims> jws = Jwts.parser()
+				.verifyWith(getSigningKey())
+				.requireIssuer(issuer)
+				.build()
+				.parseSignedClaims(token);
+
+		return jws.getPayload();
 	}
 }
