@@ -2,8 +2,6 @@
 .gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 # IntelliJ IDEA
 .idea/
@@ -11,16 +9,12 @@ build/
 *.iml
 *.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
 # Eclipse
 .classpath
 .project
 .settings/
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
 # NetBeans
 /nbproject/private/
