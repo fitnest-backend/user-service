@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import az.fitnest.user.shared.dto.ErrorResponse;
+import az.fitnest.user.shared.dto.ErrorWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +27,7 @@ public class GlobalExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	
 	@ExceptionHandler(BaseException.class)
-	public ResponseEntity<ErrorResponse> handleBaseException(BaseException exception, WebRequest request) {
+	public ResponseEntity<ErrorWrapper> handleBaseException(BaseException exception, WebRequest request) {
 		logger.warn("BaseException [{}]: {}", exception.getErrorCode(), exception.getMessage());
 		
 		ErrorResponse.ErrorResponseBuilder builder = ErrorResponse.builder()
@@ -46,56 +50,60 @@ public class GlobalExceptionHandler {
 		}
 		
 		ErrorResponse errorResponse = builder.build();
-		return ResponseEntity.status(exception.getHttpStatus()).body(errorResponse);
+		return ResponseEntity.status(exception.getHttpStatus()).body(ErrorWrapper.fromErrorResponse(errorResponse));
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest request) {
+	public ResponseEntity<ErrorWrapper> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest request) {
 		logger.warn("MethodArgumentNotValidException: {}", exception.getMessage());
 		
 		BindingResult result = exception.getBindingResult();
-		Map<String, Object> details = new HashMap<>();
-		Map<String, String> validationErrors = new HashMap<>();
+		List<ErrorWrapper.FieldIssue> details = new ArrayList<>();
 		
 		for (FieldError error : result.getFieldErrors()) {
-			validationErrors.put(error.getField(), error.getDefaultMessage());
+			details.add(ErrorWrapper.FieldIssue.builder()
+					.field(error.getField())
+					.issue(error.getDefaultMessage())
+					.build());
 		}
-		details.put("validationErrors", validationErrors);
 		
-		ErrorResponse errorResponse = ErrorResponse.builder()
-				.message("Validation failed")
-				.code("VALIDATION_ERROR")
-				.path(request.getDescription(false).replace("uri=", ""))
-				.details(details)
+		ErrorWrapper errorWrapper = ErrorWrapper.builder()
+				.error(ErrorWrapper.ErrorDetail.builder()
+						.code("VALIDATION_ERROR")
+						.message("Validation failed")
+						.details(details)
+						.build())
 				.build();
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorWrapper);
 	}
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception, WebRequest request) {
+	public ResponseEntity<ErrorWrapper> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception, WebRequest request) {
 		logger.warn("HttpMessageNotReadableException: {}", exception.getMessage());
 
-		ErrorResponse errorResponse = ErrorResponse.builder()
-				.message("Məlumat oxunmadı. Daxil edilən məlumatların dəqiqliyini yoxlayın.")
-				.code("HTTP_MESSAGE_NOT_READABLE")
-				.path(request.getDescription(false).replace("uri=", ""))
+		ErrorWrapper errorWrapper = ErrorWrapper.builder()
+				.error(ErrorWrapper.ErrorDetail.builder()
+						.code("HTTP_MESSAGE_NOT_READABLE")
+						.message("Məlumat oxunmadı. Daxil edilən məlumatların dəqiqliyini yoxlayın.")
+						.build())
 				.build();
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorWrapper);
 	}
 	
 	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+	public ResponseEntity<ErrorWrapper> handleRuntimeException(RuntimeException ex, WebRequest request) {
 		logger.error("RuntimeException: {}", ex.getMessage(), ex);
 
-		ErrorResponse errorResponse = ErrorResponse.builder()
-				.message("Server xətası")
-				.code("RUNTIME_EXCEPTION")
-				.path(request.getDescription(false).replace("uri=", ""))
+		ErrorWrapper errorWrapper = ErrorWrapper.builder()
+				.error(ErrorWrapper.ErrorDetail.builder()
+						.code("RUNTIME_EXCEPTION")
+						.message("Server xətası")
+						.build())
 				.build();
 		
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
 	}
 
 }

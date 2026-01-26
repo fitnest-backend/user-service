@@ -3,6 +3,8 @@ package az.fitnest.user.user.adapter.client.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class UserResponse {
 
@@ -26,4 +28,7 @@ public class UserResponse {
     private String profileImageUrl;
 
     private String language;
+
+    @JsonProperty("created_at")
+    private LocalDateTime createdAt;
 }
