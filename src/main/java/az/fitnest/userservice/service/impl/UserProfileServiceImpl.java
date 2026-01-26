@@ -8,6 +8,8 @@ import az.fitnest.userservice.dto.response.UserProfileResponse;
 import az.fitnest.userservice.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService{
@@ -29,5 +31,8 @@ public class UserProfileServiceImpl implements UserProfileService{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+
 
 }

@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateGoalsRequest {
-    @NotBlank(message = "Goal is required")
-    private String goal;
+	
+	@NotBlank(message = "Goal code is required")
+	private String goalCode;
+
 }
 
