@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class PreferencesService {
 	
 	public void updateMePreferences(UpdatePreferences request) {
-		// TODO Auto-generated method stub
 		
 	}
 

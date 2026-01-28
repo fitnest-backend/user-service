@@ -7,7 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "workout_plans")
+@Table(
+        name = "workout_plans",
+        indexes = {
+                @Index(name = "idx_workout_plans_user_id", columnList = "user_id"),
+                @Index(name = "idx_workout_plans_user_id_active", columnList = "user_id,is_active")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,6 +24,9 @@ public class WorkoutPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
     private Long planId;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
     
     @Column(name = "title", nullable = false)
     private String title;

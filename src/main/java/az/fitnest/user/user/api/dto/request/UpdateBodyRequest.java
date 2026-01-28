@@ -2,7 +2,7 @@ package az.fitnest.user.user.api.dto.request;
 
 import java.time.LocalDate;
 
-import az.fitnest.user.enums.Gender;
+import az.fitnest.user.user.domain.enums.Gender;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;

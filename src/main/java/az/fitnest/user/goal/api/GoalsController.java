@@ -4,6 +4,12 @@ import az.fitnest.user.user.api.dto.request.UpdateBodyRequest;
 import az.fitnest.user.goal.api.dto.request.UpdateGoalsRequest;
 import az.fitnest.user.goal.api.dto.response.GoalsResponse;
 import az.fitnest.user.goal.adapter.service.GoalReferenceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,16 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "Goals", description = "Endpoints for goals and body data")
 public class GoalsController {
 
 	private final GoalReferenceService goalsService;
 
+	@Operation(summary = "Get reference goals", description = "Returns reference goals list for onboarding.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Goals returned", content = @Content(schema = @Schema(implementation = GoalsResponse.class)))
+	})
 	@GetMapping("/reference/goals")
 	public ResponseEntity<GoalsResponse> getGoals() {
 		GoalsResponse response = goalsService.getGoals();
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
+	@Operation(summary = "Update my goals", description = "Updates current user's selected goals.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Goals updated", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+	})
 	@PutMapping(value = "/me/goals", consumes = "application/json")
 	public ResponseEntity<Void> updateMeGoals(
 			@Valid @RequestBody UpdateGoalsRequest request
@@ -35,6 +52,12 @@ public class GoalsController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@Operation(summary = "Update my body", description = "Updates current user's body information.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Body updated", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+	})
 	@PutMapping(value = "/me/body", consumes = "application/json")
 	public ResponseEntity<Void> updateMeBody(
 			@Valid @RequestBody UpdateBodyRequest request

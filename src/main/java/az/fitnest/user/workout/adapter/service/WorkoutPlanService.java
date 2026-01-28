@@ -11,17 +11,14 @@ import lombok.RequiredArgsConstructor;
 public class WorkoutPlanService {
 	
 	public WorkoutPlanResponses getWorkoutPlans() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public WorkoutPlanResponse getWorkoutPlan(Long planId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void getActiveWorkoutPlan(Long planId) {
-		// TODO Auto-generated method stub
 		
 	}
 
