@@ -17,7 +17,7 @@ before_script:
 # -----------------------------
 build:
   stage: build
-  image: gradle:8.3.3-jdk17-alpine
+  image: gradle:8.3-jdk17-alpine
   script:
     - gradle --version
     - gradle clean build -x test --no-daemon
