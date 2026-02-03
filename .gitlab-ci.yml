@@ -59,22 +59,28 @@ update-helm-chart:
   script:
     - IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
     - echo "Updating Helm chart with image tag $IMAGE_TAG"
-    - git config --global user.email "ci@gitlab.com"
+
+    - git config --global user.email ci@gitlab.com
     - git config --global user.name "GitLab CI"
-    - test -n "$CHART_REPO_SSH_PRIVATE_KEY_B64" || (echo "missing CHART_REPO_SSH_PRIVATE_KEY_B64"; exit 1)
+
+    # Fail fast if key is missing (NO subshell)
+    - if [ -z "$CHART_REPO_SSH_PRIVATE_KEY_B64" ]; then echo "missing CHART_REPO_SSH_PRIVATE_KEY_B64"; exit 1; fi
+
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+
     - eval "$(ssh-agent -s)"
     - echo "$CHART_REPO_SSH_PRIVATE_KEY_B64" | base64 -d | tr -d '\r' | ssh-add -
+
     - git clone "$HELM_REPO_URL"
     - cd user-service
-    - git checkout $CI_COMMIT_BRANCH || git checkout -b $CI_COMMIT_BRANCH
+    - git checkout "$CI_COMMIT_BRANCH" || git checkout -b "$CI_COMMIT_BRANCH"
     - yq eval ".image.tag = \"$IMAGE_TAG\"" -i values.yaml
     - git add values.yaml
     - git commit -m "chore: update image tag to $IMAGE_TAG"
-    - git push origin $CI_COMMIT_BRANCH
+    - git push origin "$CI_COMMIT_BRANCH"
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
     - if: '$CI_COMMIT_BRANCH == "staging"'
