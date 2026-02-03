@@ -15,6 +15,8 @@ before_script:
 build:
   stage: build
   image: gradle:8.3-jdk17
+cd u  variables:
+    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   script:
     - gradle --version
     - gradle clean build -x test --no-daemon --no-build-cache
