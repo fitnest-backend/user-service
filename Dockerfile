@@ -1,7 +1,7 @@
 # -----------------------------
 # Stage 1: Build the Java JAR
 # -----------------------------
-FROM gradle:8.3.3-jdk17-alpine AS builder
+FROM gradle:8.5-jdk17-alpine AS builder
 
 # Set working directory
 WORKDIR /app
