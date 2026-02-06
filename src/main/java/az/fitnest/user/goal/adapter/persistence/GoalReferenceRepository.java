@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface GoalReferenceRepository extends JpaRepository<GoalReference, String>{
 
-	boolean existsByCode(String goalCode);
+	boolean existsByGoalCode(String goalCode);
 
-	List<GoalReference> findAllByOrderByCodeAsc();
+	List<GoalReference> findAllByOrderByGoalCodeAsc();
 
 }

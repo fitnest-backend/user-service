@@ -33,7 +33,7 @@ public class GoalReferenceService {
 			return newProfile;
 		});
 
-		boolean exists = goalReferenceRepository.existsByCode(request.getGoalCode());
+		boolean exists = goalReferenceRepository.existsByGoalCode(request.getGoalCode());
 
 		if (!exists) {
 			throw new ResourceNotFoundException("Goal reference not found");
@@ -62,7 +62,7 @@ public class GoalReferenceService {
 
 	@Transactional
 	public GoalsResponse getGoals() {
-		List<GoalItemResponse> items = goalReferenceRepository.findAllByOrderByCodeAsc().stream()
+		List<GoalItemResponse> items = goalReferenceRepository.findAllByOrderByGoalCodeAsc().stream()
 				.map(this::toGoalItemResponse)
 				.toList();
 		return GoalsResponse.builder()
