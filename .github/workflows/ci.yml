@@ -155,3 +155,25 @@ jobs:
             git push origin ${{ github.ref_name }}
             echo "✅ Helm chart updated successfully"
           fi
+
+
+# -------------------------
+# ArgoCD Sync Job
+# -------------------------
+  sync-argocd:
+    name: Sync ArgoCD
+    runs-on: ubuntu-latest
+    needs: update-helm-chart
+    if: github.ref_name == 'development'
+    
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 161.97.183.7 >> ~/.ssh/known_hosts
+          
+      - name: Trigger ArgoCD Sync
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@161.97.183.7 "kubectl patch application -n argocd fitnest-user-service-dev --type merge -p '{\"operation\": {\"sync\": {\"prune\": true}}}'"
