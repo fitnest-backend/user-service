@@ -1,5 +1,5 @@
 server:
-  port: 9897
+  port: 8080
 
 spring:
   application:
@@ -45,3 +45,13 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

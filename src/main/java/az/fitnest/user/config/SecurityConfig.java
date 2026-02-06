@@ -7,8 +7,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import az.fitnest.user.security.JwtAuthenticationFilter;
-import az.fitnest.user.shared.util.JwtUtil;
+
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -21,7 +20,7 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtUtil jwtUtil) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -31,12 +30,12 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/v1/files/profiles/**",
-                                "/actuator/**"
+                                "/actuator/**",
+                                "/api/v1/files/profiles/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
