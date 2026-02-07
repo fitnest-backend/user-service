@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import az.fitnest.user.favorites.adapter.service.FavoritesService;
 import az.fitnest.user.favorites.domain.enums.EntityType;
 import az.fitnest.user.shared.exception.ConflictException;
-import az.fitnest.user.shared.util.UserContextUtil;
+import az.fitnest.user.shared.util.UserContext;
 import az.fitnest.user.user.adapter.client.IamServiceClient;
 import az.fitnest.user.user.adapter.client.dto.UpdateProfileImageRequest;
 import az.fitnest.user.user.adapter.client.dto.UpdateUserProfileRequest;
@@ -44,7 +44,7 @@ public class UserProfileService {
 	private final UserLocationRepository userLocationRepository;
 	
 	public SummaryResponse getUserSummary() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		UserResponse iamUser = iamServiceClient.getUserById(userId);
 		
 		UserProfileResponse user = UserProfileResponse.builder()
@@ -66,7 +66,7 @@ public class UserProfileService {
 	}
 
 	public UserProfileResponse getUserMe() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserResponse iamUser = iamServiceClient.getUserById(userId);
 		
@@ -83,7 +83,7 @@ public class UserProfileService {
 	
 	@Transactional
 	public LocationResponse updateMyLocation(UpdateLocationRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserLocation location = userLocationRepository.findById(userId)
 				.orElseGet(() -> new UserLocation(userId, 0.0, 0.0, LocalDateTime.now()));
@@ -103,7 +103,7 @@ public class UserProfileService {
 
 	@Transactional
 	public void updateBody(az.fitnest.user.user.api.dto.request.UpdateBodyRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserProfile profile = userProfileRepository.findByUserId(userId)
 				.orElseGet(() -> {
@@ -129,7 +129,7 @@ public class UserProfileService {
 	}
 
 	public UserProfileResponse updateUserMe(az.fitnest.user.user.api.dto.request.UpdateUserProfileRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UpdateUserProfileRequest updateRequest = new UpdateUserProfileRequest();
 		updateRequest.setFirstName(request.getFirstName());
@@ -150,7 +150,7 @@ public class UserProfileService {
 	}
 
 	public UserProfileResponse updateProfileImage(MultipartFile file) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserResponse currentUser = iamServiceClient.getUserById(userId);
 		String oldImageUrl = currentUser.getProfileImageUrl();
@@ -189,7 +189,7 @@ public class UserProfileService {
 	}
 
 	public UserProfileResponse updateProfileImage(String imageUrl) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserResponse currentUser = iamServiceClient.getUserById(userId);
 		String oldImageUrl = currentUser.getProfileImageUrl();
@@ -218,7 +218,7 @@ public class UserProfileService {
 	}
 
 	public ActiveSubscriptionResponse getActiveSubscription() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		return ActiveSubscriptionResponse.builder()
 				.status("none")
@@ -230,7 +230,7 @@ public class UserProfileService {
 			throw new az.fitnest.user.shared.exception.BadRequestException("Confirmation must be true");
 		}
 
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 
 		// TODO: check active subscription when subscriptions-service API is available.
 		// If active subscription exists, throw ConflictException with code HAS_ACTIVE_SUBSCRIPTION.
@@ -242,7 +242,7 @@ public class UserProfileService {
 
     @Transactional(readOnly = true)
     public SetupResponse getSetupStatus() {
-        Long userId = UserContextUtil.getCurrentUserId();
+        Long userId = UserContext.getCurrentUserId();
         
         UserResponse iamUser = iamServiceClient.getUserById(userId);
         
@@ -272,7 +272,7 @@ public class UserProfileService {
 
 	@Transactional(readOnly = true)
 	public az.fitnest.user.user.api.dto.response.FitnessLevelResponse getFitnessLevel() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserProfile profile = userProfileRepository.findByUserId(userId)
 				.orElseThrow(() -> new az.fitnest.user.shared.exception.ResourceNotFoundException("Profile not found"));
@@ -301,7 +301,7 @@ public class UserProfileService {
 
 	@Transactional
 	public az.fitnest.user.user.api.dto.response.CompleteSetupResponse completeSetup() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserProfile profile = userProfileRepository.findByUserId(userId)
 				.orElseThrow(() -> new az.fitnest.user.shared.exception.ResourceNotFoundException("Profile not found"));
@@ -327,7 +327,7 @@ public class UserProfileService {
 	
 	@Transactional
 	public SetupResponse setupProfile(SetupRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		UserProfile profile = userProfileRepository.findByUserId(userId)
 				.orElseGet(() -> {

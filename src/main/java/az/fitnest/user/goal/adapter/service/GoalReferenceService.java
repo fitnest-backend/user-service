@@ -12,7 +12,7 @@ import az.fitnest.user.user.domain.model.UserProfile;
 import az.fitnest.user.shared.exception.ResourceNotFoundException;
 import az.fitnest.user.goal.adapter.persistence.GoalReferenceRepository;
 import az.fitnest.user.user.adapter.persistence.UserProfileRepository;
-import az.fitnest.user.shared.util.UserContextUtil;
+import az.fitnest.user.shared.util.UserContext;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class GoalReferenceService {
 	private final GoalReferenceRepository goalReferenceRepository;
 
 	public void updateMeGoals(UpdateGoalsRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		UserProfile profile = userProfileRepository.findByUserId(userId).orElseGet(() -> {
 			UserProfile newProfile = new UserProfile();
 			newProfile.setUserId(userId);
@@ -44,7 +44,7 @@ public class GoalReferenceService {
 	}
 
 	public void updateMeBody(UpdateBodyRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		UserProfile profile = userProfileRepository.findByUserId(userId).orElseGet(() -> {
 			UserProfile newProfile = new UserProfile();
 			newProfile.setUserId(userId);

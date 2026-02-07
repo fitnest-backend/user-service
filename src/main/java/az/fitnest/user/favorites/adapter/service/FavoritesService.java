@@ -13,7 +13,7 @@ import az.fitnest.user.favorites.domain.model.Favorite;
 import az.fitnest.user.shared.exception.AlreadyFavoritedException;
 import az.fitnest.user.shared.exception.BadRequestException;
 import az.fitnest.user.shared.exception.FavoriteNotFoundException;
-import az.fitnest.user.shared.util.UserContextUtil;
+import az.fitnest.user.shared.util.UserContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,7 +23,7 @@ public class FavoritesService {
 	private final FavoritesRepository favoritesRepository;
 	
 	public FavoritesResponses getFavorites() {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		var items = favoritesRepository.findAllByUserIdOrderByCreatedAtDesc(userId).stream()
 				.map(this::toResponse)
@@ -35,7 +35,7 @@ public class FavoritesService {
 	}
 
 	public FavoritesResponse addFavorites(FavoritesRequest request) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		EntityType entityType = parseEntityType(request.getEntityType());
 		Long entityId = request.getEntityId();
@@ -56,7 +56,7 @@ public class FavoritesService {
 	}
 
 	public void deleteFavorites(Long favoritesId) {
-		Long userId = UserContextUtil.getCurrentUserId();
+		Long userId = UserContext.getCurrentUserId();
 		
 		Favorite favorite = favoritesRepository.findByFavoriteIdAndUserId(favoritesId, userId)
 				.orElseThrow(() -> new FavoriteNotFoundException("Favorite not found"));

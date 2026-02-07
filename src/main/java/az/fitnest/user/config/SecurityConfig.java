@@ -43,10 +43,10 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // 1. INTERNAL SERVICE-TO-SERVICE - Permitted (filter validates X-Internal-Service header)
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/internal/**")).permitAll()
+                // 1. INTERNAL SERVICE-TO-SERVICE - Requires ROLE_INTERNAL
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/internal/**")).hasRole("INTERNAL")
                 
-                // 2. PUBLIC ENDPOINTS - Swagger, actuator, public files
+                // 2. PUBLIC ENDPOINTS
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
@@ -57,18 +57,13 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
                 
-                // 3. ALL OTHER ENDPOINTS - Require authentication (via gateway headers)
+                // 3. ALL OTHER ENDPOINTS - Authenticated (ROLE_USER set by filter)
                 .anyRequest().authenticated()
             )
-            // Internal endpoint protection filter - blocks external access to /api/v1/internal/**
+            // Single unified security filter
             .addFilterBefore(
-                new InternalEndpointFilter(),
+                new az.fitnest.user.security.FitnestSecurityFilter(),
                 UsernamePasswordAuthenticationFilter.class
-            )
-            // Gateway header authentication filter for external requests
-            .addFilterAfter(
-                new GatewayHeaderAuthenticationFilter(), 
-                InternalEndpointFilter.class
             );
         
         log.info("User-service security: internal=X-Internal-Service required, external=authenticated");
