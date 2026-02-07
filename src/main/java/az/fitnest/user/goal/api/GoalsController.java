@@ -38,6 +38,15 @@ public class GoalsController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
+	@Operation(summary = "Get reference goals (alias)", description = "Returns reference goals list. Alias for /reference/goals.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Goals returned", content = @Content(schema = @Schema(implementation = GoalsResponse.class)))
+	})
+	@GetMapping("/me/reference/goals")
+	public ResponseEntity<GoalsResponse> getMeReferenceGoals() {
+		return getGoals();
+	}
+
 	@Operation(summary = "Update my goals", description = "Updates current user's selected goals.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Goals updated", content = @Content),
@@ -49,6 +58,23 @@ public class GoalsController {
 			@Valid @RequestBody UpdateGoalsRequest request
 	) {
 		goalsService.updateMeGoals(request);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@Operation(summary = "Update my goal (alias)", description = "Updates current user's goal. Alias for /me/goals.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Goal updated", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+	})
+	@PutMapping(value = "/me/goal", consumes = "application/json")
+	public ResponseEntity<Void> updateMeGoal(
+			@Valid @RequestBody az.fitnest.user.goal.api.dto.request.UpdateGoalRequest request
+	) {
+		UpdateGoalsRequest serviceRequest = new UpdateGoalsRequest();
+		serviceRequest.setGoalCode(request.getGoal());
+		
+		goalsService.updateMeGoals(serviceRequest);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 

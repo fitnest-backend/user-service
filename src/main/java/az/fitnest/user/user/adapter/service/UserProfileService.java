@@ -100,6 +100,33 @@ public class UserProfileService {
 				.build();
 	}
 
+	@Transactional
+	public void updateBody(az.fitnest.user.user.api.dto.request.UpdateBodyRequest request) {
+		Long userId = UserContextUtil.getCurrentUserId();
+		
+		UserProfile profile = userProfileRepository.findByUserId(userId)
+				.orElseGet(() -> {
+					UserProfile newProfile = new UserProfile();
+					newProfile.setUserId(userId);
+					return newProfile;
+				});
+
+		if (request.getHeightCm() != null) {
+			profile.setHeightCm(request.getHeightCm());
+		}
+		if (request.getWeightKg() != null) {
+			profile.setWeightKg(request.getWeightKg());
+		}
+		if (request.getGender() != null) {
+			profile.setGender(request.getGender());
+		}
+		if (request.getBirthDate() != null) {
+			profile.setBirthDate(request.getBirthDate());
+		}
+		
+		userProfileRepository.save(profile);
+	}
+
 	public UserProfileResponse updateUserMe(az.fitnest.user.user.api.dto.request.UpdateUserProfileRequest request) {
 		Long userId = UserContextUtil.getCurrentUserId();
 		
@@ -241,6 +268,61 @@ public class UserProfileService {
                 .build();
     }
 
+	@Transactional(readOnly = true)
+	public az.fitnest.user.user.api.dto.response.FitnessLevelResponse getFitnessLevel() {
+		Long userId = UserContextUtil.getCurrentUserId();
+		
+		UserProfile profile = userProfileRepository.findByUserId(userId)
+				.orElseThrow(() -> new az.fitnest.user.shared.exception.ResourceNotFoundException("Profile not found"));
+
+		if (profile.getHeightCm() == null || profile.getWeightKg() == null) {
+			throw new az.fitnest.user.shared.exception.ConflictException("Profile incomplete");
+		}
+		
+		double heightM = profile.getHeightCm() / 100.0;
+		double bmi = profile.getWeightKg() / (heightM * heightM);
+		String category = getBmiCategory(bmi);
+		
+		return az.fitnest.user.user.api.dto.response.FitnessLevelResponse.builder()
+				.level("BEGINNER") // Default logic for now
+				.bmi(Math.round(bmi * 10.0) / 10.0)
+				.bmiCategory(category)
+				.build();
+	}
+
+	private String getBmiCategory(double bmi) {
+		if (bmi < 18.5) return "UNDERWEIGHT";
+		if (bmi < 25) return "NORMAL";
+		if (bmi < 30) return "OVERWEIGHT";
+		return "OBESE";
+	}
+
+	@Transactional
+	public az.fitnest.user.user.api.dto.response.CompleteSetupResponse completeSetup() {
+		Long userId = UserContextUtil.getCurrentUserId();
+		
+		UserProfile profile = userProfileRepository.findByUserId(userId)
+				.orElseThrow(() -> new az.fitnest.user.shared.exception.ResourceNotFoundException("Profile not found"));
+		
+		if (profile.getHeightCm() == null || profile.getWeightKg() == null || profile.getGoalCode() == null) {
+			throw new az.fitnest.user.shared.exception.ConflictException("Setup incomplete");
+		}
+		
+		az.fitnest.user.user.adapter.client.dto.UpdateSetupRequiredRequest setupRequest =
+				new az.fitnest.user.user.adapter.client.dto.UpdateSetupRequiredRequest();
+		setupRequest.setSetupRequired(false);
+		
+		iamServiceClient.updateSetupRequired(userId, setupRequest);
+		
+		return az.fitnest.user.user.api.dto.response.CompleteSetupResponse.builder()
+				.setupRequired(false)
+				.next(az.fitnest.user.user.api.dto.response.CompleteSetupResponse.NextSteps.builder()
+						.workoutPlanReady(true)
+						.nutritionPlanReady(true)
+						.build())
+				.build();
+	}
+	
 	@Transactional
 	public SetupResponse setupProfile(SetupRequest request) {
 		Long userId = UserContextUtil.getCurrentUserId();

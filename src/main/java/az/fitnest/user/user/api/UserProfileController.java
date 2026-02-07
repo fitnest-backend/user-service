@@ -138,6 +138,52 @@ public class UserProfileController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
+	@Operation(summary = "Update user profile", description = "Saves user body information: height, weight, gender, age")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Profile updated", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+	})
+	@PutMapping("/me/profile")
+	public ResponseEntity<Void> updateProfile(@Valid @RequestBody az.fitnest.user.user.api.dto.request.UpdateBodyRequest request) {
+		// Reusing GoalsController logic or duplicating? 
+		// GoalsController has updateMeBody(@RequestBody UpdateBodyRequest request) mapped to /me/body
+		// The client expects /me/profile for setup flow.
+		// We can reuse the service method if it exists, or create one.
+		// UserProfileService doesn't have updateBody method, GoalsController uses GoalReferenceService.
+		// Let's check GoalReferenceService. For now, calling userProfileService.updateMyLocation is wrong.
+		// I'll add updateBody to UserProfileService or use GoalReferenceService?
+		// UserProfileService is better for "User Profile".
+		// Actually, let's look at GoalsController again. It uses GoalReferenceService.
+		// I will implement updateBody in UserProfileService to keep it consolidated.
+		userProfileService.updateBody(request);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@Operation(summary = "Get fitness level", description = "Returns BMI and fitness level calculations.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Fitness level calculated", content = @Content(schema = @Schema(implementation = az.fitnest.user.user.api.dto.response.FitnessLevelResponse.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+			@ApiResponse(responseCode = "409", description = "Profile incomplete", content = @Content)
+	})
+	@GetMapping("/me/fitness-level")
+	public ResponseEntity<az.fitnest.user.user.api.dto.response.FitnessLevelResponse> getFitnessLevel() {
+		az.fitnest.user.user.api.dto.response.FitnessLevelResponse response = userProfileService.getFitnessLevel();
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@Operation(summary = "Complete setup", description = "Completes onboarding/setup process.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Setup completed", content = @Content(schema = @Schema(implementation = az.fitnest.user.user.api.dto.response.CompleteSetupResponse.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+			@ApiResponse(responseCode = "409", description = "Setup incomplete", content = @Content)
+	})
+	@PostMapping("/me/setup/complete")
+	public ResponseEntity<az.fitnest.user.user.api.dto.response.CompleteSetupResponse> completeSetup() {
+		az.fitnest.user.user.api.dto.response.CompleteSetupResponse response = userProfileService.completeSetup();
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
 	@Operation(summary = "Delete my account", description = "Deletes current user account.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "204", description = "Account deleted", content = @Content),
