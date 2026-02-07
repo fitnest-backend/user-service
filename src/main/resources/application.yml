@@ -48,7 +48,7 @@ eureka:
     enabled: false
 
 jwt:
-  secret: ${JWT_SECRET:fitnest_jwt_secret_key_at_least_32_characters_long_for_hs256}
+  secret: ${JWT_SECRET:your-jwt-secret-change-in-production}
   issuer: ${JWT_ISSUER:fitnest}
 
 iam:
