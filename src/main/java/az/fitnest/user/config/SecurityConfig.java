@@ -32,7 +32,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/actuator/**",
                                 "/api/v1/files/profiles/**",
-                                "/api/v1/internal/**"  // Internal service-to-service endpoints
+                                "/api/v1/internal/**",  // Internal service-to-service endpoints
+                                "/api/v1/reference/**"  // Reference data endpoints
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
