@@ -31,7 +31,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/actuator/**",
-                                "/api/v1/files/profiles/**"
+                                "/api/v1/files/profiles/**",
+                                "/api/v1/internal/**"  // Internal service-to-service endpoints
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
