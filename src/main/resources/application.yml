@@ -21,6 +21,26 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+  # Redis
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis.fitnest-dev.svc.cluster.local}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+      timeout: 2000ms
+
+  # Kafka
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-service.fitnest-dev.svc.cluster.local:9092}
+    consumer:
+      group-id: user-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 eureka:
   client:
     enabled: false
