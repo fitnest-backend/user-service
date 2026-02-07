@@ -14,13 +14,40 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Internal endpoints for service-to-service communication.
- * These endpoints are not exposed via the API Gateway.
+ * Internal controller for user setup operations.
+ * 
+ * <p>This controller provides internal service-to-service communication endpoints
+ * for managing user profile setup. These endpoints are not exposed via the API Gateway
+ * and are intended for use by other microservices only.</p>
+ * 
+ * <h2>Consuming Services:</h2>
+ * <ul>
+ *   <li><strong>iam-service</strong> - Uses UserServiceClient to call these endpoints for:
+ *     <ul>
+ *       <li>Checking user setup status during authentication flows</li>
+ *       <li>Updating user profile data (height, weight, gender, birth date)</li>
+ *       <li>Setting user fitness goals</li>
+ *       <li>Retrieving fitness level information</li>
+ *       <li>Completing the setup process</li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ * 
+ * <h2>Endpoints:</h2>
+ * <ul>
+ *   <li>{@code GET /api/v1/internal/setup/status} - Get setup status for a user</li>
+ *   <li>{@code PUT /api/v1/internal/profile} - Update user profile data</li>
+ *   <li>{@code PUT /api/v1/internal/goal} - Update user's fitness goal</li>
+ *   <li>{@code GET /api/v1/internal/fitness-level} - Get user's fitness level</li>
+ *   <li>{@code POST /api/v1/internal/setup/complete} - Mark setup as complete</li>
+ * </ul>
+ * 
+ * @see az.fitnest.iam.setup.adapter.client.UserServiceClient (in iam-service)
  */
 @RestController
 @RequestMapping("/api/v1/internal")
 @RequiredArgsConstructor
-@Hidden // Hide from Swagger
+@Hidden // Hide from Swagger - internal endpoints only
 public class InternalSetupController {
 
     private final UserProfileRepository userProfileRepository;
@@ -150,6 +177,7 @@ public class InternalSetupController {
 
     /**
      * Get fitness level for a user.
+     * Called by IAM service to display initial fitness level during setup.
      */
     @GetMapping("/fitness-level")
     public ResponseEntity<Map<String, Object>> getFitnessLevel(
@@ -163,6 +191,7 @@ public class InternalSetupController {
 
     /**
      * Complete setup for a user.
+     * Called by IAM service when user finishes the setup wizard.
      */
     @PostMapping("/setup/complete")
     public ResponseEntity<Map<String, Object>> completeSetup(
