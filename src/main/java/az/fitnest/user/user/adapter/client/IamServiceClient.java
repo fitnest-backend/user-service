@@ -34,25 +34,25 @@ import org.springframework.web.bind.annotation.*;
 )
 public interface IamServiceClient {
 
-    @GetMapping("/api/v1/internal/users/{userId}")
+    @GetMapping(value = "/api/v1/internal/users/{userId}", headers = "X-Internal-Service=user-service")
     UserResponse getUserById(@PathVariable("userId") Long userId);
 
-    @PutMapping("/api/v1/internal/users/{userId}")
+    @PutMapping(value = "/api/v1/internal/users/{userId}", headers = "X-Internal-Service=user-service")
     UserResponse updateUserProfile(
             @PathVariable("userId") Long userId,
             @RequestBody UpdateUserProfileRequest request);
 
-    @PutMapping("/api/v1/internal/users/{userId}/profile-image")
+    @PutMapping(value = "/api/v1/internal/users/{userId}/profile-image", headers = "X-Internal-Service=user-service")
     UserResponse updateProfileImage(
             @PathVariable("userId") Long userId,
             @RequestBody UpdateProfileImageRequest request);
 
-    @PutMapping("/api/v1/internal/users/{userId}/setup-required")
+    @PutMapping(value = "/api/v1/internal/users/{userId}/setup-required", headers = "X-Internal-Service=user-service")
     UserResponse updateSetupRequired(
             @PathVariable("userId") Long userId,
             @RequestBody UpdateSetupRequiredRequest request);
 
-    @DeleteMapping("/api/v1/internal/users/{userId}")
+    @DeleteMapping(value = "/api/v1/internal/users/{userId}", headers = "X-Internal-Service=user-service")
     void deleteUser(
             @PathVariable("userId") Long userId,
             @RequestParam(value = "reason", required = false) String reason);
