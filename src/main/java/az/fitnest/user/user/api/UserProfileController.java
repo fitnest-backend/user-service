@@ -146,16 +146,6 @@ public class UserProfileController {
 	})
 	@PutMapping("/me/profile")
 	public ResponseEntity<Void> updateProfile(@Valid @RequestBody az.fitnest.user.user.api.dto.request.UpdateBodyRequest request) {
-		// Reusing GoalsController logic or duplicating? 
-		// GoalsController has updateMeBody(@RequestBody UpdateBodyRequest request) mapped to /me/body
-		// The client expects /me/profile for setup flow.
-		// We can reuse the service method if it exists, or create one.
-		// UserProfileService doesn't have updateBody method, GoalsController uses GoalReferenceService.
-		// Let's check GoalReferenceService. For now, calling userProfileService.updateMyLocation is wrong.
-		// I'll add updateBody to UserProfileService or use GoalReferenceService?
-		// UserProfileService is better for "User Profile".
-		// Actually, let's look at GoalsController again. It uses GoalReferenceService.
-		// I will implement updateBody in UserProfileService to keep it consolidated.
 		userProfileService.updateBody(request);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

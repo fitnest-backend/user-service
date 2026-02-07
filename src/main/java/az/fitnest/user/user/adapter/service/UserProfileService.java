@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -248,24 +249,25 @@ public class UserProfileService {
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElse(new UserProfile());
         
-        SetupResponse.UserInfo.ProfileInfo profileInfo = SetupResponse.UserInfo.ProfileInfo.builder()
+        SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
                 .heightCm(profile.getHeightCm())
                 .weightKg(profile.getWeightKg())
                 .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
-                .birthDate(profile.getBirthDate() != null ? profile.getBirthDate().format(DateTimeFormatter.ISO_DATE) : null)
-                .goal(profile.getGoalCode())
-                .build();
-        
-        SetupResponse.UserInfo userInfo = SetupResponse.UserInfo.builder()
-                .userId(iamUser.getUserId())
-                .language(iamUser.getLanguage())
-                .profile(profileInfo)
+                .age(calculateAge(profile.getBirthDate()))
                 .build();
         
         return SetupResponse.builder()
                 .setupRequired(iamUser.getSetupRequired())
-                .user(userInfo)
+                .profile(profileData)
+                .goal(profile.getGoalCode())
                 .build();
+    }
+
+    private Integer calculateAge(LocalDate birthDate) {
+        if (birthDate == null) {
+            return null;
+        }
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
 	@Transactional(readOnly = true)
@@ -363,25 +365,17 @@ public class UserProfileService {
 		setupRequest.setSetupRequired(false);
 		iamServiceClient.updateSetupRequired(userId, setupRequest);
 		
-		UserResponse iamUser = iamServiceClient.getUserById(userId);
-		
-		SetupResponse.UserInfo.ProfileInfo profileInfo = SetupResponse.UserInfo.ProfileInfo.builder()
+		SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
 				.heightCm(profile.getHeightCm())
 				.weightKg(profile.getWeightKg())
 				.gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
-				.birthDate(profile.getBirthDate() != null ? profile.getBirthDate().format(DateTimeFormatter.ISO_DATE) : null)
-				.goal(profile.getGoalCode())
-				.build();
-		
-		SetupResponse.UserInfo userInfo = SetupResponse.UserInfo.builder()
-				.userId(iamUser.getUserId())
-				.language(request.getLanguage())
-				.profile(profileInfo)
+				.age(calculateAge(profile.getBirthDate()))
 				.build();
 		
 		return SetupResponse.builder()
 				.setupRequired(false)
-				.user(userInfo)
+				.profile(profileData)
+				.goal(profile.getGoalCode())
 				.build();
 	}
 	

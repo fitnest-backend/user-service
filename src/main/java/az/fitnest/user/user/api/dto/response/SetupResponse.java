@@ -15,37 +15,27 @@ public class SetupResponse {
 	@JsonProperty("setup_required")
 	private Boolean setupRequired;
 
-	private UserInfo user;
+	@JsonProperty("profile")
+	private ProfileData profile;
+
+	@JsonProperty("goal")
+	private String goal;
 
 	@Data
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class UserInfo {
-		@JsonProperty("user_id")
-		private String userId;
+	public static class ProfileData {
+		@JsonProperty("height_cm")
+		private Integer heightCm;
 
-		private String language;
+		@JsonProperty("weight_kg")
+		private Double weightKg;
 
-		private ProfileInfo profile;
+		@JsonProperty("gender")
+		private String gender;
 
-		@Data
-		@Builder
-		@NoArgsConstructor
-		@AllArgsConstructor
-		public static class ProfileInfo {
-			@JsonProperty("height_cm")
-			private Integer heightCm;
-
-			@JsonProperty("weight_kg")
-			private Double weightKg;
-
-			private String gender;
-
-			@JsonProperty("birth_date")
-			private String birthDate;
-
-			private String goal;
-		}
+		@JsonProperty("age")
+		private Integer age;
 	}
 }
