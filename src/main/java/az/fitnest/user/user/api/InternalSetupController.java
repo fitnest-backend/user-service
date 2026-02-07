@@ -100,7 +100,8 @@ public class InternalSetupController {
             profile.setWeightKg(((Number) request.get("weight_kg")).doubleValue());
         }
         if (request.containsKey("gender") && request.get("gender") != null) {
-            profile.setGender(az.fitnest.user.user.domain.enums.Gender.valueOf((String) request.get("gender")));
+            String genderStr = ((String) request.get("gender")).toUpperCase();
+            profile.setGender(az.fitnest.user.user.domain.enums.Gender.valueOf(genderStr));
         }
         if (request.containsKey("birth_date") && request.get("birth_date") != null) {
             profile.setBirthDate(LocalDate.parse((String) request.get("birth_date")));
