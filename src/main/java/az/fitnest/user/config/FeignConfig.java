@@ -12,8 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * Feign client configuration for forwarding authentication headers
  * to downstream services during service-to-service communication.
+ * 
+ * NOTE: This is NOT marked with @Configuration to avoid being picked up globally.
+ * Specific clients should include this config in their @FeignClient annotation if needed.
  */
-@Configuration
+//@Configuration
 public class FeignConfig {
 
     /**

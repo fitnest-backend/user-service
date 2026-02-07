@@ -18,11 +18,35 @@ public class IamServiceClientConfig {
     @Bean
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
+            // 1. Mandatory Internal Header
             template.header("X-Internal-Service", "user-service");
-            // Remove Authorization header for internal calls to avoid Istio/Envoy 403 issues
+            
+            // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
             template.header("Authorization", (String) null);
-            log.debug("Added X-Internal-Service header and removed Authorization for iam-service request: {}", template.url());
+
+            // 3. Forward relevant headers from original request if available
+            org.springframework.web.context.request.ServletRequestAttributes requestAttributes = 
+                (org.springframework.web.context.request.ServletRequestAttributes) 
+                org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            
+            if (requestAttributes != null) {
+                jakarta.servlet.http.HttpServletRequest request = requestAttributes.getRequest();
+                
+                // Forward context headers EXCEPT Authorization
+                forwardHeader(template, request, "X-User-Id");
+                forwardHeader(template, request, "X-User-Email");
+                forwardHeader(template, request, "X-User-Roles");
+                forwardHeader(template, request, "X-Request-ID");
+            }
+            log.debug("Configured IamServiceClient request: {} with X-Internal-Service", template.url());
         };
+    }
+
+    private void forwardHeader(RequestTemplate template, jakarta.servlet.http.HttpServletRequest request, String name) {
+        String value = request.getHeader(name);
+        if (value != null && !value.isEmpty()) {
+            template.header(name, value);
+        }
     }
 
     @Bean
