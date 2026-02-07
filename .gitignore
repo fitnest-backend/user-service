@@ -1,60 +1,30 @@
+# Build and Gradle
+.gradle/
+build/
+out/
+gradle/wrapper/gradle-wrapper.jar
 
-# IntelliJ IDEA
+# IDEs
 .idea/
 *.iws
 *.iml
 *.ipr
-out/
-
-# Eclipse
+.vscode/
+.settings/
 .classpath
 .project
-.settings/
 bin/
 
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-
-# VS Code
-.vscode/
-
-# Mac
+# OS files
 .DS_Store
+Thumbs.db
 
-# Gradle
-.gradle/
-build/
-
-# Application
+# Logs
 *.log
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
 
-# Spring Boot
+# Environment and Secrets
+.env
+.env.local
 application-local.yml
 application-dev.yml
 application-prod.yml
-
-# Environment variables
-.env
-.env.local
-
-# Maven (if used)
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
