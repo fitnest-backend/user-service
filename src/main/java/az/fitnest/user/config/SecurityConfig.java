@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,40 +24,12 @@ import java.util.List;
 /**
  * Security configuration for user-service.
  * 
- * Uses a single SecurityFilterChain with proper request matchers
- * to handle both internal (service-to-service) and external requests.
+ * Uses AntPathRequestMatcher explicitly for Spring Security 6.x compatibility.
  */
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    /**
-     * Public endpoints that don't require authentication.
-     * Internal endpoints are called by other services (iam-service, etc.)
-     */
-    private static final String[] PUBLIC_ENDPOINTS = {
-            // Internal service-to-service endpoints - MUST be first and most specific
-            "/api/v1/internal/**",
-            
-            // Swagger/OpenAPI
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            
-            // Actuator endpoints
-            "/actuator/**",
-            "/health/**",
-            
-            // Public file access
-            "/api/v1/files/profiles/**",
-            
-            // Reference data endpoints
-            "/api/v1/reference/**",
-            
-            // Error handling
-            "/error"
-    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -72,13 +47,31 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             
-            // Authorization rules
+            // Authorization rules - using explicit AntPathRequestMatcher for Spring Security 6.x
             .authorizeHttpRequests(auth -> auth
-                // Allow all public endpoints without authentication
-                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                // Internal service-to-service endpoints - MUST be first
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/internal/**")).permitAll()
+                
+                // Swagger/OpenAPI
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
+                
+                // Actuator endpoints
+                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/health/**")).permitAll()
+                
+                // Public file access
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/files/profiles/**")).permitAll()
+                
+                // Reference data endpoints
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/reference/**")).permitAll()
+                
+                // Error handling
+                .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                 
                 // Allow OPTIONS requests for CORS preflight
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
                 
                 // All other requests require authentication
                 .anyRequest().authenticated()
@@ -90,8 +83,7 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class
             );
         
-        log.info("User-service security configured. Public endpoints: {}", 
-                 Arrays.toString(PUBLIC_ENDPOINTS));
+        log.info("User-service security configured with AntPathRequestMatcher");
         
         return http.build();
     }
