@@ -1,13 +1,17 @@
 package az.fitnest.user.config;
 
+import az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,8 +22,9 @@ import java.util.List;
 /**
  * Security configuration for user-service.
  * 
- * TEMPORARY: Permits all requests to diagnose 403 issue.
- * TODO: Re-enable proper security after confirming deployment works.
+ * - Internal endpoints (/api/v1/internal/**): Permit all (service-to-service)
+ * - External endpoints: Require authentication via gateway headers (X-User-Id)
+ * - Public endpoints: Swagger, actuator, files
  */
 @Slf4j
 @Configuration
@@ -28,27 +33,39 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.warn(">>> USER-SERVICE SECURITY CONFIG LOADED - VERSION 2026-02-07-v3 <<<");
-        log.warn(">>> TEMPORARY: ALL REQUESTS PERMITTED FOR DEBUGGING <<<");
+        log.info(">>> USER-SERVICE SECURITY CONFIG LOADED - VERSION 2026-02-07-v4 <<<");
         
         http
-            // Disable CSRF for stateless REST API
             .csrf(AbstractHttpConfigurer::disable)
-            
-            // Configure CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // Stateless session management
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            
-            // TEMPORARY: Permit ALL requests to diagnose the 403 issue
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                // 1. INTERNAL SERVICE-TO-SERVICE - No auth required
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/internal/**")).permitAll()
+                
+                // 2. PUBLIC ENDPOINTS - Swagger, actuator, public files
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/health/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/files/profiles/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/reference/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
+                
+                // 3. ALL OTHER ENDPOINTS - Require authentication (via gateway headers)
+                .anyRequest().authenticated()
+            )
+            // Gateway header authentication filter for external requests
+            .addFilterBefore(
+                new GatewayHeaderAuthenticationFilter(), 
+                UsernamePasswordAuthenticationFilter.class
             );
         
-        log.warn(">>> USER-SERVICE: ALL ENDPOINTS NOW PERMIT ALL REQUESTS <<<");
+        log.info("User-service security configured: internal=permitAll, external=authenticated");
         
         return http.build();
     }
