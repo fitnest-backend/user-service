@@ -1,53 +1,36 @@
-## -----------------------------
-## Stage 1: Build the Java JAR
-## -----------------------------
-FROM gradle:8.5-jdk17-alpine AS builder
-
+# -----------------------------
+# Stage 1: Build JAR
+# -----------------------------
+FROM gradle:8.5.0-jdk17-alpine AS builder
 WORKDIR /app
 
-# Copy Gradle project files
+# Cache dependencies
+COPY gradlew .
+COPY gradle gradle
 COPY build.gradle settings.gradle ./
+RUN ./gradlew dependencies --no-daemon
 
-# Regenerate the wrapper jar (gitignored) so ./gradlew can run
-RUN gradle wrapper
+# Copy source and build
+COPY src src
+RUN ./gradlew clean bootJar -x test --no-daemon
 
-# Download dependencies (this layer will be cached)
-RUN ./gradlew build -x test --no-daemon || true
-
-# Copy source code
-COPY src ./src
-
-# Build the JAR
-RUN ./gradlew bootJar -x test --no-daemon
-
-## -----------------------------
-## Stage 2: Package minimal Alpine image
-## -----------------------------
-FROM eclipse-temurin:17-jre-alpine
-
-LABEL org.opencontainers.image.source=https://github.com/fitnest-backend/user-service
+# -----------------------------
+# Stage 2: Runtime image
+# -----------------------------
+FROM eclipse-temurin:17.0.10_7-jre-alpine
 
 WORKDIR /app
-
-# Copy the JAR from builder
 COPY --from=builder /app/build/libs/*.jar app.jar
-
-# Add curl for health checks
-RUN apk add --no-cache curl
-
-# Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT [ \
-  "java", \
-  "-XX:MaxRAMPercentage=70.0", \
-  "-XX:+ExitOnOutOfMemoryError", \
-  "-Djava.security.egd=file:/dev/urandom", \
-  "-Djava.net.preferIPv4Stack=true", \
-  "-Djava.net.preferIPv4Addresses=true", \
-  "-jar", \
-  "app.jar" \
-]
+# ENTRYPOINT must start at column 0, JSON array items too
+ENTRYPOINT ["java", \
+"-XX:+UseContainerSupport", \
+"-XX:MaxRAMPercentage=75.0", \
+"-XX:InitialRAMPercentage=50.0", \
+"-XX:+UseG1GC", \
+"-XX:+AlwaysPreTouch", \
+"-XX:+ExitOnOutOfMemoryError", \
+"-jar", \
+"app.jar"]
