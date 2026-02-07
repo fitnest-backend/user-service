@@ -1,11 +1,13 @@
 package az.fitnest.user.config;
 
+import az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -16,58 +18,81 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Security configuration for user-service.
+ * 
+ * Uses a single SecurityFilterChain with proper request matchers
+ * to handle both internal (service-to-service) and external requests.
+ */
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     /**
-     * Security filter chain for internal service-to-service endpoints.
-     * These endpoints completely bypass security - no authentication required.
-     * This security chain has higher priority (lower order number) than the main chain.
-     * 
-     * <p>Internal endpoints are called by other microservices (e.g., iam-service)
-     * and should not require any authentication headers.</p>
+     * Public endpoints that don't require authentication.
+     * Internal endpoints are called by other services (iam-service, etc.)
      */
-    @Bean
-    @Order(1)
-    public SecurityFilterChain internalSecurityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring internal security filter chain for /api/v1/internal/** endpoints");
-        http
-                .securityMatcher("/api/v1/internal/**")
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
-        return http.build();
-    }
+    private static final String[] PUBLIC_ENDPOINTS = {
+            // Internal service-to-service endpoints - MUST be first and most specific
+            "/api/v1/internal/**",
+            
+            // Swagger/OpenAPI
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            
+            // Actuator endpoints
+            "/actuator/**",
+            "/health/**",
+            
+            // Public file access
+            "/api/v1/files/profiles/**",
+            
+            // Reference data endpoints
+            "/api/v1/reference/**",
+            
+            // Error handling
+            "/error"
+    };
 
-    /**
-     * Main security filter chain for all other endpoints.
-     * Uses gateway header authentication for protected endpoints.
-     */
     @Bean
-    @Order(2)
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring main security filter chain");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Configuring user-service security filter chain");
+        
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/actuator/**",
-                                "/api/v1/files/profiles/**",
-                                "/api/v1/reference/**"  // Reference data endpoints
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            // Disable CSRF for stateless REST API
+            .csrf(AbstractHttpConfigurer::disable)
+            
+            // Configure CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
+            // Stateless session management
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
+            // Authorization rules
+            .authorizeHttpRequests(auth -> auth
+                // Allow all public endpoints without authentication
+                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                
+                // Allow OPTIONS requests for CORS preflight
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // All other requests require authentication
+                .anyRequest().authenticated()
+            )
+            
+            // Add custom authentication filter for gateway headers
+            .addFilterBefore(
+                new GatewayHeaderAuthenticationFilter(), 
+                UsernamePasswordAuthenticationFilter.class
+            );
+        
+        log.info("User-service security configured. Public endpoints: {}", 
+                 Arrays.toString(PUBLIC_ENDPOINTS));
+        
         return http.build();
     }
 
@@ -75,9 +100,16 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
+        ));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of(
+            "Authorization", "X-User-Id", "X-User-Email", "X-User-Roles", "X-Request-ID"
+        ));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
