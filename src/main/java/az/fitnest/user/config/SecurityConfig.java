@@ -1,13 +1,14 @@
 package az.fitnest.user.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,10 +25,14 @@ public class SecurityConfig {
      * Security filter chain for internal service-to-service endpoints.
      * These endpoints completely bypass security - no authentication required.
      * This security chain has higher priority (lower order number) than the main chain.
+     * 
+     * <p>Internal endpoints are called by other microservices (e.g., iam-service)
+     * and should not require any authentication headers.</p>
      */
     @Bean
     @Order(1)
-    SecurityFilterChain internalSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain internalSecurityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Configuring internal security filter chain for /api/v1/internal/** endpoints");
         http
                 .securityMatcher("/api/v1/internal/**")
                 .csrf(csrf -> csrf.disable())
@@ -44,7 +50,8 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("Configuring main security filter chain");
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -65,7 +72,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
