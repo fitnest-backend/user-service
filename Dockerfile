@@ -10,6 +10,9 @@ COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY gradlew ./
 
+# Regenerate the wrapper jar (gitignored) so ./gradlew can run
+RUN gradle wrapper
+
 # Download dependencies (this layer will be cached unless build.gradle changes)
 RUN ./gradlew build -x test --no-daemon || true
 
