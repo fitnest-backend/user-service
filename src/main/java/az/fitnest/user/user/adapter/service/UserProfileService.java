@@ -101,8 +101,27 @@ public class UserProfileService {
 	public UserProfileResponse updateUserMe(az.fitnest.user.user.api.dto.request.UpdateUserProfileRequest request) {
 		Long userId = UserContextUtil.getCurrentUserId();
 		
+		// Split fullName into firstName and lastName for IAM service
+		String fullName = request.getFullName();
+		String firstName = "";
+		String lastName = "";
+		
+		if (fullName != null && !fullName.isBlank()) {
+			String trimmedName = fullName.trim();
+			int spaceIndex = trimmedName.indexOf(' ');
+			if (spaceIndex > 0) {
+				firstName = trimmedName.substring(0, spaceIndex);
+				lastName = trimmedName.substring(spaceIndex + 1).trim();
+			} else {
+				// If no space, use the whole name as firstName and empty lastName
+				firstName = trimmedName;
+				lastName = trimmedName; // IAM requires lastName, so we duplicate if single word
+			}
+		}
+		
 		UpdateUserProfileRequest updateRequest = new UpdateUserProfileRequest();
-		updateRequest.setFullName(request.getFullName());
+		updateRequest.setFirstName(firstName);
+		updateRequest.setLastName(lastName);
 		updateRequest.setEmail(request.getEmail());
 		
 		UserResponse updatedUser = iamServiceClient.updateUserProfile(userId, updateRequest);
