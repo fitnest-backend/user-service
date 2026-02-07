@@ -13,7 +13,7 @@ COPY gradle ./gradle
 COPY src ./src
 
 # Build the JAR
-RUN gradle clean build -x test --no-daemon
+RUN gradle wrapper && ./gradlew clean build -x test --no-daemon
 
 ## -----------------------------
 ## Stage 2: Package minimal Alpine image
