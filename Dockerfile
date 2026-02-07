@@ -8,12 +8,16 @@ WORKDIR /app
 # Copy Gradle project files
 COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
+COPY gradlew ./
+
+# Download dependencies (this layer will be cached unless build.gradle changes)
+RUN ./gradlew build -x test --no-daemon || true
 
 # Copy source code
 COPY src ./src
 
 # Build the JAR
-RUN gradle wrapper && ./gradlew clean build -x test --no-daemon
+RUN ./gradlew bootJar -x test --no-daemon
 
 ## -----------------------------
 ## Stage 2: Package minimal Alpine image
