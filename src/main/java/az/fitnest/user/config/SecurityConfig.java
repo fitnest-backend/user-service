@@ -1,5 +1,6 @@
 package az.fitnest.user.config;
 
+import az.fitnest.user.security.InternalEndpointFilter;
 import az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * Security configuration for user-service.
  * 
- * - Internal endpoints (/api/v1/internal/**): Permit all (service-to-service)
+ * - Internal endpoints (/api/v1/internal/**): Permit if X-Internal-Service header present
  * - External endpoints: Require authentication via gateway headers (X-User-Id)
  * - Public endpoints: Swagger, actuator, files
  */
@@ -33,7 +34,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info(">>> USER-SERVICE SECURITY CONFIG LOADED - VERSION 2026-02-07-v4 <<<");
+        log.info(">>> USER-SERVICE SECURITY CONFIG LOADED - VERSION 2026-02-07-v5 <<<");
         
         http
             .csrf(AbstractHttpConfigurer::disable)
@@ -42,7 +43,7 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // 1. INTERNAL SERVICE-TO-SERVICE - No auth required
+                // 1. INTERNAL SERVICE-TO-SERVICE - Permitted (filter validates X-Internal-Service header)
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/internal/**")).permitAll()
                 
                 // 2. PUBLIC ENDPOINTS - Swagger, actuator, public files
@@ -59,13 +60,18 @@ public class SecurityConfig {
                 // 3. ALL OTHER ENDPOINTS - Require authentication (via gateway headers)
                 .anyRequest().authenticated()
             )
-            // Gateway header authentication filter for external requests
+            // Internal endpoint protection filter - blocks external access to /api/v1/internal/**
             .addFilterBefore(
-                new GatewayHeaderAuthenticationFilter(), 
+                new InternalEndpointFilter(),
                 UsernamePasswordAuthenticationFilter.class
+            )
+            // Gateway header authentication filter for external requests
+            .addFilterAfter(
+                new GatewayHeaderAuthenticationFilter(), 
+                InternalEndpointFilter.class
             );
         
-        log.info("User-service security configured: internal=permitAll, external=authenticated");
+        log.info("User-service security: internal=X-Internal-Service required, external=authenticated");
         
         return http.build();
     }
