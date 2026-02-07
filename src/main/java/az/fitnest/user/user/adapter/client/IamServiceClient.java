@@ -27,7 +27,11 @@ import org.springframework.web.bind.annotation.*;
  * 
  * @see az.fitnest.user.config.FeignConfig for authentication header forwarding configuration
  */
-@FeignClient(name = "iam-service", url = "${IAM_SERVICE_URL:http://iam-service:8080}")
+@FeignClient(
+        name = "iam-service", 
+        url = "${IAM_SERVICE_URL:http://iam-service:8080}",
+        configuration = IamServiceClientConfig.class
+)
 public interface IamServiceClient {
 
     @GetMapping("/api/v1/internal/users/{userId}")
