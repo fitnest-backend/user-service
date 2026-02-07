@@ -7,7 +7,7 @@ import az.fitnest.user.user.adapter.client.dto.UserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "iam-service", url = "${iam.service.url:http://localhost:8080}")
+@FeignClient(name = "iam-service", url = "${IAM_SERVICE_URL:http://iam-service:8080}")
 public interface IamServiceClient {
 
     @GetMapping("/api/v1/internal/users/{userId}")

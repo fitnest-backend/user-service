@@ -9,16 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@FeignClient(name = "media-service", url = "${media.service.url:http://localhost:8086}")
+@FeignClient(name = "media-service", url = "${MEDIA_SERVICE_URL:http://media-service:8080}")
 public interface MediaClient {
 
-    @PostMapping(value = "/api/v1/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/v1/internal/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<MediaUploadResponse> uploadImage(
             @RequestPart("image") MultipartFile file,
             @RequestParam(required = false) String directory
     );
 
-    @DeleteMapping("/api/v1/media/files")
+    @DeleteMapping("/api/v1/internal/media/files")
     ResponseEntity<MediaDeleteResponse> deleteFiles(
             @RequestBody MediaDeleteRequest request
     );
