@@ -22,4 +22,9 @@ public class IamServiceClientConfig {
             log.debug("Added X-Internal-Service header to iam-service request: {}", template.url());
         };
     }
+
+    @Bean
+    feign.Logger.Level feignLoggerLevel() {
+        return feign.Logger.Level.FULL;
+    }
 }
