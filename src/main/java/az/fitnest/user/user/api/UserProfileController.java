@@ -115,6 +115,17 @@ public class UserProfileController {
 		return ResponseEntity.status(HttpStatus.OK).body(subscription);
 	}
 
+	@Operation(summary = "Get setup status", description = "Returns setup flow status and previously entered values.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Setup status returned", content = @Content(schema = @Schema(implementation = SetupResponse.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+	})
+	@GetMapping("/me/setup")
+	public ResponseEntity<SetupResponse> getSetupStatus() {
+		SetupResponse response = userProfileService.getSetupStatus();
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
 	@Operation(summary = "Setup profile", description = "Saves onboarding/setup profile data.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Setup saved", content = @Content(schema = @Schema(implementation = SetupResponse.class))),

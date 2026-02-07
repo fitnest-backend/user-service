@@ -212,6 +212,35 @@ public class UserProfileService {
 		iamServiceClient.deleteUser(userId, request.getReason());
 	}
 
+    @Transactional(readOnly = true)
+    public SetupResponse getSetupStatus() {
+        Long userId = UserContextUtil.getCurrentUserId();
+        
+        UserResponse iamUser = iamServiceClient.getUserById(userId);
+        
+        UserProfile profile = userProfileRepository.findByUserId(userId)
+                .orElse(new UserProfile());
+        
+        SetupResponse.UserInfo.ProfileInfo profileInfo = SetupResponse.UserInfo.ProfileInfo.builder()
+                .heightCm(profile.getHeightCm())
+                .weightKg(profile.getWeightKg())
+                .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
+                .birthDate(profile.getBirthDate() != null ? profile.getBirthDate().format(DateTimeFormatter.ISO_DATE) : null)
+                .goal(profile.getGoalCode())
+                .build();
+        
+        SetupResponse.UserInfo userInfo = SetupResponse.UserInfo.builder()
+                .userId(iamUser.getUserId())
+                .language(iamUser.getLanguage())
+                .profile(profileInfo)
+                .build();
+        
+        return SetupResponse.builder()
+                .setupRequired(iamUser.getSetupRequired())
+                .user(userInfo)
+                .build();
+    }
+
 	@Transactional
 	public SetupResponse setupProfile(SetupRequest request) {
 		Long userId = UserContextUtil.getCurrentUserId();
