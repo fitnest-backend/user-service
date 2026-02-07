@@ -17,8 +17,11 @@ public class UserProfileResponse {
 	@JsonProperty("user_id")
 	private String userId;
 	
-	@JsonProperty("full_name")
-	private String fullName;
+	@JsonProperty("first_name")
+	private String firstName;
+
+	@JsonProperty("last_name")
+	private String lastName;
 	
 	private String mobile;
 	

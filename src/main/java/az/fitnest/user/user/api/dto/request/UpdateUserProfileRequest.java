@@ -9,10 +9,15 @@ import lombok.Data;
 @Data
 public class UpdateUserProfileRequest {
 
-	@JsonProperty("full_name")
-	@NotBlank(message = "Full name is required")
-	@Size(min = 2, max = 120, message = "Full name must be between 2 and 120 characters")
-	private String fullName;
+	@JsonProperty("first_name")
+	@NotBlank(message = "First name is required")
+	@Size(min = 1, max = 60, message = "First name must be between 1 and 60 characters")
+	private String firstName;
+
+	@JsonProperty("last_name")
+	@NotBlank(message = "Last name is required")
+	@Size(min = 1, max = 60, message = "Last name must be between 1 and 60 characters")
+	private String lastName;
 	
 	@Email(message = "Email must be valid")
 	private String email;

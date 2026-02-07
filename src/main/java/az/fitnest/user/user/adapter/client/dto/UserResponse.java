@@ -5,14 +5,23 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Response DTO for user data from the IAM service.
+ * 
+ * <p>This DTO maps to the IAM service's UserResponse which includes
+ * firstName and lastName as separate fields.</p>
+ */
 @Data
 public class UserResponse {
 
     @JsonProperty("user_id")
     private String userId;
 
-    @JsonProperty("full_name")
-    private String fullName;
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
 
     private String mobile;
 
