@@ -1,11 +1,6 @@
 server:
   port: 8080
 
-logging:
-  level:
-    az.fitnest.user: DEBUG
-    org.springframework.cloud.openfeign: DEBUG
-
 spring:
   main:
     lazy-initialization: true

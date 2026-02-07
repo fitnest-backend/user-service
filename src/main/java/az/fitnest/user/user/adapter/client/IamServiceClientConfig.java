@@ -1,8 +1,12 @@
 package az.fitnest.user.user.adapter.client;
 
 import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Configuration for IamServiceClient.
@@ -25,12 +29,11 @@ public class IamServiceClientConfig {
             template.header("Authorization", (String) null);
 
             // 3. Forward relevant headers from original request if available
-            org.springframework.web.context.request.ServletRequestAttributes requestAttributes = 
-                (org.springframework.web.context.request.ServletRequestAttributes) 
-                org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes requestAttributes = 
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             
             if (requestAttributes != null) {
-                jakarta.servlet.http.HttpServletRequest request = requestAttributes.getRequest();
+                HttpServletRequest request = requestAttributes.getRequest();
                 
                 // Forward context headers EXCEPT Authorization
                 forwardHeader(template, request, "X-User-Id");
@@ -49,8 +52,4 @@ public class IamServiceClientConfig {
         }
     }
 
-    @Bean
-    feign.Logger.Level feignLoggerLevel() {
-        return feign.Logger.Level.FULL;
-    }
 }
