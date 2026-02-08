@@ -47,14 +47,20 @@ public class IamServiceClientConfig {
             } else {
                 log.warn(">>> [FEIGN-TRACE] No incoming request context available for header forwarding <<<");
             }
+
+            // FINAL CHECK: Log all headers in the template
+            log.warn(">>> [FEIGN-TRACE] Final Headers for {}:", template.url());
+            template.headers().forEach((name, values) -> 
+                log.warn(">>> [FEIGN-TRACE] Header {}: {} <<<", name, values)
+            );
         };
     }
 
-    private void forwardHeader(RequestTemplate template, jakarta.servlet.http.HttpServletRequest request, String name) {
+    private void forwardHeader(RequestTemplate template, HttpServletRequest request, String name) {
         String value = request.getHeader(name);
         if (value != null && !value.isEmpty()) {
+            log.warn(">>> [FEIGN-TRACE] Forwarding {}: {} <<<", name, value);
             template.header(name, value);
         }
     }
-
 }
