@@ -55,8 +55,10 @@ public class UserProfileService {
 				.build();
 		
 		CountersResponse counters = new CountersResponse();
-		counters.setFavorite_gyms(favoritesService.countFavorites(userId, EntityType.GYM));
-		counters.setFavorite_stores(favoritesService.countFavorites(userId, EntityType.STORE));
+		java.util.Map<EntityType, Long> favoriteCounts = favoritesService.getFavoriteCounts(userId);
+		
+		counters.setFavorite_gyms(favoriteCounts.getOrDefault(EntityType.GYM, 0L));
+		counters.setFavorite_stores(favoriteCounts.getOrDefault(EntityType.STORE, 0L));
 		
 		SummaryResponse summary = new SummaryResponse();
 		summary.setUser(user);

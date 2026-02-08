@@ -68,6 +68,15 @@ public class FavoritesService {
 	public long countFavorites(Long userId, EntityType entityType) {
 		return favoritesRepository.countByUserIdAndEntityType(userId, entityType);
 	}
+
+	public java.util.Map<EntityType, Long> getFavoriteCounts(Long userId) {
+		java.util.List<Object[]> results = favoritesRepository.countAllByUserIdGroupByEntityType(userId);
+		return results.stream()
+				.collect(java.util.stream.Collectors.toMap(
+						row -> (EntityType) row[0],
+						row -> (Long) row[1]
+				));
+	}
 	
 	private EntityType parseEntityType(String raw) {
 		if (raw == null) {
