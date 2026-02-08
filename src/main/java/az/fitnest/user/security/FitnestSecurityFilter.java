@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FitnestSecurityFilter extends OncePerRequestFilter {
 
-    private static final String INTERNAL_SERVICE_HEADER = "X-Internal-Service";
+    private static final String INTERNAL_TOKEN_HEADER = "X-Internal-Token";
+    private static final String INTERNAL_TOKEN_VALUE = "fitnest-internal-token-2024-secure-v1"; // Placeholder, should be in env
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String USER_EMAIL_HEADER = "X-User-Email";
     private static final String USER_ROLES_HEADER = "X-User-Roles";
@@ -34,13 +35,13 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        String internalHeader = request.getHeader(INTERNAL_SERVICE_HEADER);
+        String internalToken = request.getHeader(INTERNAL_TOKEN_HEADER);
         String userIdStr = request.getHeader(USER_ID_HEADER);
 
         // 1. Internal Service-to-Service Authentication
-        if (internalHeader != null && !internalHeader.isBlank()) {
-            log.trace("Internal service authentication: {} calling {}", internalHeader, path);
-            authenticateInternalService(internalHeader);
+        if (internalToken != null && INTERNAL_TOKEN_VALUE.equals(internalToken)) {
+            log.trace("Internal service authentication success for path: {}", path);
+            authenticateInternalService();
         }
         // 2. Gateway User Authentication
         else if (userIdStr != null && !userIdStr.isBlank()) {
@@ -51,10 +52,10 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void authenticateInternalService(String serviceName) {
+    private void authenticateInternalService() {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_INTERNAL"));
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                "INTERNAL_SERVICE:" + serviceName, null, authorities);
+                "INTERNAL_SERVICE", null, authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

@@ -21,7 +21,7 @@ public class MediaClientConfig {
             log.trace(">>> [FEIGN-TRACE] Preparing Media request: {} {} <<<", template.method(), template.url());
             
             // 1. Mandatory Internal Header
-            template.header("X-Internal-Service", "user-service");
+            template.header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1");
             
             // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
             template.removeHeader("Authorization");

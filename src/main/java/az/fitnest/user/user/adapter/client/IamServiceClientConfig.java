@@ -25,8 +25,8 @@ public class IamServiceClientConfig {
             log.warn(">>> [FEIGN-TRACE] Preparing request: {} {} <<<", template.method(), template.url());
             
             // 1. Mandatory Internal Header
-            log.warn(">>> [FEIGN-TRACE] Adding X-Internal-Service: user-service <<<");
-            template.header("X-Internal-Service", "user-service");
+            log.warn(">>> [FEIGN-TRACE] Adding X-Internal-Token <<<");
+            template.header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1");
             
             // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
             log.warn(">>> [FEIGN-TRACE] Explicitly removing Authorization header <<<");

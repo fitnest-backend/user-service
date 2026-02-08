@@ -71,9 +71,14 @@ public class SecurityConfig {
                     response.getWriter().write("{\"error\":\"Forbidden\"}");
                 })
             )
-            .addFilterBefore(new FitnestSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(fitnestSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public FitnestSecurityFilter fitnestSecurityFilter() {
+        return new FitnestSecurityFilter();
     }
 
     @Bean
