@@ -22,11 +22,14 @@ public class IamServiceClientConfig {
     @Bean
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
+            log.warn(">>> [FEIGN-TRACE] Preparing request: {} {} <<<", template.method(), template.url());
+            
             // 1. Mandatory Internal Header
-            log.info(">>> FEIGN INTERCEPTOR: Adding X-Internal-Service: user-service to request: {} <<<", template.url());
+            log.warn(">>> [FEIGN-TRACE] Adding X-Internal-Service: user-service <<<");
             template.header("X-Internal-Service", "user-service");
             
             // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
+            log.warn(">>> [FEIGN-TRACE] Explicitly removing Authorization header <<<");
             template.removeHeader("Authorization");
 
             // 3. Forward relevant headers from original request if available
@@ -36,11 +39,13 @@ public class IamServiceClientConfig {
             if (requestAttributes != null) {
                 HttpServletRequest request = requestAttributes.getRequest();
                 
-                // Forward context headers EXCEPT Authorization
+                log.warn(">>> [FEIGN-TRACE] Forwarding headers from incoming request <<<");
                 forwardHeader(template, request, "X-User-Id");
                 forwardHeader(template, request, "X-User-Email");
                 forwardHeader(template, request, "X-User-Roles");
                 forwardHeader(template, request, "X-Request-ID");
+            } else {
+                log.warn(">>> [FEIGN-TRACE] No incoming request context available for header forwarding <<<");
             }
         };
     }
