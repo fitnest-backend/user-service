@@ -26,7 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
  * 
  * @see az.fitnest.user.config.FeignConfig for authentication header forwarding configuration
  */
-@FeignClient(name = "media-service", url = "${MEDIA_SERVICE_URL:http://media-service:8080}")
+@FeignClient(
+        name = "media-service", 
+        url = "${MEDIA_SERVICE_URL:http://media-service:8080}",
+        configuration = MediaClientConfig.class
+)
 public interface MediaClient {
 
     @PostMapping(value = "/api/v1/internal/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
