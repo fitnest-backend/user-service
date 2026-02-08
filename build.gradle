@@ -49,6 +49,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation 'io.github.openfeign:feign-jackson'
+	testImplementation 'io.github.openfeign:feign-slf4j'
 }
 
 tasks.named('test') {
