@@ -1,3 +1,12 @@
+package az.fitnest.user.user.adapter.client;
+
+import az.fitnest.user.user.adapter.client.dto.UpdateProfileImageRequest;
+import az.fitnest.user.user.adapter.client.dto.UpdateSetupRequiredRequest;
+import az.fitnest.user.user.adapter.client.dto.UpdateUserProfileRequest;
+import az.fitnest.user.user.adapter.client.dto.UserResponse;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
 @FeignClient(
     name = "iam-service",
     url = "${iam.service.url:http://iam-service:8080}",

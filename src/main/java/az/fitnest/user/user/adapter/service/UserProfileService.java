@@ -104,6 +104,7 @@ public class UserProfileService {
 	}
 
 	@Transactional
+	@org.springframework.cache.annotation.CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.shared.util.UserContext).getCurrentUserId()")
 	public void updateBody(az.fitnest.user.user.api.dto.request.UpdateBodyRequest request) {
 		Long userId = UserContext.getCurrentUserId();
 		
@@ -328,6 +329,7 @@ public class UserProfileService {
 	}
 	
 	@Transactional
+	@org.springframework.cache.annotation.CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.shared.util.UserContext).getCurrentUserId()")
 	public SetupResponse setupProfile(SetupRequest request) {
 		Long userId = UserContext.getCurrentUserId();
 		

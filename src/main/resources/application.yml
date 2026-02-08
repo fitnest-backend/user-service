@@ -1,5 +1,18 @@
 server:
   port: 8080
+  http2:
+    enabled: true
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 20
+    connection-timeout: 20000
+    max-connections: 8192
+    accept-count: 100
 
 spring:
   main:
@@ -11,6 +24,26 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:user}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      keep-alive-time: 300000
+      minimum-idle: 10
+      maximum-pool-size: 20
+      pool-name: HikariCP-User
+      auto-commit: true
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,6 +75,21 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 500
+            readTimeout: 1500
+            loggerLevel: NONE
+      httpclient:
+        hc5:
+          enabled: true
+          pool:
+            max-connections: 400
+            max-connections-per-route: 200
 
 eureka:
   client:

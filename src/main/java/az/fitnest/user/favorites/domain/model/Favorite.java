@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 import az.fitnest.user.favorites.domain.enums.EntityType;
 
 @Entity
-@Table(name = "favorites")
+@Table(name = "favorites", indexes = {
+    @Index(name = "idx_favorites_user_id", columnList = "user_id"),
+    @Index(name = "idx_favorites_user_entity", columnList = "user_id, entity_type")
+})
 @Getter
 @Setter
 @NoArgsConstructor

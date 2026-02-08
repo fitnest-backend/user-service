@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long>{
 	
+    @org.springframework.cache.annotation.Cacheable(value = "user_profiles", key = "#userId")
     Optional<UserProfile> findByUserId(Long userId);
 }
