@@ -1,7 +1,6 @@
 package az.fitnest.user.config;
 
-import az.fitnest.user.security.InternalEndpointFilter;
-import az.fitnest.user.security.gateway.GatewayHeaderAuthenticationFilter;
+import az.fitnest.user.security.FitnestSecurityFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
