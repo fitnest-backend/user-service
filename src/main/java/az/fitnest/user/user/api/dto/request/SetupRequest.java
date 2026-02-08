@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class SetupRequest {
 
-	private String language;
-
 	@Valid
 	@NotNull(message = "Profile is required")
 	private ProfileInfo profile;

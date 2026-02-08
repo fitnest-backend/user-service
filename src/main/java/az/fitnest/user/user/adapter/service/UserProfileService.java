@@ -360,11 +360,6 @@ public class UserProfileService {
 		
 		userProfileRepository.save(profile);
 		
-		az.fitnest.user.user.adapter.client.dto.UpdateSetupRequiredRequest setupRequest =
-				new az.fitnest.user.user.adapter.client.dto.UpdateSetupRequiredRequest();
-		setupRequest.setSetupRequired(false);
-		iamServiceClient.updateSetupRequired(userId, setupRequest);
-		
 		SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
 				.heightCm(profile.getHeightCm())
 				.weightKg(profile.getWeightKg())
