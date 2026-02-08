@@ -23,10 +23,11 @@ public class IamServiceClientConfig {
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
             // 1. Mandatory Internal Header
+            log.info(">>> FEIGN INTERCEPTOR: Adding X-Internal-Service: user-service to request: {} <<<", template.url());
             template.header("X-Internal-Service", "user-service");
             
             // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
-            template.header("Authorization", (String) null);
+            template.removeHeader("Authorization");
 
             // 3. Forward relevant headers from original request if available
             ServletRequestAttributes requestAttributes = 
@@ -41,7 +42,6 @@ public class IamServiceClientConfig {
                 forwardHeader(template, request, "X-User-Roles");
                 forwardHeader(template, request, "X-Request-ID");
             }
-            log.debug("Configured IamServiceClient request: {} with X-Internal-Service", template.url());
         };
     }
 
