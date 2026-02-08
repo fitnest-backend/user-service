@@ -177,7 +177,7 @@ public class GlobalExceptionHandler {
 		ErrorWrapper errorWrapper = ErrorWrapper.builder()
 				.error(ErrorWrapper.ErrorDetail.builder()
 						.code("RUNTIME_EXCEPTION")
-						.message("Server xətası")
+				.message("Server xətası: " + ex.getMessage())
 						.build())
 				.build();
 		

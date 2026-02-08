@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import az.fitnest.user.favorites.adapter.service.FavoritesService;
 import az.fitnest.user.favorites.domain.enums.EntityType;
 import az.fitnest.user.shared.exception.ConflictException;
+import az.fitnest.user.shared.exception.BadRequestException;
 import az.fitnest.user.shared.util.UserContext;
 import az.fitnest.user.user.adapter.client.IamServiceClient;
 import az.fitnest.user.user.adapter.client.dto.UpdateProfileImageRequest;
@@ -246,6 +247,10 @@ public class UserProfileService {
     @Transactional(readOnly = true)
     public SetupResponse getSetupStatus() {
         Long userId = UserContext.getCurrentUserId();
+        
+        if (userId == null) {
+            throw new az.fitnest.user.shared.exception.BadRequestException("User not authenticated or ID missing");
+        }
         
         UserResponse iamUser = iamServiceClient.getUserById(userId);
         

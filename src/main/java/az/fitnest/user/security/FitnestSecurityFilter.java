@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class FitnestSecurityFilter extends OncePerRequestFilter {
 
     private static final String INTERNAL_TOKEN_HEADER = "X-Internal-Token";
