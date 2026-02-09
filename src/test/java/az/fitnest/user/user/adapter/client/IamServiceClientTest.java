@@ -38,12 +38,13 @@ class IamServiceClientTest {
     }
 
     @Test
-    void shouldAddInternalTokenAndRemoveAuthorization() {
+    void shouldForwardAuthorizationHeaderAndNotAddInternalToken() {
         // Arrange
         RequestTemplate template = new RequestTemplate();
-        template.header("Authorization", "Bearer some-user-token");
-
+        String jwt = "Bearer some-user-token";
+        
         // Mock current request context
+        when(request.getHeader("Authorization")).thenReturn(jwt);
         when(requestAttributes.getRequest()).thenReturn(request);
         RequestContextHolder.setRequestAttributes(requestAttributes);
 
@@ -53,13 +54,12 @@ class IamServiceClientTest {
         // Assert
         Map<String, Collection<String>> headers = template.headers();
         
-        // 1. Verify Internal Token is present and correct
-        assertTrue(headers.containsKey("X-Internal-Token"));
-        assertEquals("fitnest-internal-token-2024-secure-v1", 
-            headers.get("X-Internal-Token").iterator().next());
+        // 1. Verify Internal Token is NOT present
+        assertFalse(headers.containsKey("X-Internal-Token"));
             
-        // 2. Verify Authorization header is removed
-        assertFalse(headers.containsKey("Authorization"));
+        // 2. Verify Authorization header is forwarded
+        assertTrue(headers.containsKey("Authorization"));
+        assertEquals(jwt, headers.get("Authorization").iterator().next());
     }
 
     @Test

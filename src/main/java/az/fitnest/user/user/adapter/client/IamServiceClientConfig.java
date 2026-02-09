@@ -16,22 +16,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Configuration
 public class IamServiceClientConfig {
 
-    private static final String INTERNAL_TOKEN_HEADER = "X-Internal-Token";
-    // Ideally fetch from secure config/vault, matching what IAM expects
-    
-    @org.springframework.beans.factory.annotation.Value("${app.security.internal-token}")
-    private String internalTokenValue;
 
     @Bean
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
-            // 1. Add the secure internal token
-            template.header(INTERNAL_TOKEN_HEADER, internalTokenValue);
-            
-            // 2. Remove any existing Authorization header to rely on internal trust
-            template.removeHeader("Authorization");
+            // 1. Forward relevant headers from SecurityContext and Request
 
-            // 3. Forward relevant headers from SecurityContext and Request
+            // 2. Forward headers from current request and SecurityContext
             
             // Get User ID from Security Context (JWT)
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -53,6 +44,7 @@ public class IamServiceClientConfig {
             
             if (requestAttributes != null) {
                 HttpServletRequest request = requestAttributes.getRequest();
+                forwardHeader(template, request, "Authorization");
                 forwardHeader(template, request, "X-User-Email");
                 forwardHeader(template, request, "X-User-Roles");
                 forwardHeader(template, request, "X-Request-ID");

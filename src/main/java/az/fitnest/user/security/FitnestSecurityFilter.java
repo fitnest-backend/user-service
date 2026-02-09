@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FitnestSecurityFilter extends OncePerRequestFilter {
 
-    private static final String INTERNAL_TOKEN_HEADER = "X-Internal-Token";
-    private static final String INTERNAL_TOKEN_VALUE = "fitnest-internal-token-2024-secure-v1"; // Placeholder, should be in env
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String USER_EMAIL_HEADER = "X-User-Email";
     private static final String USER_ROLES_HEADER = "X-User-Roles";
@@ -38,20 +36,14 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         
-        // Ensure clean context at start
-        SecurityContextHolder.clearContext();
-
-        String internalToken = request.getHeader(INTERNAL_TOKEN_HEADER);
         String authHeader = request.getHeader("Authorization");
 
-        if (internalToken != null && INTERNAL_TOKEN_VALUE.equals(internalToken)) {
-            // Priority 1: Trusted Internal Communication
-            // Trust X-User-* headers ONLY when internal token is present
-            authenticateViaInternalHeaders(request);
-        } else if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            // Priority 2: Direct Client Communication (Fallback)
-            // Validate JWT directly if no internal token
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            // Validate JWT directly (public or internal delegation)
             authenticateViaJwt(authHeader.substring(7));
+        } else if (request.getRequestURI().startsWith("/api/v1/internal")) {
+            // Internal call without JWT - Rely on mesh for access control
+            authenticateViaInternalHeaders(request);
         }
 
         filterChain.doFilter(request, response);
@@ -61,8 +53,10 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
         String userIdStr = request.getHeader(USER_ID_HEADER);
         
         if (userIdStr != null && !userIdStr.isBlank()) {
+            log.debug("Authenticating internal request via headers for user: {}", userIdStr);
             authenticateGatewayUser(request);
         } else {
+            log.debug("Internal service-to-service call detected on {}", request.getRequestURI());
             authenticateInternalService();
         }
     }
@@ -98,7 +92,7 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
             Long userId = Long.parseLong(userIdStr);
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            // IMPORTANT: If we are here, we are verified via X-Internal-Token
+            // Keep ROLE_INTERNAL if code still checks it
             authorities.add(new SimpleGrantedAuthority("ROLE_INTERNAL"));
 
             if (rolesStr != null && !rolesStr.isBlank()) {
