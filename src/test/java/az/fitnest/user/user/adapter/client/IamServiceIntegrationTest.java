@@ -1,6 +1,8 @@
 package az.fitnest.user.user.adapter.client;
 
-import az.fitnest.user.user.adapter.client.dto.UserResponse;
+import az.fitnest.user.profile.adapter.client.IamServiceClient;
+import az.fitnest.user.profile.adapter.client.IamServiceClientConfig;
+import az.fitnest.user.profile.adapter.client.dto.UserResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -50,7 +52,7 @@ public class IamServiceIntegrationTest {
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
         // Get the interceptor from the actual config class
-        RequestInterceptor interceptor = new IamServiceClientConfig().internalServiceRequestInterceptor();
+        RequestInterceptor interceptor = new az.fitnest.user.config.FeignConfig().requestInterceptor();
 
         // Build the Feign client manually with SpringMvcContract to support @GetMapping
         iamServiceClient = Feign.builder()

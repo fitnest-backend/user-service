@@ -28,6 +28,16 @@ public class FeignConfig {
             
             // Forward Authorization header if present in current request context
             // (Standard Feign interceptor pattern)
+            org.springframework.web.context.request.ServletRequestAttributes attributes = 
+                (org.springframework.web.context.request.ServletRequestAttributes) 
+                org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            
+            if (attributes != null) {
+                String authHeader = attributes.getRequest().getHeader("Authorization");
+                if (authHeader != null) {
+                    requestTemplate.header("Authorization", authHeader);
+                }
+            }
         };
     }
 }
