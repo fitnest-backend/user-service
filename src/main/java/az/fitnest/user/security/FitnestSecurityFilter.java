@@ -98,6 +98,8 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
             Long userId = Long.parseLong(userIdStr);
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            // IMPORTANT: If we are here, we are verified via X-Internal-Token
+            authorities.add(new SimpleGrantedAuthority("ROLE_INTERNAL"));
 
             if (rolesStr != null && !rolesStr.isBlank()) {
                 authorities.addAll(Arrays.stream(rolesStr.split(","))
@@ -112,6 +114,7 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
             
             auth.setDetails(email);
             SecurityContextHolder.getContext().setAuthentication(auth);
+            log.debug("Authenticated internal request for user {} with ROLE_INTERNAL", userId);
         } catch (NumberFormatException e) {
             // Ignore invalid user ID format
         }
