@@ -7,7 +7,7 @@ public class AlreadyFavoritedException extends BaseException {
     private static final long serialVersionUID = 1L;
 
     public AlreadyFavoritedException(String message) {
-        super(message, HttpStatus.CONFLICT, "ALREADY_FAVORITED");
+        super(message, "ALREADY_FAVORITED", HttpStatus.CONFLICT);
     }
 }
 

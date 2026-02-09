@@ -7,7 +7,7 @@ public class FavoriteNotFoundException extends BaseException {
     private static final long serialVersionUID = 1L;
 
     public FavoriteNotFoundException(String message) {
-        super(message, HttpStatus.NOT_FOUND, "FAVORITE_NOT_FOUND");
+        super(message, "FAVORITE_NOT_FOUND", HttpStatus.NOT_FOUND);
     }
 }
 
