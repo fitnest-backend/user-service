@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Configuration;
 public class FeignConfig {
 
     @Bean
+    public feign.Logger.Level feignLoggerLevel() {
+        return feign.Logger.Level.FULL;
+    }
+
+    @Bean
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
             String userId = String.valueOf(UserContext.getCurrentUserId());

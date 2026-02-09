@@ -10,8 +10,5 @@ import org.springframework.context.annotation.Import;
 @Import(FeignConfig.class)
 public class IamServiceClientConfig {
     
-    @Bean
-    Logger.Level feignLoggerLevel() {
-        return Logger.Level.FULL;
-    }
+
 }

@@ -19,8 +19,5 @@ public class MediaClientConfig {
         return new SpringFormEncoder(new SpringEncoder(() -> new HttpMessageConverters()));
     }
     
-    @Bean
-    Logger.Level feignLoggerLevel() {
-        return Logger.Level.FULL;
-    }
+
 }
