@@ -1,6 +1,7 @@
 package az.fitnest.user.config;
 
 import az.fitnest.user.security.FitnestSecurityFilter;
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final FitnestSecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,15 +61,11 @@ public class SecurityConfig {
                     response.getWriter().write("{\"error\":\"Forbidden\"}");
                 })
             )
-            .addFilterBefore(fitnestSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    public FitnestSecurityFilter fitnestSecurityFilter() {
-        return new FitnestSecurityFilter();
-    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

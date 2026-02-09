@@ -8,6 +8,7 @@ import az.fitnest.user.user.api.dto.response.SetupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import az.fitnest.user.shared.util.JwtUtil;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +29,9 @@ class UserProfileControllerTest {
     @Mock
     private UserProfileService userProfileService;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
     @InjectMocks
     private UserProfileController userProfileController;
 
@@ -35,7 +39,7 @@ class UserProfileControllerTest {
     void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(userProfileController)
                 .setControllerAdvice(new GlobalExceptionHandler())
-                .addFilter(new FitnestSecurityFilter())
+                .addFilter(new FitnestSecurityFilter(jwtUtil))
                 .build();
     }
 
@@ -57,6 +61,7 @@ class UserProfileControllerTest {
         // Actually, standalone setup with addFilter executes the filter.
         
         mockMvc.perform(get("/api/v1/me/setup")
+                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .header("X-User-Email", "test@example.com")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -82,6 +87,7 @@ class UserProfileControllerTest {
                 .willThrow(new BadRequestException("User not authenticated or ID missing"));
 
         mockMvc.perform(get("/api/v1/me/setup")
+                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -95,6 +101,7 @@ class UserProfileControllerTest {
                 .willThrow(new RuntimeException("Connection refused"));
 
         mockMvc.perform(get("/api/v1/me/setup")
+                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
