@@ -58,6 +58,21 @@ public class JwtUtil {
 		}
 	}
 
+
+	public java.util.List<String> getRolesFromToken(String token) {
+		if (token == null || token.isBlank()) {
+			return java.util.Collections.emptyList();
+		}
+		Claims claims = parseClaims(token);
+		Object roles = claims.get("roles");
+		if (roles instanceof java.util.List<?>) {
+			return ((java.util.List<?>) roles).stream()
+					.map(Object::toString)
+					.collect(java.util.stream.Collectors.toList());
+		}
+		return java.util.Collections.emptyList();
+	}
+
 	private Claims parseClaims(String token) {
 		try {
 			Jws<Claims> jws = jwtParser.parseClaimsJws(token);

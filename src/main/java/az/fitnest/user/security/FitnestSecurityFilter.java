@@ -46,7 +46,8 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
     private void authenticateViaJwt(String token) {
         try {
             Long userId = jwtUtil.getUserIdFromToken(token);
-            setAuthentication(userId, null, List.of("ROLE_USER"));
+            List<String> roles = jwtUtil.getRolesFromToken(token);
+            setAuthentication(userId, null, roles);
         } catch (Exception e) {
             log.warn("JWT validation failed: {}", e.getMessage());
         }

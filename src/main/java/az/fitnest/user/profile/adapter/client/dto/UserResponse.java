@@ -40,4 +40,7 @@ public class UserResponse {
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
+
+    @JsonProperty("consent_required")
+    private Boolean consentRequired;
 }
