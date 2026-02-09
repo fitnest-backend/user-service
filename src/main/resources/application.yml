@@ -83,7 +83,7 @@ spring:
           default:
             connectTimeout: 500
             readTimeout: 1500
-            loggerLevel: NONE
+            loggerLevel: FULL
       httpclient:
         hc5:
           enabled: true
@@ -125,3 +125,7 @@ springdoc:
   show-actuator: false
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+logging:
+  level:
+    az.fitnest.user.user.adapter.client.IamServiceClient: DEBUG
+    feign.Logger: DEBUG
