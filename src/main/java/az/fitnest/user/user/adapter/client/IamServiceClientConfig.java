@@ -17,6 +17,7 @@ public class IamServiceClientConfig {
     @Bean
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
+            System.out.println("DEBUG: IamServiceClientConfig interceptor running for URL: " + template.url());
             
             // 1. Mandatory Internal Header
             template.header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1");
@@ -39,10 +40,16 @@ public class IamServiceClientConfig {
         };
     }
 
+    @Bean
+    feign.Logger.Level feignLoggerLevel() {
+        return feign.Logger.Level.FULL;
+    }
+
     private void forwardHeader(RequestTemplate template, HttpServletRequest request, String name) {
         String value = request.getHeader(name);
         if (value != null && !value.isEmpty()) {
             template.header(name, value);
+            System.out.println("DEBUG: Forwarding header " + name + ": " + value);
         }
     }
 }
