@@ -4,8 +4,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,9 +39,7 @@ public class OpenApiConfig {
                                 .in(SecurityScheme.In.HEADER)
                                 .name("X-Internal-Token")
                                 .description("Enter the internal service-to-service token")))
-                .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement()
-                        .addList("bearerAuth")
-                        .addList("xInternalToken"));
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
 
         // Add server URL for Istio routing if configured
         if (serverUrl != null && !serverUrl.isEmpty()) {
@@ -49,5 +47,16 @@ public class OpenApiConfig {
         }
 
         return openAPI;
+    }
+
+    @Bean
+    public OpenApiCustomizer internalTokenForInternalPaths() {
+        return openApi -> openApi.getPaths().forEach((path, item) -> {
+            if (path.startsWith("/api/v1/internal/")) {
+                item.readOperations().forEach(op -> op.addSecurityItem(
+                        new SecurityRequirement().addList("xInternalToken")
+                ));
+            }
+        });
     }
 }
