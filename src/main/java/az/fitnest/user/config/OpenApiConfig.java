@@ -33,8 +33,15 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
-                                .description("Enter your JWT token")))
-                .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement().addList("bearerAuth"));
+                                .description("Enter your JWT token"))
+                        .addSecuritySchemes("xInternalToken", new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                                .name("X-Internal-Token")
+                                .description("Enter the internal service-to-service token")))
+                .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement()
+                        .addList("bearerAuth")
+                        .addList("xInternalToken"));
 
         // Add server URL for Istio routing if configured
         if (serverUrl != null && !serverUrl.isEmpty()) {
