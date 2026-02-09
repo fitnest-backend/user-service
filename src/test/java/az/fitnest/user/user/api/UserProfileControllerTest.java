@@ -61,7 +61,6 @@ class UserProfileControllerTest {
         // Actually, standalone setup with addFilter executes the filter.
         
         mockMvc.perform(get("/api/v1/me/setup")
-                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .header("X-User-Email", "test@example.com")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -87,7 +86,6 @@ class UserProfileControllerTest {
                 .willThrow(new BadRequestException("User not authenticated or ID missing"));
 
         mockMvc.perform(get("/api/v1/me/setup")
-                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -101,7 +99,6 @@ class UserProfileControllerTest {
                 .willThrow(new RuntimeException("Connection refused"));
 
         mockMvc.perform(get("/api/v1/me/setup")
-                .header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1")
                 .header("X-User-Id", "123")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())

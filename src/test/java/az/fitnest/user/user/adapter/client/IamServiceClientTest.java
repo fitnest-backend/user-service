@@ -82,7 +82,7 @@ class IamServiceClientTest {
         // Assert
         Map<String, Collection<String>> headers = template.headers();
         
-        assertEquals("123", headers.get("X-User-Id").iterator().next());
+        assertFalse(headers.containsKey("X-User-Id"), "X-User-Id should not be forwarded from RequestContext");
         assertEquals("user@example.com", headers.get("X-User-Email").iterator().next());
         assertEquals("ROLE_USER", headers.get("X-User-Roles").iterator().next());
         assertEquals("req-123", headers.get("X-Request-ID").iterator().next());

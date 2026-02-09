@@ -99,9 +99,7 @@ public class IamServiceIntegrationTest {
 
         // VERIFY REQUEST HEADERS ON THE WIRE
         wireMockServer.verify(getRequestedFor(urlEqualTo("/api/v1/internal/users/" + userId))
-                .withHeader("X-Internal-Token", equalTo("fitnest-internal-token-2024-secure-v1"))
-                .withHeader("Authorization", absent()) 
-                .withHeader("X-User-Id", equalTo("123"))); 
+                .withHeader("Authorization", equalTo("Bearer user-token"))); 
     }
 
     @Test
