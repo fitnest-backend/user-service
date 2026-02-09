@@ -1,4 +1,4 @@
-package az.fitnest.user.profile.adapter.api;
+package az.fitnest.user.profile.api;
 
 import az.fitnest.user.profile.adapter.service.FileStorageService;
 import az.fitnest.user.shared.dto.ApiResponse;
