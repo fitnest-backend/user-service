@@ -47,19 +47,4 @@ public class OpenApiConfig {
 
         return openAPI;
     }
-
-    @Bean
-    public OpenApiCustomizer internalTokenForInternalPaths() {
-        return openApi -> openApi.getPaths().forEach((path, item) -> {
-            if (path.startsWith("/api/v1/internal/")) {
-                item.readOperations().forEach(op -> op.addParametersItem(
-                        new Parameter()
-                                .in("header")
-                                .name("X-Internal-Token")
-                                .required(true)
-                                .schema(new StringSchema()._default("fitnest-internal-token-2024-secure-v1"))
-                ));
-            }
-        });
-    }
 }
