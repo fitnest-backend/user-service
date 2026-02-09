@@ -4,6 +4,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -35,12 +37,7 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
-                                .description("Enter your JWT token"))
-                        .addSecuritySchemes("xInternalToken", new SecurityScheme()
-                                .type(SecurityScheme.Type.APIKEY)
-                                .in(SecurityScheme.In.HEADER)
-                                .name("X-Internal-Token")
-                                .description("Enter the internal service-to-service token")))
+                                .description("Enter your JWT token")))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
 
         // Add server URL for Istio routing if configured
@@ -55,8 +52,12 @@ public class OpenApiConfig {
     public OpenApiCustomizer internalTokenForInternalPaths() {
         return openApi -> openApi.getPaths().forEach((path, item) -> {
             if (path.startsWith("/api/v1/internal/")) {
-                item.readOperations().forEach(op -> op.addSecurityItem(
-                        new SecurityRequirement().addList("xInternalToken")
+                item.readOperations().forEach(op -> op.addParametersItem(
+                        new Parameter()
+                                .in("header")
+                                .name("X-Internal-Token")
+                                .required(true)
+                                .schema(new StringSchema()._default("fitnest-internal-token-2024-secure-v1"))
                 ));
             }
         });
