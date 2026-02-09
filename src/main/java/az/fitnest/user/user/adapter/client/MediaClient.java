@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @FeignClient(
         name = "media-service", 
-        url = "${MEDIA_SERVICE_URL:http://media-service:8080}",
+        url = "${media.service.url}",
         configuration = MediaClientConfig.class
 )
 public interface MediaClient {

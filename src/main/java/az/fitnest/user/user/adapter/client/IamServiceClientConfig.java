@@ -18,13 +18,15 @@ public class IamServiceClientConfig {
 
     private static final String INTERNAL_TOKEN_HEADER = "X-Internal-Token";
     // Ideally fetch from secure config/vault, matching what IAM expects
-    private static final String INTERNAL_TOKEN_VALUE = "fitnest-internal-token-2024-secure-v1";
+    
+    @org.springframework.beans.factory.annotation.Value("${app.security.internal-token}")
+    private String internalTokenValue;
 
     @Bean
     public RequestInterceptor internalServiceRequestInterceptor() {
         return template -> {
             // 1. Add the secure internal token
-            template.header(INTERNAL_TOKEN_HEADER, INTERNAL_TOKEN_VALUE);
+            template.header(INTERNAL_TOKEN_HEADER, internalTokenValue);
             
             // 2. Remove any existing Authorization header to rely on internal trust
             template.removeHeader("Authorization");

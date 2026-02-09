@@ -8,7 +8,11 @@ import org.springframework.context.annotation.Bean;
  * Configuration for MediaClient.
  * Adds the required X-Internal-Service header for service-to-service communication.
  */
+@org.springframework.context.annotation.Configuration
 public class MediaClientConfig {
+
+    @org.springframework.beans.factory.annotation.Value("${app.security.internal-token}")
+    private String internalTokenValue;
 
     /**
      * Request interceptor that adds X-Internal-Service header for service-to-service calls.
@@ -19,7 +23,7 @@ public class MediaClientConfig {
         return template -> {
             
             // 1. Mandatory Internal Header
-            template.header("X-Internal-Token", "fitnest-internal-token-2024-secure-v1");
+            template.header("X-Internal-Token", internalTokenValue);
             
             // 2. Clear Authorization to avoid Istio/Envoy 403 for internal calls
             template.removeHeader("Authorization");
