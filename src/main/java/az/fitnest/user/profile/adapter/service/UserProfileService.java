@@ -271,13 +271,33 @@ public class UserProfileService {
 
         double heightM = profile.getHeightCm() / 100.0;
         double bmi = profile.getWeightKg() / (heightM * heightM);
+        bmi = Math.round(bmi * 10.0) / 10.0;
         String category = getBmiCategory(bmi);
+
+        FitnessLevelResponse.BmiScale bmiScale = FitnessLevelResponse.BmiScale.builder()
+                .underweightMax(18.5)
+                .normalMax(25.0)
+                .overweightMax(30.0)
+                .build();
 
         return FitnessLevelResponse.builder()
                 .level("BEGINNER")
-                .bmi(Math.round(bmi * 10.0) / 10.0)
+                .bmi(bmi)
                 .bmiCategory(category)
+                .bmiScale(bmiScale)
+                .goal(profile.getGoalCode())
+                .message(getBmiMessage(category))
                 .build();
+    }
+
+    private String getBmiMessage(String category) {
+        return switch (category) {
+            case "UNDERWEIGHT" -> "Sizin çəkiniz normadan aşağıdır. Qidalanmanıza diqqət yetirin.";
+            case "NORMAL" -> "Sizin çəkiniz normal diapazondadır. Belə davam edin!";
+            case "OVERWEIGHT" -> "Sizin çəkiniz normadan artıqdır. Aktivliyinizi artırın.";
+            case "OBESE" -> "Sizin çəkiniz piylənmə diapazonundadır. Mütəxəssislə məsləhətləşin.";
+            default -> "Məlumat yoxdur.";
+        };
     }
 
     @Transactional

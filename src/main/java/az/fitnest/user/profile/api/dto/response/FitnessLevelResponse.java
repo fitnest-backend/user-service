@@ -18,4 +18,26 @@ public class FitnessLevelResponse {
 
     @JsonProperty("bmi_category")
     private String bmiCategory;
+
+    @JsonProperty("bmi_scale")
+    private BmiScale bmiScale;
+
+    private String goal;
+
+    private String message;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BmiScale {
+        @JsonProperty("underweight_max")
+        private Double underweightMax;
+
+        @JsonProperty("normal_max")
+        private Double normalMax;
+
+        @JsonProperty("overweight_max")
+        private Double overweightMax;
+    }
 }
