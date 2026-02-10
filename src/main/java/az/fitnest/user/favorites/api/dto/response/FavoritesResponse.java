@@ -9,8 +9,8 @@ import lombok.Data;
 public class FavoritesResponse {
 	
 	  @JsonProperty("favorite_id")
-	  private Long favoriteId;
-	  
+	  private String favoriteId;
+
 	  @JsonProperty("user_id")
 	  private Long userId;
 	  
@@ -18,8 +18,8 @@ public class FavoritesResponse {
 	  private String entityType;
 	  
 	  @JsonProperty("entity_id")
-	  private Long entityId;
-	  
+	  private String entityId;
+
 	  @JsonProperty("created_at")
 	  private LocalDateTime createdAt;
 

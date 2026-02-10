@@ -69,13 +69,21 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-service.fitnest-dev.svc.cluster.local:9092}
     consumer:
-      group-id: user-group
-      auto-offset-reset: earliest
+      group-id: user-service
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: az.fitnest.identity.user.events.UserSetupCompletedEvent
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    listener:
+      ack-mode: record
+      concurrency: 1
 
   cloud:
     openfeign:
@@ -146,3 +154,17 @@ logging:
   level:
     az.fitnest.user.profile.adapter.client.IdentityServiceClient: DEBUG
     feign.Logger: DEBUG
+
+grpc:
+  client:
+    identity-service:
+      address: 'static://identity-service:9090'
+      negotiation-type: ${GRPC_CLIENT_NEGOTIATION:plaintext}
+      enable-keep-alive: true
+      keep-alive-time: 30s
+      keep-alive-timeout: 5s
+      security:
+        enabled: ${GRPC_TLS_ENABLED:false}
+        trust-cert-collection: ${GRPC_TRUST_CERT:}
+        client-cert-chain: ${GRPC_CLIENT_CERT:}
+        client-private-key: ${GRPC_CLIENT_KEY:}

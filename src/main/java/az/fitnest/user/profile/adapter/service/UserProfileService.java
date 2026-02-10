@@ -1,11 +1,11 @@
 package az.fitnest.user.profile.adapter.service;
 
+import az.fitnest.user.adapter.client.IdentityGrpcClient;
+import az.fitnest.user.grpc.UserResponse;
 import az.fitnest.user.favorites.adapter.service.FavoritesService;
 import az.fitnest.user.favorites.domain.enums.EntityType;
-import az.fitnest.user.profile.adapter.client.IdentityServiceClient;
 import az.fitnest.user.profile.adapter.client.dto.UpdateProfileImageRequest;
 import az.fitnest.user.profile.adapter.client.dto.UpdateSetupRequiredRequest;
-import az.fitnest.user.profile.adapter.client.dto.UserResponse;
 import az.fitnest.user.profile.adapter.persistence.UserLocationRepository;
 import az.fitnest.user.profile.adapter.persistence.UserProfileRepository;
 import az.fitnest.user.profile.api.dto.request.*;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserProfileService {
 
-    private final IdentityServiceClient identityServiceClient;
+    private final IdentityGrpcClient identityServiceClient;
     private final UserProfileRepository userProfileRepository;
     private final FileStorageService fileStorageService;
     private final FavoritesService favoritesService;
@@ -45,7 +45,7 @@ public class UserProfileService {
         UserResponse identityUser = identityServiceClient.getUserById(userId);
 
         UserProfileResponse user = UserProfileResponse.builder()
-                .userId(identityUser.getUserId())
+                .userId(String.valueOf(identityUser.getUserId()))
                 .firstName(identityUser.getFirstName())
                 .lastName(identityUser.getLastName())
                 .profileImageUrl(identityUser.getProfileImageUrl())
@@ -69,13 +69,13 @@ public class UserProfileService {
         UserResponse identityUser = identityServiceClient.getUserById(userId);
 
         return UserProfileResponse.builder()
-                .userId(identityUser.getUserId())
+                .userId(String.valueOf(identityUser.getUserId()))
                 .firstName(identityUser.getFirstName())
                 .lastName(identityUser.getLastName())
                 .mobile(identityUser.getMobile())
                 .email(identityUser.getEmail())
                 .profileImageUrl(identityUser.getProfileImageUrl())
-                .createdAt(identityUser.getCreatedAt())
+                .createdAt(parseCreatedAt(identityUser.getCreatedAt()))
                 .build();
     }
 
@@ -122,23 +122,16 @@ public class UserProfileService {
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
-        az.fitnest.user.profile.adapter.client.dto.UpdateUserProfileRequest updateRequest =
-                az.fitnest.user.profile.adapter.client.dto.UpdateUserProfileRequest.builder()
-                        .firstName(request.getFirstName())
-                        .lastName(request.getLastName())
-                        .email(request.getEmail())
-                        .build();
-
-        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, updateRequest);
+        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, request.getFirstName(), request.getLastName(), request.getEmail());
 
         return UserProfileResponse.builder()
-                .userId(updatedUser.getUserId())
+                .userId(String.valueOf(updatedUser.getUserId()))
                 .firstName(updatedUser.getFirstName())
                 .lastName(updatedUser.getLastName())
                 .mobile(updatedUser.getMobile())
                 .email(updatedUser.getEmail())
                 .profileImageUrl(updatedUser.getProfileImageUrl())
-                .createdAt(updatedUser.getCreatedAt())
+                .createdAt(parseCreatedAt(updatedUser.getCreatedAt()))
                 .build();
     }
 
@@ -151,28 +144,21 @@ public class UserProfileService {
         String newImageUrl = fileStorageService.saveFile(file);
 
         try {
-            UpdateProfileImageRequest request = UpdateProfileImageRequest.builder()
-                    .imageUrl(newImageUrl)
-                    .build();
-
-            UserResponse updatedUser = identityServiceClient.updateProfileImage(userId, request);
-
-            if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
-                fileStorageService.deleteFile(oldImageUrl);
-            }
+            UserResponse updatedUser = identityServiceClient.updateProfileImage(userId, newImageUrl);
 
             return UserProfileResponse.builder()
-                    .userId(updatedUser.getUserId())
+                    .userId(String.valueOf(updatedUser.getUserId()))
                     .firstName(updatedUser.getFirstName())
                     .lastName(updatedUser.getLastName())
                     .mobile(updatedUser.getMobile())
                     .email(updatedUser.getEmail())
                     .profileImageUrl(updatedUser.getProfileImageUrl())
-                    .createdAt(updatedUser.getCreatedAt())
+                    .createdAt(parseCreatedAt(updatedUser.getCreatedAt()))
                     .build();
-        } catch (Exception e) {
-            fileStorageService.deleteFile(newImageUrl);
-            throw e;
+        } finally {
+            if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+                fileStorageService.deleteFile(oldImageUrl);
+            }
         }
     }
 
@@ -213,10 +199,7 @@ public class UserProfileService {
         Long userId = UserContext.getCurrentUserId();
         
         if (request.getLanguage() != null) {
-            identityServiceClient.updateLanguage(userId, 
-                az.fitnest.user.profile.adapter.client.dto.UpdateLanguageRequest.builder()
-                    .language(request.getLanguage())
-                    .build());
+            identityServiceClient.updateLanguage(userId, request.getLanguage());
         }
         
         // Save theme/notifications if/when extended
@@ -311,11 +294,7 @@ public class UserProfileService {
             throw new ConflictException("Setup incomplete");
         }
 
-        UpdateSetupRequiredRequest updateRequest = UpdateSetupRequiredRequest.builder()
-                .setupRequired(false)
-                .build();
-
-        identityServiceClient.updateSetupRequired(userId, updateRequest);
+        identityServiceClient.updateSetupRequired(userId, false);
 
         return CompleteSetupResponse.builder()
                 .setupRequired(false)
@@ -374,6 +353,13 @@ public class UserProfileService {
     private Integer calculateAge(LocalDate birthDate) {
         if (birthDate == null) return null;
         return Period.between(birthDate, LocalDate.now()).getYears();
+    }
+
+    private LocalDateTime parseCreatedAt(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return LocalDateTime.parse(value);
     }
 
     private String getBmiCategory(double bmi) {

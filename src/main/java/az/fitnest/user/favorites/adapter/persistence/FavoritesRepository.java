@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface FavoritesRepository extends JpaRepository<Favorite, Long>{
 
-    boolean existsByUserIdAndEntityTypeAndEntityId(Long userId, EntityType entityType, Long entityId);
+    boolean existsByUserIdAndEntityTypeAndEntityId(Long userId, EntityType entityType, String entityId);
 
     long countByUserIdAndEntityType(Long userId, EntityType entityType);
 
@@ -22,4 +22,6 @@ public interface FavoritesRepository extends JpaRepository<Favorite, Long>{
     List<Favorite> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<Favorite> findByFavoriteIdAndUserId(Long favoriteId, Long userId);
+
+    List<Favorite> findByUserIdAndEntityTypeAndEntityIdIn(Long userId, EntityType entityType, List<String> entityIds);
 }

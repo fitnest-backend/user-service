@@ -10,6 +10,7 @@ import az.fitnest.user.shared.exception.ConflictException;
 import az.fitnest.user.shared.exception.ResourceNotFoundException;
 import az.fitnest.user.shared.util.UserContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class FavoritesService {
 
     private final FavoritesRepository favoritesRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public Map<EntityType, Long> getFavoriteCounts(Long userId) {
         List<Object[]> counts = favoritesRepository.countAllByUserIdGroupByEntityType(userId);
@@ -67,6 +70,10 @@ public class FavoritesService {
         favorite.setCreatedAt(LocalDateTime.now());
 
         Favorite saved = favoritesRepository.save(favorite);
+
+        // Publish event for cache invalidation
+        publishFavoriteEvent("FAVORITE_ADDED", userId, type, request.getEntityId());
+
         return toResponse(saved);
     }
 
@@ -76,6 +83,9 @@ public class FavoritesService {
         Favorite favorite = favoritesRepository.findByFavoriteIdAndUserId(favoritesId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("FAVORITE_NOT_FOUND"));
         
+        // Publish event before deletion
+        publishFavoriteEvent("FAVORITE_REMOVED", userId, favorite.getEntityType(), favorite.getEntityId());
+
         favoritesRepository.delete(favorite);
     }
 
@@ -83,18 +93,42 @@ public class FavoritesService {
         return favoritesRepository.countByUserIdAndEntityType(userId, entityType);
     }
 
-    public boolean isFavorited(Long userId, EntityType entityType, Long entityId) {
+    public boolean isFavorited(Long userId, EntityType entityType, String entityId) {
         if (userId == null) return false;
         return favoritesRepository.existsByUserIdAndEntityTypeAndEntityId(userId, entityType, entityId);
     }
 
+    public Map<String, Boolean> bulkCheckFavorites(Long userId, EntityType entityType, List<String> entityIds) {
+        if (userId == null || entityIds == null || entityIds.isEmpty()) {
+            return entityIds.stream().collect(Collectors.toMap(id -> id, id -> false));
+        }
+
+        List<Favorite> favorites = favoritesRepository.findByUserIdAndEntityTypeAndEntityIdIn(userId, entityType, entityIds);
+        Set<String> favoritedIds = favorites.stream()
+                .map(Favorite::getEntityId)
+                .collect(Collectors.toSet());
+
+        return entityIds.stream()
+                .collect(Collectors.toMap(id -> id, favoritedIds::contains));
+    }
+
     private FavoritesResponse toResponse(Favorite favorite) {
         FavoritesResponse response = new FavoritesResponse();
-        response.setFavoriteId(favorite.getFavoriteId());
-        response.setUserId(favorite.getUserId());
-        response.setEntityType(favorite.getEntityType().name());
+        response.setFavoriteId("f_" + favorite.getFavoriteId());
+        response.setEntityType(favorite.getEntityType().name().toLowerCase());
         response.setEntityId(favorite.getEntityId());
         response.setCreatedAt(favorite.getCreatedAt());
         return response;
+    }
+
+    private void publishFavoriteEvent(String eventType, Long userId, EntityType entityType, String entityId) {
+        Map<String, Object> event = Map.of(
+            "eventType", eventType,
+            "userId", userId,
+            "entityType", entityType.name(),
+            "entityId", entityId,
+            "timestamp", System.currentTimeMillis()
+        );
+        kafkaTemplate.send("favorites-events", event);
     }
 }

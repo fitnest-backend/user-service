@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package az.fitnest.user;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.user.grpc";
+option java_outer_classname = "UserServiceProto";
+
+service UserService {
+  rpc GetUserById(GetUserByIdRequest) returns (UserResponse);
+  rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UserResponse);
+  rpc UpdateProfileImage(UpdateProfileImageRequest) returns (UserResponse);
+  rpc UpdateSetupRequired(UpdateSetupRequiredRequest) returns (UserResponse);
+  rpc UpdateLanguage(UpdateLanguageRequest) returns (UserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (Empty);
+}
+
+message GetUserByIdRequest {
+  int64 user_id = 1;
+}
+
+message UserResponse {
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string mobile = 5;
+  string profile_image_url = 6;
+  bool setup_required = 7;
+  string language = 8;
+  string created_at = 9;
+}
+
+message UpdateUserProfileRequest {
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+}
+
+message UpdateProfileImageRequest {
+  int64 user_id = 1;
+  string image_url = 2;
+}
+
+message UpdateSetupRequiredRequest {
+  int64 user_id = 1;
+  bool setup_required = 2;
+}
+
+message UpdateLanguageRequest {
+  int64 user_id = 1;
+  string language = 2;
+}
+
+message DeleteUserRequest {
+  int64 user_id = 1;
+  string reason = 2;
+}
+
+message Empty {
+}
+

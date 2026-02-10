@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class FavoritesRequest {
 	
-	@NotNull
-	@JsonProperty("entity_id")
-	private Long entityId;
-	
 	@NotBlank
 	@JsonProperty("entity_type")
 	private String entityType;
+
+	@NotBlank
+	@JsonProperty("entity_id")
+	private String entityId;
 
 }

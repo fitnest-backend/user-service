@@ -33,8 +33,8 @@ public class Favorite {
     private EntityType entityType;
     
     @Column(name = "entity_id", nullable = false)
-    private Long entityId;
-    
+    private String entityId;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
