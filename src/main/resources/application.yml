@@ -119,6 +119,7 @@ management:
 springdoc:
   api-docs:
     path: /v3/api-docs
+  paths-to-exclude: /api/v1/internal/**
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
