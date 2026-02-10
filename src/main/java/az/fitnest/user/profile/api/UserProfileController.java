@@ -7,7 +7,6 @@ import az.fitnest.user.shared.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,7 +25,7 @@ public class UserProfileController {
 
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Summary retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Summary retrieved successfully",
                     content = @Content(schema = @Schema(implementation = SummaryResponse.class)))
     })
     @GetMapping("/summary")
@@ -36,7 +35,7 @@ public class UserProfileController {
 
     @Operation(summary = "Get current user profile", description = "Returns the full profile details of the authenticated user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Profile retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile retrieved successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
     })
     @GetMapping
@@ -46,7 +45,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile information.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Profile updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile updated successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
     })
     @PutMapping
@@ -56,7 +55,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user location", description = "Updates the user's current city and country.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Location updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location updated successfully",
                     content = @Content(schema = @Schema(implementation = LocationResponse.class)))
     })
     @PutMapping("/location")
@@ -66,7 +65,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update body metrics", description = "Updates user's physical metrics like height, weight, etc.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Body metrics updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully")
     })
     @PutMapping("/body")
     public ResponseEntity<ApiResponse<Void>> updateBody(@Valid @RequestBody UpdateBodyRequest request) {
@@ -76,7 +75,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Profile image updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
     })
     @PutMapping("/profile-image")
@@ -86,7 +85,7 @@ public class UserProfileController {
 
     @Operation(summary = "Get goal references", description = "Returns available health and fitness goals for reference.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goal references retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal references retrieved successfully",
                     content = @Content(schema = @Schema(implementation = GoalsResponse.class)))
     })
     @GetMapping("/reference/goals")
@@ -96,7 +95,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user goal", description = "Updates the primary fitness or health goal of the user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goal updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully")
     })
     @PutMapping("/goal")
     public ResponseEntity<ApiResponse<Void>> updateGoal(@Valid @RequestBody UpdateGoalsRequest request) {
@@ -106,7 +105,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Preferences updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully")
     })
     @PutMapping("/preferences")
     public ResponseEntity<ApiResponse<Void>> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request) {
@@ -116,7 +115,7 @@ public class UserProfileController {
 
     @Operation(summary = "Get setup status", description = "Returns the current progress of the user profile setup.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Setup status retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup status retrieved successfully",
                     content = @Content(schema = @Schema(implementation = SetupResponse.class)))
     })
     @GetMapping("/setup")
@@ -126,7 +125,7 @@ public class UserProfileController {
 
     @Operation(summary = "Initial profile setup", description = "Sets up the user's profile with required initial details.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Profile setup step completed successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile setup step completed successfully",
                     content = @Content(schema = @Schema(implementation = SetupResponse.class)))
     })
     @PostMapping("/setup")
@@ -134,19 +133,19 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.setupProfile(request)));
     }
 
-    @Operation(summary = "Complete profile setup", description = "Finalizes the profile setup process.")
+    @Operation(summary = "Complete profile setup", description = "Finalizes the user profile setup process.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Setup completed successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup completed successfully",
                     content = @Content(schema = @Schema(implementation = CompleteSetupResponse.class)))
     })
-    @PostMapping("/complete-setup")
+    @PostMapping("/setup/complete")
     public ResponseEntity<ApiResponse<CompleteSetupResponse>> completeSetup() {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.completeSetup()));
     }
 
-    @Operation(summary = "Get fitness level", description = "Returns the calculated fitness level based on user data.")
+    @Operation(summary = "Get fitness level", description = "Returns the user's current fitness level.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fitness level retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Fitness level retrieved successfully",
                     content = @Content(schema = @Schema(implementation = FitnessLevelResponse.class)))
     })
     @GetMapping("/fitness-level")
@@ -154,21 +153,21 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel()));
     }
 
-    @Operation(summary = "Get active subscription", description = "Returns details of the user's currently active subscription plan.")
+    @Operation(summary = "Get active subscription", description = "Returns the user's active subscription details.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Subscription details retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Subscription details retrieved successfully",
                     content = @Content(schema = @Schema(implementation = ActiveSubscriptionResponse.class)))
     })
-    @GetMapping("/active-subscription")
+    @GetMapping("/subscription")
     public ResponseEntity<ApiResponse<ActiveSubscriptionResponse>> getActiveSubscription() {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getActiveSubscription()));
     }
 
-    @Operation(summary = "Delete account", description = "Permanently deletes the user's account and all associated data.")
+    @Operation(summary = "Delete account", description = "Deletes the user's account and associated data.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Account deleted successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully")
     })
-    @DeleteMapping("/account")
+    @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
         userProfileService.deleteAccount(request);
         return ResponseEntity.ok(ApiResponse.success(null));
