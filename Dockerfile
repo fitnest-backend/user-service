@@ -23,8 +23,7 @@ RUN ./gradlew dependencies --no-daemon
 COPY . .
 
 # Build (add stacktrace for useful logs)
-RUN ./gradlew clean bootJar -x test --no-daemon --stacktrace
-
+RUN ./gradlew clean bootJar -x test --no-daemon --no-configuration-cache --stacktrace --info || (echo "===== LAST 400 LINES OF GRADLE LOG =====" && tail -n 400 /root/.gradle/daemon/*/daemon-*.out.log && exit 1)
 # -----------------------------
 # Stage 2: Runtime image
 # -----------------------------
