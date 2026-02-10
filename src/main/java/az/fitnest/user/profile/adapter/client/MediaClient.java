@@ -18,8 +18,7 @@ public interface MediaClient {
 
     @PostMapping(value = "/api/v1/internal/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<MediaUploadResponse> uploadImage(
-            @RequestPart("image") MultipartFile file,
-            @RequestParam(value = "directory", required = false) String directory
+            @RequestPart("image") MultipartFile file
     );
 
     @DeleteMapping("/api/v1/internal/media/files")

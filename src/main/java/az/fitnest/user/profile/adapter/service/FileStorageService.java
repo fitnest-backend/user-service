@@ -21,7 +21,6 @@ import java.util.Arrays;
 public class FileStorageService {
 
     private final MediaClient mediaClient;
-    private static final String PROFILES_DIRECTORY = "/profiles";
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png"
@@ -35,7 +34,7 @@ public class FileStorageService {
         validateFile(file);
 
         try {
-            ResponseEntity<MediaUploadResponse> responseEntity = mediaClient.uploadImage(file, PROFILES_DIRECTORY);
+            ResponseEntity<MediaUploadResponse> responseEntity = mediaClient.uploadImage(file);
             MediaUploadResponse response = responseEntity.getBody();
 
             if (response != null && response.isSuccess() && response.getData() != null) {
