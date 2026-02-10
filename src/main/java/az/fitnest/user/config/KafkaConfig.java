@@ -17,10 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 @Configuration
 public class KafkaConfig {
+    @org.springframework.beans.factory.annotation.Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Bean
     public ConsumerFactory<String, UserSetupCompletedEvent> userSetupCompletedConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        // Bootstrap server is expected in application.yml as spring.kafka.bootstrap-servers
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-service");

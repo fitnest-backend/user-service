@@ -15,11 +15,17 @@ import java.time.Duration;
 import java.util.UUID;
 import static org.mockito.Mockito.*;
 @SpringBootTest(properties = {
-        "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}",
-        "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.data.jpa.repository.config.JpaRepositoriesAutoConfiguration",
+        "spring.autoconfigure.exclude=" +
+                "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," +
+                "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration," +
+                "org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration," +
+                "org.springframework.boot.autoconfigure.data.jpa.JpaAuditingAutoConfiguration," +
+                "org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration," +
+                "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration",
+        "spring.data.jpa.repositories.enabled=false",
         "app.warmup.enabled=false"
 })
-@EmbeddedKafka(partitions = 1, topics = {"user-setup-completed"})
+@EmbeddedKafka(partitions = 1, topics = {"user-setup-completed"}, bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class UserSetupCompletedKafkaIT {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -33,6 +39,10 @@ class UserSetupCompletedKafkaIT {
     private UserLocationRepository userLocationRepository;
     @MockBean
     private GoalReferenceRepository goalReferenceRepository;
+    @MockBean
+    private org.springframework.data.redis.connection.RedisConnectionFactory redisConnectionFactory;
+    @MockBean
+    private javax.sql.DataSource dataSource;
     @Test
     void consumesEventAndSavesProfile() {
         when(idempotencyService.markProcessedIfNew(anyString())).thenReturn(true);
