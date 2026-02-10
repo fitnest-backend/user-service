@@ -16,7 +16,7 @@ server:
 
 spring:
   main:
-    lazy-initialization: true
+    lazy-initialization: false
   application:
     name: user-service
   datasource:
@@ -119,13 +119,20 @@ management:
 springdoc:
   api-docs:
     path: /v3/api-docs
+    cache:
+      enabled: true
   paths-to-exclude: /api/v1/internal/**
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    doc-expansion: none
+    display-request-duration: true
+    operations-sorter: alpha
+    tags-sorter: alpha
   show-actuator: false
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+  writer-with-default-pretty-printer: false
 logging:
   level:
     az.fitnest.user.user.adapter.client.IamServiceClient: DEBUG
