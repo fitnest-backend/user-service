@@ -209,7 +209,7 @@ public class UserProfileService {
         userProfileRepository.save(profile);
     }
 
-    public void updatePreferences(UpdatePreferences request) {
+    public void updatePreferences(UpdatePreferencesRequest request) {
         Long userId = UserContext.getCurrentUserId();
         
         if (request.getLanguage() != null) {

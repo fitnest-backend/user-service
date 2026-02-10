@@ -3,7 +3,7 @@ package az.fitnest.user.profile.api.dto.request;
 import lombok.Data;
 
 @Data
-public class UpdatePreferences {
+public class UpdatePreferencesRequest {
     
     private String language;
     
