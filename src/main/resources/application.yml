@@ -20,9 +20,9 @@ spring:
   application:
     name: user-service
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://user-db:5432/user_db}
-    username: ${SPRING_DATASOURCE_USERNAME:user}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgresql-user:5432/fitnest_user}
+    username: ${SPRING_DATASOURCE_USERNAME:fitnest_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:user_password_123}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
