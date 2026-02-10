@@ -82,9 +82,9 @@ spring:
       client:
         config:
           default:
-            connectTimeout: 500
-            readTimeout: 1500
-            loggerLevel: FULL
+            connect-timeout: ${FEIGN_CONNECT_TIMEOUT:5000}
+            read-timeout: ${FEIGN_READ_TIMEOUT:10000}
+            logger-level: BASIC
       httpclient:
         hc5:
           enabled: true
@@ -92,12 +92,6 @@ spring:
             max-connections: ${FEIGN_MAX_CONNECTIONS:50}
             max-connections-per-route: ${FEIGN_CONNECTIONS_PER_ROUTE:20}
             conn-pool-policy: LIFO
-      client:
-        config:
-          default:
-            connect-timeout: ${FEIGN_CONNECT_TIMEOUT:5000}
-            read-timeout: ${FEIGN_READ_TIMEOUT:10000}
-            logger-level: BASIC
 
 eureka:
   client:
