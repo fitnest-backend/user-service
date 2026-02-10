@@ -4,8 +4,8 @@ server:
     enabled: true
   compression:
     enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
-    min-response-size: 1024
+    mime-types: application/json,text/plain,text/css,application/javascript,application/openapi+json,application/vnd.api+json
+    min-response-size: 2048
   tomcat:
     threads:
       max: 200
@@ -16,7 +16,7 @@ server:
 
 spring:
   main:
-    lazy-initialization: false
+    lazy-initialization: ${SPRING_MAIN_LAZY_INITIALIZATION:false}
   application:
     name: user-service
   datasource:
@@ -29,10 +29,11 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       keep-alive-time: 300000
-      minimum-idle: 10
-      maximum-pool-size: 20
+      minimum-idle: ${HIKARI_MIN_IDLE:2}
+      maximum-pool-size: ${HIKARI_MAX_POOL:20}
       pool-name: HikariCP-User
       auto-commit: true
+      connection-test-query: SELECT 1
       data-source-properties:
         cachePrepStmts: true
         prepStmtCacheSize: 250
@@ -88,8 +89,15 @@ spring:
         hc5:
           enabled: true
           pool:
-            max-connections: 400
-            max-connections-per-route: 200
+            max-connections: ${FEIGN_MAX_CONNECTIONS:50}
+            max-connections-per-route: ${FEIGN_CONNECTIONS_PER_ROUTE:20}
+            conn-pool-policy: LIFO
+      client:
+        config:
+          default:
+            connect-timeout: ${FEIGN_CONNECT_TIMEOUT:5000}
+            read-timeout: ${FEIGN_READ_TIMEOUT:10000}
+            logger-level: BASIC
 
 eureka:
   client:
@@ -115,6 +123,11 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  
+  warmup:
+    enabled: ${APP_WARMUP_ENABLED:true}
+    db: ${APP_WARMUP_DB:true}
+    jwks: ${APP_WARMUP_JWKS:true}
 
 springdoc:
   api-docs:
@@ -126,7 +139,9 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
     doc-expansion: none
+    filter: true
     display-request-duration: true
+    try-it-out-enabled: true
     operations-sorter: alpha
     tags-sorter: alpha
   show-actuator: false
