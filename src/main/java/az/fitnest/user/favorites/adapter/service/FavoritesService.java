@@ -21,6 +21,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing user favorites.
+ * Handles adding, removing, and querying favorite entities such as gyms and stores.
+ *
+ * <p>This service supports:
+ * <ul>
+ *   <li>Adding favorites with duplicate prevention</li>
+ *   <li>Removing favorites</li>
+ *   <li>Listing all favorites for a user</li>
+ *   <li>Bulk checking favorite status</li>
+ *   <li>Publishing favorite events to Kafka</li>
+ * </ul>
+ *
+ * @see Favorite
+ * @see EntityType
+ */
 @Service
 @RequiredArgsConstructor
 public class FavoritesService {

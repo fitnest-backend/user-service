@@ -15,17 +15,37 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Arrays;
 
+/**
+ * Service for handling file storage operations.
+ * Manages file uploads, validation, and deletion through the media service.
+ *
+ * <p>This service enforces file size limits and content type restrictions
+ * to ensure only valid images are uploaded.
+ *
+ * @see MediaClient
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileStorageService {
 
     private final MediaClient mediaClient;
+
+    /** Maximum allowed file size: 5MB */
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+    /** List of allowed image content types */
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png"
     );
 
+    /**
+     * Saves a file to the media service.
+     *
+     * @param file the multipart file to save
+     * @return the URL of the uploaded file, or null if file is empty
+     * @throws BadRequestException if file validation fails or upload fails
+     */
     public String saveFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             return null;
@@ -53,6 +73,13 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Validates file before upload.
+     * Checks content type and file size against configured limits.
+     *
+     * @param file the file to validate
+     * @throws BadRequestException if file is invalid
+     */
     private void validateFile(MultipartFile file) {
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
@@ -64,6 +91,11 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Deletes a single file from the media service.
+     *
+     * @param fileUrl the URL of the file to delete
+     */
     public void deleteFile(String fileUrl) {
         if (fileUrl == null || fileUrl.trim().isEmpty()) {
             return;
@@ -71,6 +103,12 @@ public class FileStorageService {
         deleteFiles(List.of(fileUrl));
     }
 
+    /**
+     * Deletes multiple files from the media service.
+     * Errors are logged but not thrown to avoid blocking the main flow.
+     *
+     * @param fileUrls list of file URLs to delete
+     */
     public void deleteFiles(List<String> fileUrls) {
         if (fileUrls == null || fileUrls.isEmpty()) {
             return;
