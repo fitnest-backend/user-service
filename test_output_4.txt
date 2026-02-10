@@ -1,0 +1,108 @@
+Initialized native services in: /Users/aousganeh/.gradle/native
+Initialized jansi services in: /Users/aousganeh/.gradle/native
+Received JVM installation metadata from '/Users/aousganeh/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home': {JAVA_HOME=/Users/aousganeh/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home, JAVA_VERSION=17.0.16, JAVA_VENDOR=Microsoft, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.16+8-LTS, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.16+8-LTS, VM_VENDOR=Microsoft, OS_ARCH=aarch64}
+Found daemon DaemonInfo{pid=1666, address=[e43cf095-f378-4419-af09-70957a6ce79a port:49275, addresses:[/127.0.0.1]], state=Idle, lastBusy=1770721270796, context=DefaultDaemonContext[uid=4334dbfc-6313-4f7c-8bb7-a79614c26c22,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/openjdk-24.0.2+12-54/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=1666,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=-XX:MaxMetaspaceSize=512m,-XX:+HeapDumpOnOutOfMemoryError,--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+Java home is different.
+Wanted: DefaultDaemonContext[uid=null,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=33838,idleTimeout=null,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=-XX:MaxMetaspaceSize=512m,-XX:+HeapDumpOnOutOfMemoryError,--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]
+Actual: DefaultDaemonContext[uid=4334dbfc-6313-4f7c-8bb7-a79614c26c22,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/openjdk-24.0.2+12-54/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=1666,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=-XX:MaxMetaspaceSize=512m,-XX:+HeapDumpOnOutOfMemoryError,--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+Found daemon DaemonInfo{pid=4768, address=[3cc4087e-668a-437d-998f-71484f0b78dc port:49694, addresses:[/127.0.0.1]], state=Idle, lastBusy=1770717262302, context=DefaultDaemonContext[uid=3a3990b6-7cde-4b17-bf4c-0df0fb7cff8d,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/openjdk-24.0.2+12-54/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=4768,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+Java home is different.
+Wanted: DefaultDaemonContext[uid=null,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=33838,idleTimeout=null,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=-XX:MaxMetaspaceSize=512m,-XX:+HeapDumpOnOutOfMemoryError,--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]
+Actual: DefaultDaemonContext[uid=3a3990b6-7cde-4b17-bf4c-0df0fb7cff8d,javaHome=/Users/aousganeh/Library/Java/JavaVirtualMachines/openjdk-24.0.2+12-54/Contents/Home,daemonRegistryDir=/Users/aousganeh/.gradle/daemon,pid=4768,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=AZ,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 20886). The daemon log file: /Users/aousganeh/.gradle/daemon/8.5/daemon-20886.out.log
+Starting 14th build in daemon [uptime: 22 mins 3.063 secs, performance: 99%, GC rate: 0.00/s, heap usage: 1% of 2 GiB, non-heap usage: 19% of 512 MiB]
+Using 14 worker leases.
+Now considering [/Users/aousganeh/Desktop/fix/code/user-service, /Users/aousganeh/Desktop/fix/code/identity-service] as hierarchies to watch
+Reusing configuration cache.
+Now considering [/Users/aousganeh/Desktop/fix/code/user-service, /Users/aousganeh/Desktop/fix/code/identity-service] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Using local directory build cache for the root build (location = /Users/aousganeh/.gradle/caches/build-cache-1, removeUnusedEntriesAfter = 7 days).
+Tasks to be executed: [task ':extractIncludeProto', task ':extractProto', task ':generateProto', task ':compileJava', task ':processResources', task ':classes', task ':extractIncludeTestProto', task ':extractTestProto', task ':generateTestProto', task ':compileTestJava', task ':processTestResources', task ':testClasses', task ':test']
+Tasks that were excluded: []
+Resolve mutations for :extractIncludeProto (Thread[Execution worker,5,main]) started.
+Resolve mutations for :extractProto (Thread[Execution worker Thread 2,5,main]) started.
+Resolve mutations for :extractIncludeTestProto (Thread[Execution worker Thread 3,5,main]) started.
+:extractIncludeProto (Thread[Execution worker Thread 4,5,main]) started.
+Resolve mutations for :extractTestProto (Thread[Execution worker,5,main]) started.
+:extractProto (Thread[Execution worker Thread 2,5,main]) started.
+:extractTestProto (Thread[Execution worker,5,main]) started.
+:extractIncludeTestProto (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :extractTestProto UP-TO-DATE
+Caching disabled for task ':extractTestProto' because:
+  Caching has not been enabled for the task
+Skipping task ':extractTestProto' as it is up-to-date.
+
+> Task :extractProto UP-TO-DATE
+Caching disabled for task ':extractProto' because:
+  Caching has not been enabled for the task
+Skipping task ':extractProto' as it is up-to-date.
+Resolve mutations for :processTestResources (Thread[Execution worker,5,main]) started.
+Resolve mutations for :processResources (Thread[Execution worker Thread 2,5,main]) started.
+:processTestResources (Thread[Execution worker,5,main]) started.
+:processResources (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :processTestResources NO-SOURCE
+Skipping task ':processTestResources' as it has no source files and no previous output files.
+
+> Task :processResources UP-TO-DATE
+Caching disabled for task ':processResources' because:
+  Not worth caching
+Skipping task ':processResources' as it is up-to-date.
+
+> Task :extractIncludeProto UP-TO-DATE
+Caching disabled for task ':extractIncludeProto' because:
+  Caching has not been enabled for the task
+Skipping task ':extractIncludeProto' as it is up-to-date.
+Resolve mutations for :generateProto (Thread[Execution worker Thread 4,5,main]) started.
+:generateProto (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :extractIncludeTestProto UP-TO-DATE
+Caching disabled for task ':extractIncludeTestProto' because:
+  Caching has not been enabled for the task
+Skipping task ':extractIncludeTestProto' as it is up-to-date.
+Resolve mutations for :generateTestProto (Thread[Execution worker Thread 8,5,main]) started.
+:generateTestProto (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :generateTestProto NO-SOURCE
+Skipping task ':generateTestProto' as it has no source files and no previous output files.
+
+> Task :generateProto UP-TO-DATE
+Build cache key for task ':generateProto' is 8fd87fe8f93e4b5d6d3f5b8c2752d367
+Skipping task ':generateProto' as it is up-to-date.
+Resolve mutations for :compileJava (Thread[Execution worker Thread 4,5,main]) started.
+:compileJava (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :compileJava FAILED
+Build cache key for task ':compileJava' is dc007038fc4dd80146d2836ef5084637
+Task ':compileJava' is not up-to-date because:
+  Input property 'stableSources' file /Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/UserServiceApplication.java has changed.
+  Input property 'stableSources' file /Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/config/JpaConfig.java has been added.
+Created classpath snapshot for incremental compilation in 0.014 secs.
+Full recompilation is required because FastIntegerMath.class could not be analyzed for incremental compilation. See the debug log for more details. Analysis took 0.109 secs.
+Compiling with toolchain '/Users/aousganeh/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home'.
+Compiling with JDK Java compiler API.
+/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/UserServiceApplication.java:9: error: cannot find symbol
+@EnableKafka
+ ^
+  symbol: class EnableKafka
+1 error
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 883ms
+7 actionable tasks: 1 executed, 6 up-to-date
+Watched directory hierarchies: [/Users/aousganeh/Desktop/fix/code/user-service, /Users/aousganeh/Desktop/fix/code/identity-service]
+Configuration cache entry reused.
