@@ -8,12 +8,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
-    name = "iam-service",
-    url = "${iam.service.url:http://iam-service:8080}",
+    name = "identity-service",
+    url = "${identity.service.url:http://identity-service:8080}",
     path = "/api/v1/internal/users",
-    configuration = IamServiceClientConfig.class
+    configuration = IdentityServiceClientConfig.class
 )
-public interface IamServiceClient {
+public interface IdentityServiceClient {
 
     @GetMapping("/{userId}")
     UserResponse getUserById(@PathVariable("userId") Long userId);

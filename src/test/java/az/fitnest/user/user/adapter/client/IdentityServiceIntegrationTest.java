@@ -1,7 +1,7 @@
 package az.fitnest.user.user.adapter.client;
 
-import az.fitnest.user.profile.adapter.client.IamServiceClient;
-import az.fitnest.user.profile.adapter.client.IamServiceClientConfig;
+import az.fitnest.user.profile.adapter.client.IdentityServiceClient;
+import az.fitnest.user.profile.adapter.client.IdentityServiceClientConfig;
 import az.fitnest.user.profile.adapter.client.dto.UserResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class IamServiceIntegrationTest {
+public class IdentityServiceIntegrationTest {
 
-    private IamServiceClient iamServiceClient;
+    private IdentityServiceClient identityServiceClient;
     private static WireMockServer wireMockServer;
     private ObjectMapper objectMapper;
 
@@ -55,14 +55,14 @@ public class IamServiceIntegrationTest {
         RequestInterceptor interceptor = new az.fitnest.user.config.FeignConfig().requestInterceptor();
 
         // Build the Feign client manually with SpringMvcContract to support @GetMapping
-        iamServiceClient = Feign.builder()
+        identityServiceClient = Feign.builder()
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
                 .contract(new org.springframework.cloud.openfeign.support.SpringMvcContract())
                 .requestInterceptor(interceptor)
                 .logger(new feign.Logger.ErrorLogger())
                 .logLevel(feign.Logger.Level.FULL)
-                .target(IamServiceClient.class, "http://localhost:" + wireMockServer.port() + "/api/v1/internal/users");
+                .target(IdentityServiceClient.class, "http://localhost:" + wireMockServer.port() + "/api/v1/internal/users");
 
         // Mock the RequestContext to simulate headers coming from Gateway
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -92,7 +92,7 @@ public class IamServiceIntegrationTest {
                         .withBody(objectMapper.writeValueAsString(mockResponse))));
 
         // Act
-        UserResponse result = iamServiceClient.getUserById(userIdLong);
+        UserResponse result = identityServiceClient.getUserById(userIdLong);
 
         // Assert
         assertNotNull(result);
@@ -113,7 +113,7 @@ public class IamServiceIntegrationTest {
 
         // Act & Assert
         try {
-            iamServiceClient.getUserById(userId);
+            identityServiceClient.getUserById(userId);
         } catch (Exception e) {
             // Expected
         }

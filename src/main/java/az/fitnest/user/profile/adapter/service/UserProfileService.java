@@ -2,7 +2,7 @@ package az.fitnest.user.profile.adapter.service;
 
 import az.fitnest.user.favorites.adapter.service.FavoritesService;
 import az.fitnest.user.favorites.domain.enums.EntityType;
-import az.fitnest.user.profile.adapter.client.IamServiceClient;
+import az.fitnest.user.profile.adapter.client.IdentityServiceClient;
 import az.fitnest.user.profile.adapter.client.dto.UpdateProfileImageRequest;
 import az.fitnest.user.profile.adapter.client.dto.UpdateSetupRequiredRequest;
 import az.fitnest.user.profile.adapter.client.dto.UserResponse;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserProfileService {
 
-    private final IamServiceClient iamServiceClient;
+    private final IdentityServiceClient identityServiceClient;
     private final UserProfileRepository userProfileRepository;
     private final FileStorageService fileStorageService;
     private final FavoritesService favoritesService;
@@ -42,13 +42,13 @@ public class UserProfileService {
 
     public SummaryResponse getUserSummary() {
         Long userId = UserContext.getCurrentUserId();
-        UserResponse iamUser = iamServiceClient.getUserById(userId);
+        UserResponse identityUser = identityServiceClient.getUserById(userId);
 
         UserProfileResponse user = UserProfileResponse.builder()
-                .userId(iamUser.getUserId())
-                .firstName(iamUser.getFirstName())
-                .lastName(iamUser.getLastName())
-                .profileImageUrl(iamUser.getProfileImageUrl())
+                .userId(identityUser.getUserId())
+                .firstName(identityUser.getFirstName())
+                .lastName(identityUser.getLastName())
+                .profileImageUrl(identityUser.getProfileImageUrl())
                 .build();
 
         CountersResponse counters = new CountersResponse();
@@ -66,16 +66,16 @@ public class UserProfileService {
 
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
-        UserResponse iamUser = iamServiceClient.getUserById(userId);
+        UserResponse identityUser = identityServiceClient.getUserById(userId);
 
         return UserProfileResponse.builder()
-                .userId(iamUser.getUserId())
-                .firstName(iamUser.getFirstName())
-                .lastName(iamUser.getLastName())
-                .mobile(iamUser.getMobile())
-                .email(iamUser.getEmail())
-                .profileImageUrl(iamUser.getProfileImageUrl())
-                .createdAt(iamUser.getCreatedAt())
+                .userId(identityUser.getUserId())
+                .firstName(identityUser.getFirstName())
+                .lastName(identityUser.getLastName())
+                .mobile(identityUser.getMobile())
+                .email(identityUser.getEmail())
+                .profileImageUrl(identityUser.getProfileImageUrl())
+                .createdAt(identityUser.getCreatedAt())
                 .build();
     }
 
@@ -129,7 +129,7 @@ public class UserProfileService {
                         .email(request.getEmail())
                         .build();
 
-        UserResponse updatedUser = iamServiceClient.updateUserProfile(userId, updateRequest);
+        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, updateRequest);
 
         return UserProfileResponse.builder()
                 .userId(updatedUser.getUserId())
@@ -145,7 +145,7 @@ public class UserProfileService {
     public UserProfileResponse updateProfileImage(MultipartFile file) {
         Long userId = UserContext.getCurrentUserId();
 
-        UserResponse currentUser = iamServiceClient.getUserById(userId);
+        UserResponse currentUser = identityServiceClient.getUserById(userId);
         String oldImageUrl = currentUser.getProfileImageUrl();
 
         String newImageUrl = fileStorageService.saveFile(file);
@@ -155,7 +155,7 @@ public class UserProfileService {
                     .imageUrl(newImageUrl)
                     .build();
 
-            UserResponse updatedUser = iamServiceClient.updateProfileImage(userId, request);
+            UserResponse updatedUser = identityServiceClient.updateProfileImage(userId, request);
 
             if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
                 fileStorageService.deleteFile(oldImageUrl);
@@ -187,7 +187,7 @@ public class UserProfileService {
             throw new BadRequestException("Confirmation must be true");
         }
         Long userId = UserContext.getCurrentUserId();
-        iamServiceClient.deleteUser(userId, request.getReason());
+        identityServiceClient.deleteUser(userId, request.getReason());
     }
 
     @Transactional
@@ -213,7 +213,7 @@ public class UserProfileService {
         Long userId = UserContext.getCurrentUserId();
         
         if (request.getLanguage() != null) {
-            iamServiceClient.updateLanguage(userId, 
+            identityServiceClient.updateLanguage(userId, 
                 az.fitnest.user.profile.adapter.client.dto.UpdateLanguageRequest.builder()
                     .language(request.getLanguage())
                     .build());
@@ -241,7 +241,7 @@ public class UserProfileService {
     public SetupResponse getSetupStatus() {
         Long userId = UserContext.getCurrentUserId();
 
-        UserResponse iamUser = iamServiceClient.getUserById(userId);
+        UserResponse identityUser = identityServiceClient.getUserById(userId);
         UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
 
         SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
@@ -252,7 +252,7 @@ public class UserProfileService {
                 .build();
 
         return SetupResponse.builder()
-                .setupRequired(iamUser.getSetupRequired())
+                .setupRequired(identityUser.getSetupRequired())
                 .profile(profileData)
                 .goal(profile.getGoalCode())
                 .build();
@@ -315,7 +315,7 @@ public class UserProfileService {
                 .setupRequired(false)
                 .build();
 
-        iamServiceClient.updateSetupRequired(userId, updateRequest);
+        identityServiceClient.updateSetupRequired(userId, updateRequest);
 
         return CompleteSetupResponse.builder()
                 .setupRequired(false)

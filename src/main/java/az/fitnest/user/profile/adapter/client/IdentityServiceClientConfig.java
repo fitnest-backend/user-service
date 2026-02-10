@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import(FeignConfig.class)
-public class IamServiceClientConfig {
-    
+public class IdentityServiceClientConfig {
+
 
 }

@@ -101,9 +101,9 @@ jwt:
   secret: ${JWT_SECRET:your-jwt-secret-change-in-production}
   issuer: ${JWT_ISSUER:fitnest}
 
-iam:
+identity:
   service:
-    url: ${IAM_SERVICE_URL:http://iam-service:8080}
+    url: ${IDENTITY_SERVICE_URL:http://identity-service:8080}
 
 media:
   service:
@@ -144,5 +144,5 @@ springdoc:
   writer-with-default-pretty-printer: false
 logging:
   level:
-    az.fitnest.user.user.adapter.client.IamServiceClient: DEBUG
+    az.fitnest.user.profile.adapter.client.IdentityServiceClient: DEBUG
     feign.Logger: DEBUG
