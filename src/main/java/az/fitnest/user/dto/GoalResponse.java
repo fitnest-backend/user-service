@@ -1,6 +1,5 @@
 package az.fitnest.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetupResponse {
-
-    @JsonProperty("setup_required")
-    private Boolean setupRequired;
+public class GoalResponse {
+    private String goal;
 }
+

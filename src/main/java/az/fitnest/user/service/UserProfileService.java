@@ -1,46 +1,6 @@
 package az.fitnest.user.service;
 
-import az.fitnest.user.client.IdentityGrpcClient;
-import az.fitnest.user.client.UpdateProfileImageRequest;
-import az.fitnest.user.client.UpdateSetupRequiredRequest;
-import az.fitnest.user.constants.EntityType;
-import az.fitnest.user.constants.Gender;
-import az.fitnest.user.dto.ActiveSubscriptionResponse;
-import az.fitnest.user.dto.CompleteSetupResponse;
-import az.fitnest.user.dto.CountersResponse;
-import az.fitnest.user.dto.DeleteAccountRequest;
-import az.fitnest.user.dto.FitnessLevelResponse;
-import az.fitnest.user.dto.GoalItemResponse;
-import az.fitnest.user.dto.GoalsResponse;
-import az.fitnest.user.dto.LocationResponse;
-import az.fitnest.user.dto.SetupRequest;
-import az.fitnest.user.dto.SetupResponse;
-import az.fitnest.user.dto.SummaryResponse;
-import az.fitnest.user.dto.UpdateBodyRequest;
-import az.fitnest.user.dto.UpdateGoalsRequest;
-import az.fitnest.user.dto.UpdateLocationRequest;
-import az.fitnest.user.dto.UpdatePreferencesRequest;
-import az.fitnest.user.dto.UserProfileResponse;
-import az.fitnest.user.dto.UpdateUserProfileRequest;
-import az.fitnest.user.entity.UserLocation;
-import az.fitnest.user.entity.UserProfile;
-import az.fitnest.user.exception.BadRequestException;
-import az.fitnest.user.exception.ConflictException;
-import az.fitnest.user.exception.ResourceNotFoundException;
-import az.fitnest.user.grpc.UserResponse;
-import az.fitnest.user.repository.UserLocationRepository;
-import az.fitnest.user.repository.UserProfileRepository;
-import az.fitnest.user.service.FavoritesService;
-import az.fitnest.user.util.UserContext;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import az.fitnest.user.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserProfileService {
@@ -53,6 +13,8 @@ public interface UserProfileService {
     ActiveSubscriptionResponse getActiveSubscription();
     void deleteAccount(DeleteAccountRequest request);
     void updateGoal(UpdateGoalsRequest request);
+    BodyInfoResponse getBodyInfo();
+    GoalResponse getGoal();
     void updatePreferences(UpdatePreferencesRequest request);
     GoalsResponse getReferenceGoals();
     SetupResponse getSetupStatus();

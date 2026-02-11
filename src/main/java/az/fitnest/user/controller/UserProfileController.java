@@ -73,6 +73,16 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @Operation(summary = "Get body metrics", description = "Returns user's physical metrics.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = BodyInfoResponse.class)))
+    })
+    @GetMapping("/body")
+    public ResponseEntity<ApiResponse<BodyInfoResponse>> getBody() {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getBodyInfo()));
+    }
+
     @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully",
@@ -101,6 +111,16 @@ public class UserProfileController {
     public ResponseEntity<ApiResponse<Void>> updateGoal(@Valid @RequestBody UpdateGoalsRequest request) {
         userProfileService.updateGoal(request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @Operation(summary = "Get user goal", description = "Returns the user's current goal.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = GoalResponse.class)))
+    })
+    @GetMapping("/goal")
+    public ResponseEntity<ApiResponse<GoalResponse>> getGoal() {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal()));
     }
 
     @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")

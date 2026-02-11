@@ -1,11 +1,8 @@
 package az.fitnest.user.dto;
 
 import az.fitnest.user.constants.Gender;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 public class UpdateBodyRequest {
@@ -24,9 +21,9 @@ public class UpdateBodyRequest {
     private Gender gender;
 
     @NotNull
-    @Past
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate birthDate;
+    @Min(1)
+    @Max(120)
+    private Integer age;
 
     public Integer getHeightCm() {
         return heightCm;

@@ -9,6 +9,8 @@ import az.fitnest.user.dto.UpdateGoalsRequest;
 import az.fitnest.user.dto.UpdatePreferencesRequest;
 import az.fitnest.user.dto.GoalsResponse;
 import az.fitnest.user.dto.GoalItemResponse;
+import az.fitnest.user.dto.BodyInfoResponse;
+import az.fitnest.user.dto.GoalResponse;
 import az.fitnest.user.dto.SetupResponse;
 import az.fitnest.user.dto.FitnessLevelResponse;
 import az.fitnest.user.dto.CompleteSetupResponse;
@@ -37,10 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
@@ -132,7 +131,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm());
         if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
         if (request.getGender() != null) profile.setGender(request.getGender());
-        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
+        if (request.getAge() != null) profile.setAge(request.getAge());
 
         userProfileRepository.save(profile);
     }
@@ -218,15 +217,28 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfileRepository.save(profile);
     }
 
-        @Override
-    public void updatePreferences(UpdatePreferencesRequest request) {
+    @Transactional(readOnly = true)
+    @Override
+    public BodyInfoResponse getBodyInfo() {
         Long userId = UserContext.getCurrentUserId();
-        
-        if (request.getLanguage() != null) {
-            identityServiceClient.updateLanguage(userId, request.getLanguage());
-        }
-        
-        // Save theme/notifications if/when extended
+        UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
+
+        return BodyInfoResponse.builder()
+                .heightCm(profile.getHeightCm())
+                .weightKg(profile.getWeightKg())
+                .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
+                .age(profile.getAge())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public GoalResponse getGoal() {
+        Long userId = UserContext.getCurrentUserId();
+        UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
+        return GoalResponse.builder()
+                .goal(profile.getGoalCode())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -245,25 +257,26 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
+        @Override
+    public void updatePreferences(UpdatePreferencesRequest request) {
+        Long userId = UserContext.getCurrentUserId();
+
+        if (request.getLanguage() != null) {
+            identityServiceClient.updateLanguage(userId, request.getLanguage());
+        }
+
+        // Save theme/notifications if/when extended
+    }
+
     @Transactional(readOnly = true)
         @Override
     public SetupResponse getSetupStatus() {
         Long userId = UserContext.getCurrentUserId();
 
         UserResponse identityUser = identityServiceClient.getUserById(userId);
-        UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
-
-        SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
-                .heightCm(profile.getHeightCm())
-                .weightKg(profile.getWeightKg())
-                .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
-                .age(calculateAge(profile.getBirthDate()))
-                .build();
 
         return SetupResponse.builder()
                 .setupRequired(identityUser.getSetupRequired())
-                .profile(profileData)
-                .goal(profile.getGoalCode())
                 .build();
     }
 
@@ -357,32 +370,19 @@ public class UserProfileServiceImpl implements UserProfileService {
                     profile.setGender(null);
                 }
             }
-            if (info.getBirthDate() != null) {
-                profile.setBirthDate(info.getBirthDate());
+            if (info.getAge() != null) {
+                profile.setAge(info.getAge());
             }
             if (info.getGoal() != null) profile.setGoalCode(info.getGoal());
         }
 
         userProfileRepository.save(profile);
 
-        SetupResponse.ProfileData profileData = SetupResponse.ProfileData.builder()
-                .heightCm(profile.getHeightCm())
-                .weightKg(profile.getWeightKg())
-                .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
-                .age(calculateAge(profile.getBirthDate()))
-                .build();
-
         return SetupResponse.builder()
                 .setupRequired(false)
-                .profile(profileData)
-                .goal(profile.getGoalCode())
                 .build();
     }
 
-    private Integer calculateAge(LocalDate birthDate) {
-        if (birthDate == null) return null;
-        return Period.between(birthDate, LocalDate.now()).getYears();
-    }
 
     private LocalDateTime parseCreatedAt(String value) {
         if (value == null || value.isBlank()) {
