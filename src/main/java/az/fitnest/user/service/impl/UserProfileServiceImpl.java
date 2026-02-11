@@ -236,8 +236,19 @@ public class UserProfileServiceImpl implements UserProfileService {
     public GoalResponse getGoal() {
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
+        String goalCode = profile.getGoalCode();
+
+        if (goalCode == null || goalCode.isBlank()) {
+            throw new ResourceNotFoundException("Goal not set for user");
+        }
+
+        var reference = goalReferenceRepository.findById(goalCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
+
         return GoalResponse.builder()
-                .goal(profile.getGoalCode())
+                .goalCode(goalCode)
+                .title(reference.getTitle())
+                .subtitle(reference.getSubtitle())
                 .build();
     }
 

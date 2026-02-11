@@ -1,5 +1,6 @@
 package az.fitnest.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoalResponse {
-    private String goal;
-}
 
+    @JsonProperty("code")
+    private String goalCode;
+
+    private String title;
+
+    private String subtitle;
+}
