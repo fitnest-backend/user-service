@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class IdentityUserResponse {
 
     @JsonProperty("user_id")
     private String userId;

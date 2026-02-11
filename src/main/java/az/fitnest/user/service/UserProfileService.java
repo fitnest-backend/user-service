@@ -1,4 +1,20 @@
 package az.fitnest.user.service;
+import az.fitnest.user.dto.SummaryResponse;
+import az.fitnest.user.dto.UserProfileResponse;
+import az.fitnest.user.dto.LocationResponse;
+import az.fitnest.user.dto.UpdateLocationRequest;
+import az.fitnest.user.dto.UpdateBodyRequest;
+import az.fitnest.user.dto.UpdateGoalsRequest;
+import az.fitnest.user.dto.UpdatePreferencesRequest;
+import az.fitnest.user.dto.GoalsResponse;
+import az.fitnest.user.dto.GoalItemResponse;
+import az.fitnest.user.dto.SetupResponse;
+import az.fitnest.user.dto.FitnessLevelResponse;
+import az.fitnest.user.dto.CompleteSetupResponse;
+import az.fitnest.user.dto.SetupRequest;
+import az.fitnest.user.dto.DeleteAccountRequest;
+import az.fitnest.user.dto.ActiveSubscriptionResponse;
+import az.fitnest.user.dto.CountersResponse;
 
 import az.fitnest.user.client.IdentityGrpcClient;
 import az.fitnest.user.grpc.UserResponse;
@@ -8,15 +24,13 @@ import az.fitnest.user.client.UpdateProfileImageRequest;
 import az.fitnest.user.client.UpdateSetupRequiredRequest;
 import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.UserProfileRepository;
-import az.fitnest.user.dto.*;
-import az.fitnest.user.dto.*;
 import az.fitnest.user.constants.Gender;
 import az.fitnest.user.entity.UserLocation;
 import az.fitnest.user.entity.UserProfile;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
-import az.fitnest.user.criteria.UserContext;
+import az.fitnest.user.util.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -100,7 +114,7 @@ public class UserProfileService {
     }
 
     @Transactional
-    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.criteria.UserContext).getCurrentUserId()")
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     public void updateBody(UpdateBodyRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
@@ -306,7 +320,7 @@ public class UserProfileService {
     }
 
     @Transactional
-    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.criteria.UserContext).getCurrentUserId()")
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     public SetupResponse setupProfile(SetupRequest request) {
         Long userId = UserContext.getCurrentUserId();
 

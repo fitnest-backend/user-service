@@ -62,4 +62,5 @@ public class UserProfile {
     /** URL to the user's profile image */
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+
 }

@@ -1,4 +1,4 @@
-package az.fitnest.user.criteria;
+package az.fitnest.user.util;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;

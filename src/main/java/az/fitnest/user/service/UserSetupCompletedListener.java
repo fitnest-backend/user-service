@@ -1,6 +1,6 @@
 package az.fitnest.user.service;
 
-import az.fitnest.identity.user.events.UserSetupCompletedEvent;
+import az.fitnest.user.dto.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.entity.UserProfile;
 import lombok.RequiredArgsConstructor;

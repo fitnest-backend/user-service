@@ -1,4 +1,4 @@
-package az.fitnest.user.criteria;
+package az.fitnest.user.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

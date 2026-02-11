@@ -8,7 +8,7 @@ import az.fitnest.user.constants.EntityType;
 import az.fitnest.user.entity.Favorite;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
-import az.fitnest.user.criteria.UserContext;
+import az.fitnest.user.util.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

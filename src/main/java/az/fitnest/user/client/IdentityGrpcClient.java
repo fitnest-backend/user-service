@@ -23,7 +23,7 @@ public class IdentityGrpcClient {
     }
 
     @Cacheable(value = "userAuthData", key = "#userId")
-    public UserResponse getUserById(Long userId) {
+    public az.fitnest.user.grpc.UserResponse getUserById(Long userId) {
         GetUserByIdRequest request = GetUserByIdRequest.newBuilder()
                 .setUserId(userId)
                 .build();
@@ -31,7 +31,7 @@ public class IdentityGrpcClient {
         return withDeadline().getUserById(request);
     }
 
-    public UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
+    public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
         UpdateUserProfileRequest request = UpdateUserProfileRequest.newBuilder()
                 .setUserId(userId)
                 .setFirstName(firstName != null ? firstName : "")
@@ -42,7 +42,7 @@ public class IdentityGrpcClient {
         return withDeadline().updateUserProfile(request);
     }
 
-    public UserResponse updateProfileImage(Long userId, String imageUrl) {
+    public az.fitnest.user.grpc.UserResponse updateProfileImage(Long userId, String imageUrl) {
         UpdateProfileImageRequest request = UpdateProfileImageRequest.newBuilder()
                 .setUserId(userId)
                 .setImageUrl(imageUrl != null ? imageUrl : "")
@@ -51,7 +51,7 @@ public class IdentityGrpcClient {
         return withDeadline().updateProfileImage(request);
     }
 
-    public UserResponse updateSetupRequired(Long userId, boolean setupRequired) {
+    public az.fitnest.user.grpc.UserResponse updateSetupRequired(Long userId, boolean setupRequired) {
         UpdateSetupRequiredRequest request = UpdateSetupRequiredRequest.newBuilder()
                 .setUserId(userId)
                 .setSetupRequired(setupRequired)
@@ -60,7 +60,7 @@ public class IdentityGrpcClient {
         return withDeadline().updateSetupRequired(request);
     }
 
-    public UserResponse updateLanguage(Long userId, String language) {
+    public az.fitnest.user.grpc.UserResponse updateLanguage(Long userId, String language) {
         UpdateLanguageRequest request = UpdateLanguageRequest.newBuilder()
                 .setUserId(userId)
                 .setLanguage(language != null ? language : "")

@@ -1,5 +1,5 @@
 package az.fitnest.user.profile.adapter.events;
-import az.fitnest.identity.user.events.UserSetupCompletedEvent;
+import az.fitnest.user.dto.UserSetupCompletedEvent;
 import az.fitnest.user.profile.adapter.persistence.UserProfileRepository;
 import az.fitnest.user.profile.domain.model.UserProfile;
 import org.junit.jupiter.api.Test;

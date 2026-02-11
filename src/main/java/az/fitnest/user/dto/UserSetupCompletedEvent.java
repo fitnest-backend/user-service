@@ -1,4 +1,4 @@
-package az.fitnest.identity.user.events;
+package az.fitnest.user.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

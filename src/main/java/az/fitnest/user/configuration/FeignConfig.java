@@ -1,6 +1,6 @@
 package az.fitnest.user.configurationuration;
 
-import az.fitnest.user.criteria.UserContext;
+import az.fitnest.user.util.UserContext;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
