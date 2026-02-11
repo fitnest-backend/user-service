@@ -32,7 +32,7 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
-        UpdateUserProfileRequest request = UpdateUserProfileRequest.newBuilder()
+        az.fitnest.user.grpc.UpdateUserProfileRequest request = az.fitnest.user.grpc.UpdateUserProfileRequest.newBuilder()
                 .setUserId(userId)
                 .setFirstName(firstName != null ? firstName : "")
                 .setLastName(lastName != null ? lastName : "")
@@ -43,7 +43,7 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateProfileImage(Long userId, String imageUrl) {
-        UpdateProfileImageRequest request = UpdateProfileImageRequest.newBuilder()
+        az.fitnest.user.grpc.UpdateProfileImageRequest request = az.fitnest.user.grpc.UpdateProfileImageRequest.newBuilder()
                 .setUserId(userId)
                 .setImageUrl(imageUrl != null ? imageUrl : "")
                 .build();
@@ -52,7 +52,7 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateSetupRequired(Long userId, boolean setupRequired) {
-        UpdateSetupRequiredRequest request = UpdateSetupRequiredRequest.newBuilder()
+        az.fitnest.user.grpc.UpdateSetupRequiredRequest request = az.fitnest.user.grpc.UpdateSetupRequiredRequest.newBuilder()
                 .setUserId(userId)
                 .setSetupRequired(setupRequired)
                 .build();
@@ -61,7 +61,7 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateLanguage(Long userId, String language) {
-        UpdateLanguageRequest request = UpdateLanguageRequest.newBuilder()
+        az.fitnest.user.grpc.UpdateLanguageRequest request = az.fitnest.user.grpc.UpdateLanguageRequest.newBuilder()
                 .setUserId(userId)
                 .setLanguage(language != null ? language : "")
                 .build();
@@ -70,7 +70,7 @@ public class IdentityGrpcClient {
     }
 
     public void deleteUser(Long userId, String reason) {
-        DeleteUserRequest request = DeleteUserRequest.newBuilder()
+        az.fitnest.user.grpc.DeleteUserRequest request = az.fitnest.user.grpc.DeleteUserRequest.newBuilder()
                 .setUserId(userId)
                 .setReason(reason != null ? reason : "")
                 .build();

@@ -1,4 +1,4 @@
-package az.fitnest.user.configurationuration;
+package az.fitnest.user.configuration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;

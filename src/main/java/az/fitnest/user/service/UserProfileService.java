@@ -21,6 +21,7 @@ import az.fitnest.user.dto.UpdateGoalsRequest;
 import az.fitnest.user.dto.UpdateLocationRequest;
 import az.fitnest.user.dto.UpdatePreferencesRequest;
 import az.fitnest.user.dto.UserProfileResponse;
+import az.fitnest.user.dto.UpdateUserProfileRequest;
 import az.fitnest.user.entity.UserLocation;
 import az.fitnest.user.entity.UserProfile;
 import az.fitnest.user.exception.BadRequestException;

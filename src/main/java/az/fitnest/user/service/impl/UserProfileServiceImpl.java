@@ -16,13 +16,12 @@ import az.fitnest.user.dto.SetupRequest;
 import az.fitnest.user.dto.DeleteAccountRequest;
 import az.fitnest.user.dto.ActiveSubscriptionResponse;
 import az.fitnest.user.dto.CountersResponse;
+import az.fitnest.user.dto.UpdateUserProfileRequest;
 
 import az.fitnest.user.client.IdentityGrpcClient;
 import az.fitnest.user.grpc.UserResponse;
 import az.fitnest.user.service.FavoritesService;
 import az.fitnest.user.constants.EntityType;
-import az.fitnest.user.client.UpdateProfileImageRequest;
-import az.fitnest.user.client.UpdateSetupRequiredRequest;
 import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.constants.Gender;

@@ -1,4 +1,4 @@
-package az.fitnest.user.configurationuration;
+package az.fitnest.user.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

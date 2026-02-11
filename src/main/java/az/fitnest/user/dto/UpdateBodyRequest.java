@@ -25,4 +25,8 @@ public class UpdateBodyRequest {
     @NotNull
     @Past
     private LocalDate birthDate;
+
+    public Integer getHeightCm() {
+        return heightCm;
+    }
 }

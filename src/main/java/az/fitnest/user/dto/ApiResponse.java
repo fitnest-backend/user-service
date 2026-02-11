@@ -5,19 +5,22 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
-    private final LocalDateTime timestamp = LocalDateTime.now();
-    private final boolean success;
-    private final T data;
-    private final ApiError error;
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
+    private boolean success;
+    private T data;
+    private ApiError error;
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
@@ -34,9 +37,11 @@ public class ApiResponse<T> {
     }
 
     @Getter
+    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ApiError {
-        private final String code;
-        private final String message;
+        private String code;
+        private String message;
     }
 }

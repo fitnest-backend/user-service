@@ -1,4 +1,4 @@
-package az.fitnest.user.configurationuration;
+package az.fitnest.user.configuration;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
