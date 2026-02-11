@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -83,12 +85,18 @@ public class UserProfileController {
     }
 
     @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
+    @RequestBody(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+            schema = @Schema(type = "object",
+                    requiredProperties = {"image"},
+                    properties = {
+                            @Schema(name = "image", type = "string", format = "binary")
+                    })))
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
     })
-    @PutMapping("/profile-image")
-    public ResponseEntity<ApiResponse<UserProfileResponse>> updateProfileImage(@RequestParam("image") MultipartFile file) {
+    @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<UserProfileResponse>> updateProfileImage(@RequestPart("image") MultipartFile file) {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.updateProfileImage(file)));
     }
 
