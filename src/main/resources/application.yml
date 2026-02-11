@@ -125,7 +125,8 @@ management:
   endpoint:
     health:
       show-details: when-authorized
-  
+
+app:
   warmup:
     enabled: ${APP_WARMUP_ENABLED:true}
     db: ${APP_WARMUP_DB:true}

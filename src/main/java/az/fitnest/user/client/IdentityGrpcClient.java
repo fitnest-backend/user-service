@@ -1,10 +1,13 @@
 package az.fitnest.user.client;
 
 import az.fitnest.user.grpc.*;
+import io.grpc.Metadata;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.grpc.Deadline;
 
@@ -18,10 +21,11 @@ public class IdentityGrpcClient {
     @GrpcClient("identity-service")
     private UserServiceGrpc.UserServiceBlockingStub userServiceStub;
 
-    private static final long DEFAULT_TIMEOUT_MS = 10000L; // 10s per-call deadline (allows for connection establishment)
+    @Value("${grpc.identity.deadline-ms:5000}")
+    private long deadlineMs;
 
     private UserServiceGrpc.UserServiceBlockingStub withDeadline() {
-        return userServiceStub.withDeadlineAfter(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+        return userServiceStub.withDeadlineAfter(deadlineMs, TimeUnit.MILLISECONDS);
     }
 
     public az.fitnest.user.grpc.UserResponse getUserById(Long userId) {
@@ -62,19 +66,27 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateSetupRequired(Long userId, boolean setupRequired) {
+        long start = System.currentTimeMillis();
         try {
-            log.debug("Calling identity-service to update setup required status for userId: {}, setupRequired: {}", userId, setupRequired);
+            log.debug("Calling identity-service updateSetupRequired userId={}, setupRequired={}, deadlineMs={}", userId, setupRequired, deadlineMs);
             az.fitnest.user.grpc.UpdateSetupRequiredRequest request = az.fitnest.user.grpc.UpdateSetupRequiredRequest.newBuilder()
                     .setUserId(userId)
                     .setSetupRequired(setupRequired)
                     .build();
 
             az.fitnest.user.grpc.UserResponse response = withDeadline().updateSetupRequired(request);
-            log.debug("Successfully updated setup required status for userId: {}", userId);
+            log.debug("updateSetupRequired success userId={} in {}ms", userId, System.currentTimeMillis() - start);
             return response;
         } catch (StatusRuntimeException e) {
-            log.error("gRPC call failed for updateSetupRequired - Status: {}, Code: {}, Message: {}",
-                    e.getStatus().getCode(), e.getStatus().getCode(), e.getStatus().getDescription(), e);
+            Metadata trailers = Status.trailersFromThrowable(e);
+            Status status = e.getStatus();
+            log.error("gRPC updateSetupRequired failed userId={} code={} desc={} trailers={} durationMs={}",
+                    userId,
+                    status != null ? status.getCode() : null,
+                    status != null ? status.getDescription() : null,
+                    trailers,
+                    System.currentTimeMillis() - start,
+                    e);
             throw e;
         }
     }
