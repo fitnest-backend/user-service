@@ -75,7 +75,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.value.default.type: az.fitnest.identity.user.events.UserSetupCompletedEvent
+        spring.json.value.default.type: az.fitnest.user.dto.UserSetupCompletedEvent
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
