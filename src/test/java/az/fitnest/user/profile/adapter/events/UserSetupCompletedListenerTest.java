@@ -1,7 +1,9 @@
 package az.fitnest.user.profile.adapter.events;
 import az.fitnest.user.dto.UserSetupCompletedEvent;
-import az.fitnest.user.profile.adapter.persistence.UserProfileRepository;
-import az.fitnest.user.profile.domain.model.UserProfile;
+import az.fitnest.user.repository.UserProfileRepository;
+import az.fitnest.user.entity.UserProfile;
+import az.fitnest.user.service.EventIdempotencyService;
+import az.fitnest.user.service.impl.UserSetupCompletedListener;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.*;

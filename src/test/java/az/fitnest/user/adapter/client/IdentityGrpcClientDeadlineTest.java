@@ -1,4 +1,5 @@
 package az.fitnest.user.adapter.client;
+import az.fitnest.user.client.IdentityGrpcClient;
 import az.fitnest.user.grpc.GetUserByIdRequest;
 import az.fitnest.user.grpc.UserResponse;
 import az.fitnest.user.grpc.UserServiceGrpc;

@@ -1,9 +1,10 @@
 package az.fitnest.user.profile.adapter.events;
 import az.fitnest.user.dto.UserSetupCompletedEvent;
-import az.fitnest.user.profile.adapter.persistence.UserProfileRepository;
-import az.fitnest.user.favorites.adapter.persistence.FavoritesRepository;
-import az.fitnest.user.profile.adapter.persistence.UserLocationRepository;
-import az.fitnest.user.profile.adapter.persistence.GoalReferenceRepository;
+import az.fitnest.user.repository.UserProfileRepository;
+import az.fitnest.user.repository.FavoritesRepository;
+import az.fitnest.user.repository.UserLocationRepository;
+import az.fitnest.user.repository.GoalReferenceRepository;
+import az.fitnest.user.service.EventIdempotencyService;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
