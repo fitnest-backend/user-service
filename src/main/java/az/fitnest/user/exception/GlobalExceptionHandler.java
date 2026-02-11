@@ -67,7 +67,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(StatusRuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleStatusRuntimeException(StatusRuntimeException ex) {
-        log.error("gRPC Service Error - Status: {}, Message: {}", ex.getStatus(), ex.getStatus().getDescription());
+        log.error("gRPC Service Error - Status Code: {}, Description: {}, Cause: {}",
+                ex.getStatus().getCode(), ex.getStatus().getDescription(), ex.getCause());
 
         String errorCode = "SERVICE_UNAVAILABLE";
         String errorMessage = "External service error";
@@ -93,8 +94,16 @@ public class GlobalExceptionHandler {
             case INTERNAL:
                 errorMessage = "Identity service internal error";
                 break;
+            case UNKNOWN:
+                errorMessage = "Identity service encountered an unknown error. Please try again later.";
+                log.error("UNKNOWN gRPC error - this usually indicates a server-side issue", ex);
+                break;
             default:
-                errorMessage = "Identity service error: " + ex.getStatus().getDescription();
+                // For any other status code, use the description if available
+                String description = ex.getStatus().getDescription();
+                errorMessage = (description != null && !description.isEmpty())
+                    ? "Identity service error: " + description
+                    : "Identity service encountered an error. Please try again later.";
         }
 
         return ResponseEntity
