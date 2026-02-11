@@ -2,12 +2,9 @@ package az.fitnest.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 @Getter
@@ -34,9 +31,9 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(String code, String message) {
+    public static <T> ApiResponse<T> error(ApiError apiError) {
         return ApiResponse.<T>builder()
-                .error(new ApiError(code, message))
+                .error(apiError)
                 .build();
     }
 
@@ -44,8 +41,13 @@ public class ApiResponse<T> {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ApiError {
         private String code;
         private String message;
+        private Integer status;
+        private String path;
+        private OffsetDateTime timestamp;
+        private Object details;
     }
 }
