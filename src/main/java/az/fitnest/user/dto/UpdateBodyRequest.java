@@ -1,6 +1,7 @@
 package az.fitnest.user.dto;
 
 import az.fitnest.user.constants.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class UpdateBodyRequest {
 
     @NotNull
     @Past
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     public Integer getHeightCm() {

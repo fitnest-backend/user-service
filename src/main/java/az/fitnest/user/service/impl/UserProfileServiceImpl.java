@@ -358,7 +358,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 }
             }
             if (info.getBirthDate() != null) {
-                profile.setBirthDate(LocalDate.parse(info.getBirthDate(), DateTimeFormatter.ISO_DATE));
+                profile.setBirthDate(info.getBirthDate());
             }
             if (info.getGoal() != null) profile.setGoalCode(info.getGoal());
         }
