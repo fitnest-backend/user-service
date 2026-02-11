@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.JwtException;
-import az.fitnest.user.shared.util.JwtUtil;
+import az.fitnest.user.util.JwtUtil;
 
 import java.io.IOException;
 

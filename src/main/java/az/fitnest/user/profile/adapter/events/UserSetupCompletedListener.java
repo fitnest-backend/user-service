@@ -1,8 +1,8 @@
 package az.fitnest.user.profile.adapter.events;
 
 import az.fitnest.identity.user.events.UserSetupCompletedEvent;
-import az.fitnest.user.profile.adapter.persistence.UserProfileRepository;
-import az.fitnest.user.profile.domain.model.UserProfile;
+import az.fitnest.user.repository.UserProfileRepository;
+import az.fitnest.user.entity.UserProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

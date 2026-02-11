@@ -1,0 +1,68 @@
+package az.fitnest.user.controller;
+
+import az.fitnest.user.service.FavoritesService;
+import az.fitnest.user.constants.EntityType;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Internal controller for favorites operations.
+ * Used for inter-service communication to check favorite status.
+ * Not exposed in public API documentation.
+ */
+@RestController
+@RequestMapping("/api/v1/internal/favorites")
+@RequiredArgsConstructor
+@Hidden // Hide from Swagger - internal endpoints only
+public class InternalFavoritesController {
+
+    private final FavoritesService favoritesService;
+
+    @Operation(
+            summary = "Check if entity is favorited",
+            description = "Internal endpoint to check if a specific entity is favorited by a user."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Favorite status returned",
+                    content = @Content(schema = @Schema(implementation = Boolean.class))
+            )
+    })
+    @GetMapping("/check")
+    public boolean isFavorited(
+            @Parameter(description = "User ID to check") @RequestParam("userId") Long userId,
+            @Parameter(description = "Type of entity (GYM, STORE, etc.)") @RequestParam("entityType") EntityType entityType,
+            @Parameter(description = "Entity identifier") @RequestParam("entityId") String entityId) {
+        return favoritesService.isFavorited(userId, entityType, entityId);
+    }
+
+    @Operation(
+            summary = "Bulk check favorite status",
+            description = "Internal endpoint to check favorite status for multiple entities at once."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Bulk favorite status returned as map",
+                    content = @Content(schema = @Schema(implementation = Map.class))
+            )
+    })
+    @PostMapping("/bulk-check")
+    public Map<String, Boolean> bulkCheckFavorites(
+            @Parameter(description = "User ID to check") @RequestParam("userId") Long userId,
+            @Parameter(description = "Type of entities") @RequestParam("entityType") EntityType entityType,
+            @Parameter(description = "List of entity identifiers") @RequestBody List<String> entityIds) {
+        return favoritesService.bulkCheckFavorites(userId, entityType, entityIds);
+    }
+}
