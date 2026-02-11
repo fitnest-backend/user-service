@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 /**
  * Entity representing a user's profile information.
  * Contains physical metrics, personal details, and fitness goals.
@@ -37,9 +39,9 @@ public class UserProfile {
     @Column(name = "gender")
     private Gender gender;
 
-    /** User's age */
-    @Column(name = "age")
-    private Integer age;
+    /** User's birth date */
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     /** Code representing the user's primary fitness goal */
     @Column(name = "goal")

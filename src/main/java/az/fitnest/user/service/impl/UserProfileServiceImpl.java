@@ -131,7 +131,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm());
         if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
         if (request.getGender() != null) profile.setGender(request.getGender());
-        if (request.getAge() != null) profile.setAge(request.getAge());
+        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
 
         userProfileRepository.save(profile);
     }
@@ -227,7 +227,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .heightCm(profile.getHeightCm())
                 .weightKg(profile.getWeightKg())
                 .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
-                .age(profile.getAge())
+                .birthDate(profile.getBirthDate())
                 .build();
     }
 
@@ -381,10 +381,15 @@ public class UserProfileServiceImpl implements UserProfileService {
                     profile.setGender(null);
                 }
             }
-            if (info.getAge() != null) {
-                profile.setAge(info.getAge());
+            if (info.getBirthDate() != null) {
+                profile.setBirthDate(info.getBirthDate());
             }
-            if (info.getGoal() != null) profile.setGoalCode(info.getGoal());
+            if (info.getGoal() != null) {
+                if (!goalReferenceRepository.existsById(info.getGoal())) {
+                    throw new ResourceNotFoundException("Goal reference not found");
+                }
+                profile.setGoalCode(info.getGoal());
+            }
         }
 
         userProfileRepository.save(profile);

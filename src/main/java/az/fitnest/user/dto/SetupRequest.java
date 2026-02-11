@@ -1,11 +1,13 @@
 package az.fitnest.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class SetupRequest {
@@ -24,10 +26,10 @@ public class SetupRequest {
 
         private String gender;
 
-        @JsonProperty("age")
-        @Min(value = 1, message = "Age must be at least 1")
-        @Max(value = 120, message = "Age must be realistic")
-        private Integer age;
+        @JsonProperty("birth_date")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        @Past(message = "Birth date must be in the past")
+        private LocalDate birthDate;
 
         private String goal;
     }
