@@ -3,7 +3,6 @@ package az.fitnest.user.client;
 import az.fitnest.user.grpc.*;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import io.grpc.Deadline;
 
@@ -22,7 +21,6 @@ public class IdentityGrpcClient {
         return userServiceStub.withDeadlineAfter(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
     }
 
-    @Cacheable(value = "userAuthData", key = "#userId")
     public az.fitnest.user.grpc.UserResponse getUserById(Long userId) {
         GetUserByIdRequest request = GetUserByIdRequest.newBuilder()
                 .setUserId(userId)
