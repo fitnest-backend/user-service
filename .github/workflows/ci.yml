@@ -110,10 +110,19 @@ jobs:
     if: github.ref_name == 'development'
 
     steps:
+      - name: Prepare ArgoCD token
+        env:
+          ARGOCD_TOKEN_RAW: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          CLEAN_TOKEN="$ARGOCD_TOKEN_RAW"
+          CLEAN_TOKEN="${CLEAN_TOKEN%\"}"
+          CLEAN_TOKEN="${CLEAN_TOKEN#\"}"
+          echo "ARGOCD_TOKEN=$CLEAN_TOKEN" >> $GITHUB_ENV
+
       - name: Trigger ArgoCD Sync
         run: |
           curl -k -X POST \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
             -H "Content-Type: application/json" \
             http://161.97.183.7:31052/api/v1/applications/fitnest-user-service-dev/sync \
             -d '{}'
