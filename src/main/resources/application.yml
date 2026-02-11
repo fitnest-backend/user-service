@@ -163,6 +163,7 @@ grpc:
       enable-keep-alive: true
       keep-alive-time: 30s
       keep-alive-timeout: 5s
+      deadline-after: ${GRPC_DEADLINE:10s}
       security:
         enabled: ${GRPC_TLS_ENABLED:false}
         trust-cert-collection: ${GRPC_TRUST_CERT:}

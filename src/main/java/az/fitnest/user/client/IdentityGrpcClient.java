@@ -16,7 +16,7 @@ public class IdentityGrpcClient {
     @GrpcClient("identity-service")
     private UserServiceGrpc.UserServiceBlockingStub userServiceStub;
 
-    private static final long DEFAULT_TIMEOUT_MS = 2000L; // 2s per-call deadline
+    private static final long DEFAULT_TIMEOUT_MS = 10000L; // 10s per-call deadline (allows for connection establishment)
 
     private UserServiceGrpc.UserServiceBlockingStub withDeadline() {
         return userServiceStub.withDeadlineAfter(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
