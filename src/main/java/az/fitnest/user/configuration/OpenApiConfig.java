@@ -19,6 +19,7 @@ public class OpenApiConfig {
     @Value("${springdoc.server-url:}")
     private String serverUrl;
 
+
     @Bean
     public OpenAPI customOpenAPI() {
         OpenAPI openAPI = new OpenAPI()
