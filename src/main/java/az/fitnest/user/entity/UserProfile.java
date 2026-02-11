@@ -1,7 +1,7 @@
 package az.fitnest.user.entity;
 
 import az.fitnest.user.constants.Gender;
-import az.fitnest.user.shared.persistence.BaseAuditableEntity;
+import az.fitnest.user.entity.BaseAuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

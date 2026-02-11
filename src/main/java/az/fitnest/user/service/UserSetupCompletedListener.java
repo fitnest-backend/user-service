@@ -1,4 +1,4 @@
-package az.fitnest.user.profile.adapter.events;
+package az.fitnest.user.service;
 
 import az.fitnest.identity.user.events.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;

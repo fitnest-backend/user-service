@@ -16,7 +16,7 @@ import az.fitnest.user.entity.UserProfile;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
-import az.fitnest.user.util.UserContext;
+import az.fitnest.user.criteria.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -100,7 +100,7 @@ public class UserProfileService {
     }
 
     @Transactional
-    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.criteria.UserContext).getCurrentUserId()")
     public void updateBody(UpdateBodyRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
@@ -306,7 +306,7 @@ public class UserProfileService {
     }
 
     @Transactional
-    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.criteria.UserContext).getCurrentUserId()")
     public SetupResponse setupProfile(SetupRequest request) {
         Long userId = UserContext.getCurrentUserId();
 

@@ -1,6 +1,6 @@
 package az.fitnest.user.security;
 
-import az.fitnest.user.util.JwtUtil;
+import az.fitnest.user.criteria.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
