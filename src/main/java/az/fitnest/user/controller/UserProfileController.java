@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -85,12 +84,9 @@ public class UserProfileController {
     }
 
     @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
-    @RequestBody(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-            schema = @Schema(type = "object",
-                    requiredProperties = {"image"},
-                    properties = {
-                            @Schema(name = "image", type = "string", format = "binary")
-                    })))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+            schema = @Schema(implementation = ProfileImageUploadRequest.class)))
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
