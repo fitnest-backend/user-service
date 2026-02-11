@@ -1,13 +1,14 @@
 package az.fitnest.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -16,22 +17,25 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
-    @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
-    private boolean success;
     private T data;
     private ApiError error;
 
+    @JsonValue
+    public Object asJson() {
+        if (error != null) {
+            return Map.of("error", error);
+        }
+        return data;
+    }
+
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
-                .success(true)
                 .data(data)
                 .build();
     }
 
     public static <T> ApiResponse<T> error(String code, String message) {
         return ApiResponse.<T>builder()
-                .success(false)
                 .error(new ApiError(code, message))
                 .build();
     }
