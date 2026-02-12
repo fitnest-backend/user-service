@@ -1,13 +1,17 @@
 package az.fitnest.user.service.impl;
 import az.fitnest.user.service.*;
 
-import az.fitnest.user.client.TeraBoxGrpcClient;
 import az.fitnest.user.exception.BadRequestException;
-import az.fitnest.user.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.beans.factory.annotation.Value;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
 import java.util.Arrays;
@@ -26,8 +30,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
 
-    private final TeraBoxGrpcClient teraBoxGrpcClient;
-
     /** Maximum allowed file size: 5MB */
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -35,6 +37,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png"
     );
+
+    @Value("${terabox.worker.url:http://terabox-worker-service:9090}")
+    private String teraboxWorkerUrl;
+
+    private final WebClient webClient = WebClient.create();
 
     /**
      * Saves a file to the media service via gRPC.
@@ -52,17 +59,26 @@ public class FileStorageServiceImpl implements FileStorageService {
         validateFile(file);
 
         try {
-            az.fitnest.worker.grpc.UploadFileResponse response = teraBoxGrpcClient.uploadFile(file, "/uploads");
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", file.getResource());
+            body.add("directory", "/uploads");
 
-            if (response != null && response.getSuccess() && response.hasData()) {
-                String imageUrl = response.getData().getPath();
+            JsonNode response = webClient.post()
+                    .uri(teraboxWorkerUrl + "/api/v1/upload/upload")
+                    .body(BodyInserters.fromMultipartData(body))
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+
+            if (response != null && response.get("success").asBoolean() && response.has("data")) {
+                String imageUrl = response.get("data").get("path").asText();
                 return imageUrl;
             } else {
-                log.error("Upload failed via gRPC: {}", response != null ? response.getMessage() : "Unknown error");
+                log.error("Upload failed via HTTP: {}", response != null ? response.get("message").asText() : "Unknown error");
                 throw new BadRequestException("Failed to upload profile image");
             }
         } catch (Exception e) {
-            log.error("Error calling terabox-worker gRPC service: ", e);
+            log.error("Error calling terabox-worker HTTP service: ", e);
             throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
         }
     }
@@ -109,11 +125,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         if (fileUrls == null || fileUrls.isEmpty()) {
             return;
         }
-        try {
-            teraBoxGrpcClient.deleteFiles(fileUrls);
-        } catch (Exception e) {
-            log.warn("Failed to delete files via gRPC: {}", fileUrls, e);
-            // We don't throw exception here to avoid blocking main flow
-        }
+        // TODO: Implement HTTP delete if needed
+        log.warn("Delete files not implemented via HTTP: {}", fileUrls);
     }
 }
