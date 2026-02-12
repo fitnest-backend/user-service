@@ -24,7 +24,8 @@ import static org.mockito.Mockito.*;
                 "org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration," +
                 "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration",
         "spring.data.jpa.repositories.enabled=false",
-        "app.warmup.enabled=false"
+        "app.warmup.enabled=false",
+        "grpc.server.port=0"
 })
 @EmbeddedKafka(partitions = 1, topics = {"user-setup-completed"}, bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class UserSetupCompletedKafkaIT {

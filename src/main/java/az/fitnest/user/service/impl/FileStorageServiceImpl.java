@@ -1,7 +1,7 @@
 package az.fitnest.user.service.impl;
 import az.fitnest.user.service.*;
 
-import az.fitnest.user.client.MediaGrpcClient;
+import az.fitnest.user.client.TeraBoxGrpcClient;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +19,14 @@ import java.util.Arrays;
  * <p>This service enforces file size limits and content type restrictions
  * to ensure only valid images are uploaded.
  *
- * @see MediaGrpcClient
+ * @see TeraBoxGrpcClient
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
 
-    private final MediaGrpcClient mediaGrpcClient;
+    private final TeraBoxGrpcClient teraBoxGrpcClient;
 
     /** Maximum allowed file size: 5MB */
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -52,20 +52,17 @@ public class FileStorageServiceImpl implements FileStorageService {
         validateFile(file);
 
         try {
-            az.fitnest.media.grpc.MediaUploadResponse response = mediaGrpcClient.uploadImage(file);
+            az.fitnest.worker.grpc.UploadFileResponse response = teraBoxGrpcClient.uploadFile(file, "/uploads");
 
             if (response != null && response.getSuccess() && response.hasData()) {
-                String imageUrl = response.getData().getThumbnailUrl();
-                if (imageUrl == null || imageUrl.isEmpty()) {
-                    imageUrl = response.getData().getPath();
-                }
+                String imageUrl = response.getData().getPath();
                 return imageUrl;
             } else {
                 log.error("Upload failed via gRPC: {}", response != null ? response.getMessage() : "Unknown error");
                 throw new BadRequestException("Failed to upload profile image");
             }
         } catch (Exception e) {
-            log.error("Error calling media gRPC service: ", e);
+            log.error("Error calling terabox-worker gRPC service: ", e);
             throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
         }
     }
@@ -113,7 +110,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             return;
         }
         try {
-            mediaGrpcClient.deleteFiles(fileUrls);
+            teraBoxGrpcClient.deleteFiles(fileUrls);
         } catch (Exception e) {
             log.warn("Failed to delete files via gRPC: {}", fileUrls, e);
             // We don't throw exception here to avoid blocking main flow

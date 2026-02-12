@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package workerpb;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.worker.grpc";
+option java_outer_classname = "WorkerServiceProto";
+option go_package = "github.com/fitnest/media-service/internal/pb/workerpb;workerpb";
+
+service TeraBoxWorker {
+  rpc UploadFile (UploadFileRequest) returns (UploadFileResponse);
+  rpc FetchFileList (FetchFileListRequest) returns (FetchFileListResponse);
+  rpc DownloadFile (DownloadFileRequest) returns (DownloadFileResponse);
+  rpc MoveFile (MoveFileRequest) returns (MoveFileResponse);
+  rpc DeleteFiles (DeleteFilesRequest) returns (DeleteFilesResponse);
+}
+
+message UploadFileRequest {
+  bytes file_data = 1;
+  string filename = 2;
+  string directory = 3;
+}
+
+message UploadFileResponse {
+  bool success = 1;
+  string message = 2;
+  TeraBoxFileData data = 3;
+}
+
+message FetchFileListRequest {
+  string directory = 1;
+}
+
+message FetchFileListResponse {
+  bool success = 1;
+  string message = 2;
+  repeated TeraBoxFileData data = 3;
+}
+
+message DownloadFileRequest {
+  string file_id = 1;
+}
+
+message DownloadFileResponse {
+  bool success = 1;
+  string message = 2;
+  string download_url = 3;
+}
+
+message MoveFileRequest {
+  string old_path = 1;
+  string new_path = 2;
+  string new_name = 3;
+}
+
+message MoveFileResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteFilesRequest {
+  repeated string paths = 1;
+}
+
+message DeleteFilesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message TeraBoxFileData {
+  string fs_id = 1;
+  string path = 2;
+  string server_filename = 3;
+  int64 size = 4;
+}
