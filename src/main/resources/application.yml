@@ -167,7 +167,7 @@ grpc:
       keep-alive-timeout: 5s
       deadline-after: ${GRPC_DEADLINE:10s}
     media-service:
-      address: 'static://media-service:4000'
+      address: 'static://media-service:9090'
       enable-keep-alive: true
       keep-alive-without-calls: true
       negotiation-type: plaintext
