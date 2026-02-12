@@ -162,9 +162,18 @@ grpc:
       address: 'static://identity-service:9090'
       negotiation-type: ${GRPC_CLIENT_NEGOTIATION:plaintext}
       enable-keep-alive: true
+      keep-alive-without-calls: true
       keep-alive-time: 30s
       keep-alive-timeout: 5s
       deadline-after: ${GRPC_DEADLINE:10s}
+    media-service:
+      address: 'static://media-service:9090'
+      enable-keep-alive: true
+      keep-alive-without-calls: true
+      negotiation-type: plaintext
+      keep-alive-time: 30s
+      keep-alive-timeout: 5s
+      deadline-after: ${GRPC_DEADLINE_MEDIA:15s}
     identity:
       deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:10000}
       security:
@@ -172,3 +181,5 @@ grpc:
         trust-cert-collection: ${GRPC_TRUST_CERT:}
         client-cert-chain: ${GRPC_CLIENT_CERT:}
         client-private-key: ${GRPC_CLIENT_KEY:}
+    media:
+      deadline-ms: ${MEDIA_GRPC_DEADLINE_MS:15000}

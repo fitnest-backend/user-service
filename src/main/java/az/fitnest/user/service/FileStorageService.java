@@ -1,8 +1,5 @@
 package az.fitnest.user.service;
 
-import az.fitnest.user.client.MediaClient;
-import az.fitnest.user.client.MediaDeleteRequest;
-import az.fitnest.user.client.MediaUploadResponse;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.BaseException;
 import java.util.Arrays;

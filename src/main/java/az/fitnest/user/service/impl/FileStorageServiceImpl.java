@@ -1,15 +1,11 @@
 package az.fitnest.user.service.impl;
 import az.fitnest.user.service.*;
 
-import az.fitnest.user.client.MediaClient;
-import az.fitnest.user.client.MediaDeleteRequest;
-import az.fitnest.user.client.MediaUploadResponse;
+import az.fitnest.user.client.MediaGrpcClient;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,14 +19,14 @@ import java.util.Arrays;
  * <p>This service enforces file size limits and content type restrictions
  * to ensure only valid images are uploaded.
  *
- * @see MediaClient
+ * @see MediaGrpcClient
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
 
-    private final MediaClient mediaClient;
+    private final MediaGrpcClient mediaGrpcClient;
 
     /** Maximum allowed file size: 5MB */
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -41,13 +37,13 @@ public class FileStorageServiceImpl implements FileStorageService {
     );
 
     /**
-     * Saves a file to the media service.
+     * Saves a file to the media service via gRPC.
      *
      * @param file the multipart file to save
      * @return the URL of the uploaded file, or null if file is empty
      * @throws BadRequestException if file validation fails or upload fails
      */
-        @Override
+    @Override
     public String saveFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             return null;
@@ -56,21 +52,20 @@ public class FileStorageServiceImpl implements FileStorageService {
         validateFile(file);
 
         try {
-            ResponseEntity<MediaUploadResponse> responseEntity = mediaClient.uploadImage(file);
-            MediaUploadResponse response = responseEntity.getBody();
+            az.fitnest.media.grpc.MediaUploadResponse response = mediaGrpcClient.uploadImage(file);
 
-            if (response != null && response.isSuccess() && response.getData() != null) {
+            if (response != null && response.getSuccess() && response.hasData()) {
                 String imageUrl = response.getData().getThumbnailUrl();
                 if (imageUrl == null || imageUrl.isEmpty()) {
                     imageUrl = response.getData().getPath();
                 }
                 return imageUrl;
             } else {
-                log.error("Upload failed: {}", response != null ? response.getMessage() : "Unknown error");
+                log.error("Upload failed via gRPC: {}", response != null ? response.getMessage() : "Unknown error");
                 throw new BadRequestException("Failed to upload profile image");
             }
         } catch (Exception e) {
-            log.error("Error calling media service: ", e);
+            log.error("Error calling media gRPC service: ", e);
             throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
         }
     }
@@ -94,11 +89,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     /**
-     * Deletes a single file from the media service.
+     * Deletes a single file from the media service via gRPC.
      *
      * @param fileUrl the URL of the file to delete
      */
-        @Override
+    @Override
     public void deleteFile(String fileUrl) {
         if (fileUrl == null || fileUrl.trim().isEmpty()) {
             return;
@@ -107,20 +102,20 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     /**
-     * Deletes multiple files from the media service.
+     * Deletes multiple files from the media service via gRPC.
      * Errors are logged but not thrown to avoid blocking the main flow.
      *
      * @param fileUrls list of file URLs to delete
      */
-        @Override
+    @Override
     public void deleteFiles(List<String> fileUrls) {
         if (fileUrls == null || fileUrls.isEmpty()) {
             return;
         }
         try {
-            mediaClient.deleteFiles(new MediaDeleteRequest(fileUrls));
+            mediaGrpcClient.deleteFiles(fileUrls);
         } catch (Exception e) {
-            log.warn("Failed to delete files: {}", fileUrls, e);
+            log.warn("Failed to delete files via gRPC: {}", fileUrls, e);
             // We don't throw exception here to avoid blocking main flow
         }
     }
