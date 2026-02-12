@@ -22,7 +22,7 @@ public class MediaGrpcClient {
     @GrpcClient("media-service")
     private MediaServiceGrpc.MediaServiceBlockingStub mediaServiceStub;
 
-    @Value("${grpc.media.deadline-ms:15000}")
+    @Value("${grpc.media.deadline-ms:30000}")
     private long deadlineMs;
 
     private MediaServiceGrpc.MediaServiceBlockingStub withDeadline() {

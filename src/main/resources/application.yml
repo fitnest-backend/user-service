@@ -173,13 +173,13 @@ grpc:
       negotiation-type: plaintext
       keep-alive-time: 30s
       keep-alive-timeout: 5s
-      deadline-after: ${GRPC_DEADLINE_MEDIA:15s}
+      deadline-after: ${GRPC_DEADLINE_MEDIA:30s}
     identity:
-      deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:10000}
+      deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:30000}
       security:
         enabled: ${GRPC_TLS_ENABLED:false}
         trust-cert-collection: ${GRPC_TRUST_CERT:}
         client-cert-chain: ${GRPC_CLIENT_CERT:}
         client-private-key: ${GRPC_CLIENT_KEY:}
     media:
-      deadline-ms: ${MEDIA_GRPC_DEADLINE_MS:15000}
+      deadline-ms: ${MEDIA_GRPC_DEADLINE_MS:30000}
