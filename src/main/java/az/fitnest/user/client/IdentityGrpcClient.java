@@ -21,7 +21,7 @@ public class IdentityGrpcClient {
     @GrpcClient("identity-service")
     private UserServiceGrpc.UserServiceBlockingStub userServiceStub;
 
-    @Value("${grpc.identity.deadline-ms:5000}")
+    @Value("${grpc.identity.deadline-ms:10000}")
     private long deadlineMs;
 
     private UserServiceGrpc.UserServiceBlockingStub withDeadline() {
@@ -30,7 +30,7 @@ public class IdentityGrpcClient {
 
     public az.fitnest.user.grpc.UserResponse getUserById(Long userId) {
         try {
-            log.debug("Calling identity-service to get user by id: {}", userId);
+            log.debug("Calling identity-service to get user by id: {} with deadline {}ms", userId, deadlineMs);
             GetUserByIdRequest request = GetUserByIdRequest.newBuilder()
                     .setUserId(userId)
                     .build();
@@ -80,12 +80,13 @@ public class IdentityGrpcClient {
         } catch (StatusRuntimeException e) {
             Metadata trailers = Status.trailersFromThrowable(e);
             Status status = e.getStatus();
-            log.error("gRPC updateSetupRequired failed userId={} code={} desc={} trailers={} durationMs={}",
+            log.error("gRPC updateSetupRequired failed userId={} code={} desc={} trailers={} durationMs={} deadlineMs={}",
                     userId,
                     status != null ? status.getCode() : null,
                     status != null ? status.getDescription() : null,
                     trailers,
                     System.currentTimeMillis() - start,
+                    deadlineMs,
                     e);
             throw e;
         }

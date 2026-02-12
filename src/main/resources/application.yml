@@ -165,6 +165,8 @@ grpc:
       keep-alive-time: 30s
       keep-alive-timeout: 5s
       deadline-after: ${GRPC_DEADLINE:10s}
+    identity:
+      deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:10000}
       security:
         enabled: ${GRPC_TLS_ENABLED:false}
         trust-cert-collection: ${GRPC_TRUST_CERT:}

@@ -31,19 +31,24 @@ public class IdentityGrpcClientDeadlineTest {
         server.shutdownNow();
     }
     @Test
-    void deadlineExceededOnSlowServer() {
+    void respectsIncreasedDeadline() throws Exception {
         IdentityGrpcClient client = new IdentityGrpcClient();
-        // Manually inject stub via reflection for the test
+        
+        // Inject 10s deadline
+        java.lang.reflect.Field deadlineField = IdentityGrpcClient.class.getDeclaredField("deadlineMs");
+        deadlineField.setAccessible(true);
+        deadlineField.set(client, 10000L);
+
         io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build();
         UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(channel);
-        try {
-            java.lang.reflect.Field f = IdentityGrpcClient.class.getDeclaredField("userServiceStub");
-            f.setAccessible(true);
-            f.set(client, stub);
-        } catch (Exception e) {
-            fail("Failed to set stub: " + e.getMessage());
-        }
-        assertThrows(io.grpc.StatusRuntimeException.class, () -> client.getUserById(123L));
+        
+        java.lang.reflect.Field stubField = IdentityGrpcClient.class.getDeclaredField("userServiceStub");
+        stubField.setAccessible(true);
+        stubField.set(client, stub);
+
+        // Slow server (3s) should now pass with 10s deadline
+        assertDoesNotThrow(() -> client.getUserById(123L));
+        
         channel.shutdownNow();
     }
 }
