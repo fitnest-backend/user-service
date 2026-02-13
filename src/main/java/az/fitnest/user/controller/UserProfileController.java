@@ -89,11 +89,12 @@ public class UserProfileController {
             schema = @Schema(implementation = ProfileImageUploadRequest.class)))
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully",
-                    content = @Content(schema = @Schema(implementation = String.class)))
+                    content = @Content(schema = @Schema(implementation = Void.class)))
     })
     @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> updateProfileImage(@RequestPart("image") MultipartFile file) {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.updateProfileImage(file)));
+    public ResponseEntity<ApiResponse<Void>> updateProfileImage(@RequestPart("image") MultipartFile file) {
+        userProfileService.updateProfileImage(file);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @Operation(summary = "Get goal references", description = "Returns available health and fitness goals for reference.")

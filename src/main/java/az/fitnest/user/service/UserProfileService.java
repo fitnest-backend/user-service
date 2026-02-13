@@ -9,7 +9,7 @@ public interface UserProfileService {
     LocationResponse updateMyLocation(UpdateLocationRequest request);
     void updateBody(UpdateBodyRequest request);
     UserProfileResponse updateUserMe(UpdateUserProfileRequest request);
-    String updateProfileImage(MultipartFile file);
+    void updateProfileImage(MultipartFile file);
     ActiveSubscriptionResponse getActiveSubscription();
     void deleteAccount(DeleteAccountRequest request);
     void updateGoal(UpdateGoalsRequest request);

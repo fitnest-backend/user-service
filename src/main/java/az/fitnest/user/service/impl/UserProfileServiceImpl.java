@@ -155,9 +155,9 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-        @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Override
-    public String updateProfileImage(MultipartFile file) {
+    public void updateProfileImage(MultipartFile file) {
         Long userId = UserContext.getCurrentUserId();
 
         UserResponse currentUser = identityServiceClient.getUserById(userId);
@@ -167,7 +167,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         try {
             identityServiceClient.updateProfileImage(userId, newImageUrl);
-            return newImageUrl;
         } finally {
             if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
                 fileStorageService.deleteFile(oldImageUrl);
