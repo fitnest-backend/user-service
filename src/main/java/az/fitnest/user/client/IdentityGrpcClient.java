@@ -1,21 +1,13 @@
 package az.fitnest.user.client;
 
 import az.fitnest.user.grpc.*;
-import io.grpc.Metadata;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import io.grpc.Deadline;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class IdentityGrpcClient {
 
     @GrpcClient("identity-service")
@@ -29,20 +21,11 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse getUserById(Long userId) {
-        try {
-            log.debug("Calling identity-service to get user by id: {} with deadline {}ms", userId, deadlineMs);
-            GetUserByIdRequest request = GetUserByIdRequest.newBuilder()
-                    .setUserId(userId)
-                    .build();
+        GetUserByIdRequest request = GetUserByIdRequest.newBuilder()
+                .setUserId(userId)
+                .build();
 
-            az.fitnest.user.grpc.UserResponse response = withDeadline().getUserById(request);
-            log.debug("Successfully retrieved user data for userId: {}", userId);
-            return response;
-        } catch (StatusRuntimeException e) {
-            log.error("gRPC call failed for getUserById - Status: {}, Code: {}, Message: {}",
-                    e.getStatus().getCode(), e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            throw e;
-        }
+        return withDeadline().getUserById(request);
     }
 
     public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
@@ -66,30 +49,12 @@ public class IdentityGrpcClient {
     }
 
     public az.fitnest.user.grpc.UserResponse updateSetupRequired(Long userId, boolean setupRequired) {
-        long start = System.currentTimeMillis();
-        try {
-            log.debug("Calling identity-service updateSetupRequired userId={}, setupRequired={}, deadlineMs={}", userId, setupRequired, deadlineMs);
-            az.fitnest.user.grpc.UpdateSetupRequiredRequest request = az.fitnest.user.grpc.UpdateSetupRequiredRequest.newBuilder()
-                    .setUserId(userId)
-                    .setSetupRequired(setupRequired)
-                    .build();
+        az.fitnest.user.grpc.UpdateSetupRequiredRequest request = az.fitnest.user.grpc.UpdateSetupRequiredRequest.newBuilder()
+                .setUserId(userId)
+                .setSetupRequired(setupRequired)
+                .build();
 
-            az.fitnest.user.grpc.UserResponse response = withDeadline().updateSetupRequired(request);
-            log.debug("updateSetupRequired success userId={} in {}ms", userId, System.currentTimeMillis() - start);
-            return response;
-        } catch (StatusRuntimeException e) {
-            Metadata trailers = Status.trailersFromThrowable(e);
-            Status status = e.getStatus();
-            log.error("gRPC updateSetupRequired failed userId={} code={} desc={} trailers={} durationMs={} deadlineMs={}",
-                    userId,
-                    status != null ? status.getCode() : null,
-                    status != null ? status.getDescription() : null,
-                    trailers,
-                    System.currentTimeMillis() - start,
-                    deadlineMs,
-                    e);
-            throw e;
-        }
+        return withDeadline().updateSetupRequired(request);
     }
 
     public az.fitnest.user.grpc.UserResponse updateLanguage(Long userId, String language) {

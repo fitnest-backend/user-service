@@ -4,10 +4,10 @@ import az.fitnest.user.dto.ApiResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.grpc.StatusRuntimeException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,13 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException ex, HttpServletRequest request) {
-        log.warn("Business Exception: {} - {}", ex.getErrorCode(), ex.getMessage());
         HttpStatus status = ex.getHttpStatus();
         return ResponseEntity
                 .status(status)
@@ -42,7 +40,6 @@ public class GlobalExceptionHandler {
         Map<String, Object> details = Map.of("fieldIssues", fieldIssues);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        log.warn("Validation failed: {}", fieldIssues);
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.error(buildError("VALIDATION_ERROR", "Validation failed", status, request.getRequestURI(), details)));
@@ -70,7 +67,6 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Map<String, Object> details = Map.of("message", detailText);
 
-        log.warn("JSON parsing error: {}", detailText);
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.error(buildError("VALIDATION_ERROR", message, status, request.getRequestURI(), details)));
@@ -78,9 +74,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(StatusRuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleStatusRuntimeException(StatusRuntimeException ex, HttpServletRequest request) {
-        log.error("gRPC Service Error - Status Code: {}, Description: {}, Cause: {}",
-                ex.getStatus().getCode(), ex.getStatus().getDescription(), ex.getCause());
-
         String errorCode = "SERVICE_UNAVAILABLE";
         String statusDescription = ex.getStatus().getDescription();
         String errorMessage = (statusDescription != null && !statusDescription.isEmpty()) 
@@ -106,7 +99,6 @@ public class GlobalExceptionHandler {
             }
             case UNKNOWN -> {
                 errorMessage = "Identity service encountered an unknown error: " + (statusDescription != null ? statusDescription : "");
-                log.error("UNKNOWN gRPC error - this usually indicates a server-side issue", ex);
             }
             default -> {
                 if (statusDescription == null || statusDescription.isEmpty()) {
@@ -122,11 +114,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex, HttpServletRequest request) {
-        log.error("Internal Server Error: ", ex);
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.error(buildError("INTERNAL_SERVER_ERROR", "An unexpected error occurred.", status, request.getRequestURI(), null)));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(buildError("ACCESS_DENIED", "You do not have permission to access this resource", status, request.getRequestURI(), null)));
     }
 
     private ApiResponse.ApiError buildError(String code, String message, HttpStatus status, String path, Object details) {

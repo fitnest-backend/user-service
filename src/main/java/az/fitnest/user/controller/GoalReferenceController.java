@@ -15,10 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import az.fitnest.user.exception.ConflictException;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controller for managing goal reference data.
- * Provides endpoints for creating and managing fitness goals that users can select.
- */
 @RestController
 @RequestMapping("/api/v1/goals")
 @RequiredArgsConstructor
@@ -64,10 +60,10 @@ public class GoalReferenceController {
             @Valid @RequestBody az.fitnest.user.dto.UpdateGoalRequest request) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-        
+
         goal.setTitle(request.getTitle());
         goal.setSubtitle(request.getSubtitle());
-        
+
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.save(goal)));
     }
 
@@ -82,9 +78,6 @@ public class GoalReferenceController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(null));
     }
 
-    /**
-     * Request DTO for creating a new goal reference.
-     */
     @Data
     @Schema(description = "Request to create a new goal reference")
     public static class CreateGoalRequest {

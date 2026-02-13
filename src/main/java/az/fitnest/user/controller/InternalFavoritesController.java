@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Internal controller for favorites operations.
- * Used for inter-service communication to check favorite status.
- * Not exposed in public API documentation.
- */
 @RestController
 @RequestMapping("/api/v1/internal/favorites")
 @RequiredArgsConstructor

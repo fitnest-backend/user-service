@@ -5,17 +5,13 @@ import az.fitnest.user.exception.ResourceNotFoundException;
 import az.fitnest.user.exception.InternalServerException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class FeignErrorDecoder implements ErrorDecoder {
 
     private final ErrorDecoder defaultDecoder = new Default();
 
     @Override
     public Exception decode(String methodKey, Response response) {
-        log.error("Feign error - method: {}, status: {}, reason: {}",
-                methodKey, response.status(), response.reason());
 
         return switch (response.status()) {
             case 400 -> new BadRequestException("Bad request to downstream service");
@@ -26,4 +22,3 @@ public class FeignErrorDecoder implements ErrorDecoder {
         };
     }
 }
-

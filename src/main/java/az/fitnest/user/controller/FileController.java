@@ -13,10 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Controller for handling file uploads and storage operations.
- * Provides endpoints for uploading files to the storage service.
- */
 @RestController
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
