@@ -1,20 +1,55 @@
 package az.fitnest.user.service.impl;
-import az.fitnest.user.service.*;
+
+import az.fitnest.user.service.EventIdempotencyService;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class EventIdempotencyServiceImpl implements EventIdempotencyService {
     private static final String KEY_PREFIX = "event:processed:";
-    private static final Duration TTL = Duration.ofHours(24);
+    private static final Logger log = LoggerFactory.getLogger(EventIdempotencyServiceImpl.class);
     private final StringRedisTemplate stringRedisTemplate;
-        @Override
+    private final MeterRegistry meterRegistry;
+
+    @Value("${app.idempotency.ttl-hours:24}")
+    private long ttlHours;
+
+    private Duration ttl() {
+        return Duration.ofHours(ttlHours);
+    }
+
+    @Override
     public boolean markProcessedIfNew(String eventId) {
-        if (eventId == null || eventId.isBlank()) return true; // process if no id
-        String key = KEY_PREFIX + eventId;
-        Boolean set = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", TTL);
-        return Boolean.TRUE.equals(set);
+        if (eventId == null || eventId.isBlank()) {
+            meterRegistry.counter("idempotency.missing_id").increment();
+            return true;
+        }
+
+        String normalized = eventId.trim();
+        String id = DigestUtils.sha256Hex("user-service:" + normalized);
+        String key = KEY_PREFIX + id;
+
+        try {
+            Boolean set = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", ttl());
+            boolean isNew = Boolean.TRUE.equals(set);
+            meterRegistry.counter(isNew ? "idempotency.new" : "idempotency.duplicate").increment();
+            return isNew;
+        } catch (RedisConnectionFailureException | RedisSystemException | QueryTimeoutException e) {
+            meterRegistry.counter("idempotency.redis_error").increment();
+            log.warn("Redis unavailable for idempotency check, failing open: {}", e.getMessage());
+            return true;
+        }
     }
 }

@@ -59,6 +59,7 @@ dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.awaitility:awaitility:4.2.0'
+	implementation 'commons-codec:commons-codec'
 }
 
 configurations {
