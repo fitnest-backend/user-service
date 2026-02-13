@@ -27,6 +27,7 @@ import az.fitnest.user.service.FavoritesService;
 import az.fitnest.user.constants.EntityType;
 import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.UserProfileRepository;
+import az.fitnest.user.repository.LanguageRepository;
 import az.fitnest.user.constants.Gender;
 import az.fitnest.user.entity.UserLocation;
 import az.fitnest.user.entity.UserProfile;
@@ -53,6 +54,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final FavoritesService favoritesService;
     private final UserLocationRepository userLocationRepository;
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
+    private final LanguageRepository languageRepository;
 
         @Override
     public SummaryResponse getUserSummary() {
@@ -271,8 +273,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
+        if (!languageRepository.existsByCode(request.getCode())) {
+            throw new BadRequestException("Invalid language code: " + request.getCode());
+        }
         Long userId = UserContext.getCurrentUserId();
-        identityServiceClient.updateLanguage(userId, request.getLanguageCode());
+        identityServiceClient.updateLanguage(userId, request.getCode());
     }
 
     @Transactional(readOnly = true)

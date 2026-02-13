@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class UpdateLanguageRequest {
     @NotBlank(message = "Language code is required")
     @Size(max = 10, message = "Language code must be at most 10 characters")
-    private String languageCode;
+    private String code;
 }

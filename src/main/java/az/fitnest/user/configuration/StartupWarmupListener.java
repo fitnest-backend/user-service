@@ -8,10 +8,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * Eliminates "first request" cold-start by warming up critical dependencies
- * on ApplicationReadyEvent.
- */
 @Component
 @RequiredArgsConstructor
 @ConditionalOnBean(JdbcTemplate.class)

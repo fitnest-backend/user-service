@@ -9,19 +9,6 @@ import java.time.LocalDateTime;
 
 import az.fitnest.user.constants.EntityType;
 
-/**
- * Entity representing a user's favorite item.
- * Allows users to save and track their favorite gyms, stores, or other entities.
- *
- * <p>Features:
- * <ul>
- *   <li>Supports multiple entity types (GYM, STORE, etc.)</li>
- *   <li>Indexed for efficient querying by user and entity type</li>
- *   <li>Tracks creation timestamp</li>
- * </ul>
- *
- * @see EntityType
- */
 @Entity
 @Table(name = "favorites", indexes = {
     @Index(name = "idx_favorites_user_id", columnList = "user_id"),
