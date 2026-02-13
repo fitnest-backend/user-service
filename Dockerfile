@@ -6,7 +6,7 @@ WORKDIR /app
 # Cache dependencies
 COPY gradlew .
 COPY gradle gradle
-COPY build.gradle settings.gradle gradle.properties lombok.config ./
+COPY build.gradle settings.gradle gradle.properties ./
 RUN ./gradlew dependencies --no-daemon
 
 # Copy source and build
