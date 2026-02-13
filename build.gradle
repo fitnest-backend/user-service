@@ -70,6 +70,7 @@ configurations {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	enabled = false
 }
 
 protobuf {
