@@ -11,7 +11,7 @@ RUN ./gradlew dependencies --no-daemon
 
 # Copy source and build
 COPY src src
-RUN ./gradlew clean bootJar -x test --no-daemon
+RUN ./gradlew clean bootJar --no-daemon
 
 # -----------------------------
 # Stage 2: Runtime image
