@@ -1,6 +1,8 @@
 package az.fitnest.user.service;
 
-import az.fitnest.user.dto.*;
+import az.fitnest.user.dto.request.*;
+import az.fitnest.user.dto.response.*;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserProfileService {

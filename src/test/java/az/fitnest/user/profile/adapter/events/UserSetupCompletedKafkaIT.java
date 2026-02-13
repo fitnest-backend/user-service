@@ -1,5 +1,5 @@
 package az.fitnest.user.profile.adapter.events;
-import az.fitnest.user.dto.UserSetupCompletedEvent;
+import az.fitnest.user.dto.event.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.repository.FavoritesRepository;
 import az.fitnest.user.repository.UserLocationRepository;

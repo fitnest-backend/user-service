@@ -1,5 +1,6 @@
 package az.fitnest.user.exception;
 
+import az.fitnest.user.dto.ApiError;
 import az.fitnest.user.dto.ApiResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.grpc.StatusRuntimeException;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = ex.getHttpStatus();
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildError(ex.getErrorCode(), ex.getMessage(), status, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError(ex.getErrorCode(), ex.getMessage(), status, request.getRequestURI(), null)));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -42,7 +43,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildError("VALIDATION_ERROR", "Validation failed", status, request.getRequestURI(), details)));
+                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", "Validation failed", status, request.getRequestURI(), details)));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildError("VALIDATION_ERROR", message, status, request.getRequestURI(), details)));
+                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", message, status, request.getRequestURI(), details)));
     }
 
     @ExceptionHandler(StatusRuntimeException.class)
@@ -109,7 +110,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(httpStatus)
-                .body(ApiResponse.error(buildError(errorCode, errorMessage, httpStatus, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError(errorCode, errorMessage, httpStatus, request.getRequestURI(), null)));
     }
 
     @ExceptionHandler(Exception.class)
@@ -117,7 +118,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildError("INTERNAL_SERVER_ERROR", "An unexpected error occurred.", status, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError("INTERNAL_SERVER_ERROR", "An unexpected error occurred.", status, request.getRequestURI(), null)));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -125,11 +126,30 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.FORBIDDEN;
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildError("ACCESS_DENIED", "You do not have permission to access this resource", status, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError("ACCESS_DENIED", "You do not have permission to access this resource", status, request.getRequestURI(), null)));
     }
 
-    private ApiResponse.ApiError buildError(String code, String message, HttpStatus status, String path, Object details) {
-        return ApiResponse.ApiError.builder()
+    private ApiResponse<Void> wrap(
+            String code,
+            String message,
+            HttpStatus status,
+            String path,
+            Map<String, Object> details
+    ) {
+        return ApiResponse.<Void>builder()
+                .error(ApiError.builder()
+                        .code(code)
+                        .message(message)
+                        .status(status.value())
+                        .path(path)
+                        .timestamp(OffsetDateTime.now())
+                        .details(details)
+                        .build())
+                .build();
+    }
+
+    private ApiError buildApiError(String code, String message, HttpStatus status, String path, Object details) {
+        return ApiError.builder()
                 .code(code)
                 .message(message)
                 .status(status != null ? status.value() : null)

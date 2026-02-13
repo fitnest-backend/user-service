@@ -1,7 +1,7 @@
 package az.fitnest.user.service.impl;
 
 import az.fitnest.user.client.TeraBoxWorkerClient;
-import az.fitnest.user.dto.media.MediaUploadResponse;
+import az.fitnest.user.dto.response.MediaUploadResponse;
 import az.fitnest.user.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

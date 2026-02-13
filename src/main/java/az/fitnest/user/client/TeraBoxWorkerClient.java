@@ -1,7 +1,7 @@
 package az.fitnest.user.client;
 
-import az.fitnest.user.dto.media.MediaUploadResponse;
-import az.fitnest.user.dto.media.MediaDeleteResponse;
+import az.fitnest.user.dto.response.MediaUploadResponse;
+import az.fitnest.user.dto.response.MediaDeleteResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

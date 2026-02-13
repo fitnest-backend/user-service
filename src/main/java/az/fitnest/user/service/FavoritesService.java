@@ -1,9 +1,9 @@
 package az.fitnest.user.service;
 
 import az.fitnest.user.model.enums.EntityType;
-import az.fitnest.user.dto.FavoritesRequest;
-import az.fitnest.user.dto.FavoritesResponse;
-import az.fitnest.user.dto.FavoritesResponses;
+import az.fitnest.user.dto.request.FavoritesRequest;
+import az.fitnest.user.dto.response.FavoritesResponse;
+import az.fitnest.user.dto.response.FavoritesResponses;
 
 import java.util.List;
 import java.util.Map;

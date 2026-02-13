@@ -2,6 +2,8 @@ package az.fitnest.user.controller;
 
 import az.fitnest.user.service.UserProfileService;
 import az.fitnest.user.dto.*;
+import az.fitnest.user.dto.request.*;
+import az.fitnest.user.dto.response.*;
 import az.fitnest.user.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

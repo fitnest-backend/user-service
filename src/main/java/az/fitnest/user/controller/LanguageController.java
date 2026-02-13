@@ -1,8 +1,8 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.dto.ApiResponse;
-import az.fitnest.user.dto.LanguageCreateRequest;
-import az.fitnest.user.dto.LanguageDto;
+import az.fitnest.user.dto.request.LanguageCreateRequest;
+import az.fitnest.user.dto.response.LanguageDto;
 import az.fitnest.user.service.LanguageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

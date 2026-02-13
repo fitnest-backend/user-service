@@ -57,7 +57,7 @@ public class GoalReferenceController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
-            @Valid @RequestBody az.fitnest.user.dto.UpdateGoalRequest request) {
+            @Valid @RequestBody az.fitnest.user.dto.request.UpdateGoalRequest request) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
 

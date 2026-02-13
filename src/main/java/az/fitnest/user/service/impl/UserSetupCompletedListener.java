@@ -1,6 +1,6 @@
 package az.fitnest.user.service.impl;
 
-import az.fitnest.user.dto.UserSetupCompletedEvent;
+import az.fitnest.user.dto.event.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.service.EventIdempotencyService;
