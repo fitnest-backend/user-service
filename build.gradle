@@ -52,7 +52,7 @@ dependencies {
 	implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE'
 
 	implementation 'com.google.protobuf:protobuf-java:3.25.1'
-	// Removed: compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+	compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
 	// If you truly need annotations explicitly, prefer:
 	// compileOnly 'jakarta.annotation:jakarta.annotation-api'
 
