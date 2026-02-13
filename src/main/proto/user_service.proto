@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package az.fitnest.user;
 
 option java_multiple_files = true;
@@ -12,7 +14,7 @@ service UserService {
   rpc UpdateProfileImage(UpdateProfileImageRequest) returns (UserResponse);
   rpc UpdateSetupRequired(UpdateSetupRequiredRequest) returns (UserResponse);
   rpc UpdateLanguage(UpdateLanguageRequest) returns (UserResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (Empty);
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
 }
 
 message GetUserByIdRequest {
@@ -57,7 +59,3 @@ message DeleteUserRequest {
   int64 user_id = 1;
   string reason = 2;
 }
-
-message Empty {
-}
-
