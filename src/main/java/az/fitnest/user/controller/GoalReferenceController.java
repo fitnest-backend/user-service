@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -42,7 +43,11 @@ public class GoalReferenceController {
 
     @Operation(summary = "Create a new goal reference", description = "Creates a new goal reference.")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
+        if (goalReferenceRepository.existsById(request.getCode())) {
+            throw new ConflictException("Goal already exists: " + request.getCode());
+        }
         GoalReference goal = new GoalReference();
         goal.setGoalCode(request.getCode());
         goal.setTitle(request.getTitle());
@@ -52,6 +57,7 @@ public class GoalReferenceController {
 
     @Operation(summary = "Update a goal reference", description = "Updates an existing goal reference.")
     @PutMapping("/{code}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
             @Valid @RequestBody az.fitnest.user.dto.UpdateGoalRequest request) {
@@ -66,6 +72,7 @@ public class GoalReferenceController {
 
     @Operation(summary = "Delete a goal reference", description = "Deletes a goal reference.")
     @DeleteMapping("/{code}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<Void>> deleteGoal(@PathVariable String code) {
         if (!goalReferenceRepository.existsById(code)) {
             throw new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code);
