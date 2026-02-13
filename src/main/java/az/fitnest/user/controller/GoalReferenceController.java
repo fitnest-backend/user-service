@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import az.fitnest.user.exception.ConflictException;
 import org.springframework.web.bind.annotation.*;
 
 /**
