@@ -19,6 +19,7 @@ import az.fitnest.user.dto.DeleteAccountRequest;
 import az.fitnest.user.dto.ActiveSubscriptionResponse;
 import az.fitnest.user.dto.CountersResponse;
 import az.fitnest.user.dto.UpdateUserProfileRequest;
+import az.fitnest.user.dto.UpdateLanguageRequest;
 
 import az.fitnest.user.client.IdentityGrpcClient;
 import az.fitnest.user.grpc.UserResponse;
