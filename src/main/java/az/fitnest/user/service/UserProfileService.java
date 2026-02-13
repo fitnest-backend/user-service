@@ -16,6 +16,7 @@ public interface UserProfileService {
     BodyInfoResponse getBodyInfo();
     GoalResponse getGoal();
     void updatePreferences(UpdatePreferencesRequest request);
+    void updateLanguage(UpdateLanguageRequest request);
     GoalsResponse getReferenceGoals();
     SetupResponse getSetupStatus();
     FitnessLevelResponse getFitnessLevel();

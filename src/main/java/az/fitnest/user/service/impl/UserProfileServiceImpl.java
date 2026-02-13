@@ -263,11 +263,15 @@ public class UserProfileServiceImpl implements UserProfileService {
     public void updatePreferences(UpdatePreferencesRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
-        if (request.getLanguage() != null) {
-            identityServiceClient.updateLanguage(userId, request.getLanguage());
-        }
 
         // Save theme/notifications if/when extended
+    }
+
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @Override
+    public void updateLanguage(UpdateLanguageRequest request) {
+        Long userId = UserContext.getCurrentUserId();
+        identityServiceClient.updateLanguage(userId, request.getLanguageCode());
     }
 
     @Transactional(readOnly = true)

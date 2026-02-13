@@ -136,6 +136,16 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @Operation(summary = "Update user language", description = "Updates the user's preferred language.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully")
+    })
+    @PutMapping("/language")
+    public ResponseEntity<ApiResponse<Void>> updateLanguage(@Valid @RequestBody UpdateLanguageRequest request) {
+        userProfileService.updateLanguage(request);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
     @Operation(summary = "Get setup status", description = "Returns the current progress of the user profile setup.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup status retrieved successfully",
