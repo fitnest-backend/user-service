@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 
-import java.time.OffsetDateTime;
 import java.util.Map;
 
 @Getter
@@ -35,19 +34,5 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .error(apiError)
                 .build();
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class ApiError {
-        private String code;
-        private String message;
-        private Integer status;
-        private String path;
-        private OffsetDateTime timestamp;
-        private Object details;
     }
 }

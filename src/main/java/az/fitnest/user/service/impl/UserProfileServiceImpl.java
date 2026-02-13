@@ -1,25 +1,25 @@
 package az.fitnest.user.service.impl;
 import az.fitnest.user.service.*;
-import az.fitnest.user.dto.SummaryResponse;
-import az.fitnest.user.dto.UserProfileResponse;
-import az.fitnest.user.dto.LocationResponse;
-import az.fitnest.user.dto.UpdateLocationRequest;
-import az.fitnest.user.dto.UpdateBodyRequest;
-import az.fitnest.user.dto.UpdateGoalsRequest;
-import az.fitnest.user.dto.UpdatePreferencesRequest;
-import az.fitnest.user.dto.GoalsResponse;
-import az.fitnest.user.dto.GoalItemResponse;
-import az.fitnest.user.dto.BodyInfoResponse;
-import az.fitnest.user.dto.GoalResponse;
-import az.fitnest.user.dto.SetupResponse;
-import az.fitnest.user.dto.FitnessLevelResponse;
-import az.fitnest.user.dto.CompleteSetupResponse;
-import az.fitnest.user.dto.SetupRequest;
-import az.fitnest.user.dto.DeleteAccountRequest;
-import az.fitnest.user.dto.ActiveSubscriptionResponse;
-import az.fitnest.user.dto.CountersResponse;
-import az.fitnest.user.dto.UpdateUserProfileRequest;
-import az.fitnest.user.dto.UpdateLanguageRequest;
+import az.fitnest.user.dto.response.SummaryResponse;
+import az.fitnest.user.dto.response.UserProfileResponse;
+import az.fitnest.user.dto.response.LocationResponse;
+import az.fitnest.user.dto.request.UpdateLocationRequest;
+import az.fitnest.user.dto.request.UpdateBodyRequest;
+import az.fitnest.user.dto.request.UpdateGoalsRequest;
+import az.fitnest.user.dto.request.UpdatePreferencesRequest;
+import az.fitnest.user.dto.response.GoalsResponse;
+import az.fitnest.user.dto.response.GoalItemResponse;
+import az.fitnest.user.dto.response.BodyInfoResponse;
+import az.fitnest.user.dto.response.GoalResponse;
+import az.fitnest.user.dto.response.SetupResponse;
+import az.fitnest.user.dto.response.FitnessLevelResponse;
+import az.fitnest.user.dto.response.CompleteSetupResponse;
+import az.fitnest.user.dto.request.SetupRequest;
+import az.fitnest.user.dto.request.DeleteAccountRequest;
+import az.fitnest.user.dto.response.ActiveSubscriptionResponse;
+import az.fitnest.user.dto.response.CountersResponse;
+import az.fitnest.user.dto.request.UpdateUserProfileRequest;
+import az.fitnest.user.dto.request.UpdateLanguageRequest;
 
 import az.fitnest.user.client.IdentityGrpcClient;
 import az.fitnest.user.grpc.UserResponse;
@@ -273,11 +273,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
-        if (!languageRepository.existsByCode(request.getCode())) {
-            throw new BadRequestException("Invalid language code: " + request.getCode());
+        if (!languageRepository.existsByCode(request.getLanguage())) {
+            throw new BadRequestException("Invalid language code: " + request.getLanguage());
         }
         Long userId = UserContext.getCurrentUserId();
-        identityServiceClient.updateLanguage(userId, request.getCode());
+        identityServiceClient.updateLanguage(userId, request.getLanguage());
     }
 
     @Transactional(readOnly = true)

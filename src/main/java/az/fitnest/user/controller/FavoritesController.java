@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import az.fitnest.user.dto.FavoritesRequest;
-import az.fitnest.user.dto.FavoritesResponse;
-import az.fitnest.user.dto.FavoritesResponses;
+import az.fitnest.user.dto.request.FavoritesRequest;
+import az.fitnest.user.dto.response.FavoritesResponse;
+import az.fitnest.user.dto.response.FavoritesResponses;
 import az.fitnest.user.service.FavoritesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
