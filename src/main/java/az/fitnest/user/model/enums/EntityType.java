@@ -1,4 +1,4 @@
-package az.fitnest.user.constants;
+package az.fitnest.user.model.enums;
 
 public enum EntityType {
     GYM, STORE, TRAINER, PROGRAM

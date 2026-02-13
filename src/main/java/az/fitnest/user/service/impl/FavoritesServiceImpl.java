@@ -5,7 +5,7 @@ import az.fitnest.user.repository.FavoritesRepository;
 import az.fitnest.user.dto.FavoritesRequest;
 import az.fitnest.user.dto.FavoritesResponse;
 import az.fitnest.user.dto.FavoritesResponses;
-import az.fitnest.user.constants.EntityType;
+import az.fitnest.user.model.enums.EntityType;
 import az.fitnest.user.model.entity.Favorite;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;

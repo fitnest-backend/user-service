@@ -1,7 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.service.FavoritesService;
-import az.fitnest.user.constants.EntityType;
+import az.fitnest.user.model.enums.EntityType;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

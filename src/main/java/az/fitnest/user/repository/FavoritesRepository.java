@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import az.fitnest.user.model.entity.Favorite;
-import az.fitnest.user.constants.EntityType;
+import az.fitnest.user.model.enums.EntityType;
 
 import java.util.List;
 import java.util.Optional;

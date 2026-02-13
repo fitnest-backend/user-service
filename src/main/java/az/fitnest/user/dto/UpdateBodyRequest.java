@@ -1,6 +1,6 @@
 package az.fitnest.user.dto;
 
-import az.fitnest.user.constants.Gender;
+import az.fitnest.user.model.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
