@@ -1,39 +1,25 @@
 package az.fitnest.user.service.impl;
-import az.fitnest.user.service.*;
 
+import az.fitnest.user.client.TeraBoxWorkerClient;
+import az.fitnest.user.dto.media.MediaUploadResponse;
 import az.fitnest.user.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.beans.factory.annotation.Value;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpMethod;
 
-import java.util.List;
 import java.util.Arrays;
-import az.fitnest.user.client.MediaClient;
-import az.fitnest.user.dto.media.MediaUploadResponse;
-import az.fitnest.user.dto.media.MediaDeleteRequest;
+import java.util.List;
 
 /**
  * Service for handling file storage operations.
- * Manages file uploads, validation, and deletion through the media service.
- *
- * <p>This service enforces file size limits and content type restrictions
- * to ensure only valid images are uploaded.
- *
- * @see TeraBoxGrpcClient
+ * Manages file uploads and deletion through the terabox-worker service.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FileStorageServiceImpl implements FileStorageService {
+public class FileStorageServiceImpl implements az.fitnest.user.service.FileStorageService {
 
     /** Maximum allowed file size: 5MB */
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -43,11 +29,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             "image/jpeg", "image/jpg", "image/png"
     );
 
-    @Value("${terabox.worker.url:http://terabox-worker-service:9090}")
-    private String teraboxWorkerUrl;
-
-    private final WebClient webClient = WebClient.create();
-    private final MediaClient mediaClient;
+    private final TeraBoxWorkerClient teraBoxWorkerClient;
 
     /**
      * Saves a file to the terabox-worker service.
@@ -65,22 +47,17 @@ public class FileStorageServiceImpl implements FileStorageService {
         validateFile(file);
 
         try {
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", file.getResource());
-            body.add("directory", "/uploads");
+            log.debug("Uploading file {} to terabox-worker", file.getOriginalFilename());
+            ResponseEntity<MediaUploadResponse> responseEntity = teraBoxWorkerClient.uploadFile(file, "/uploads");
+            
+            MediaUploadResponse response = responseEntity.getBody();
 
-            JsonNode response = webClient.post()
-                    .uri(teraboxWorkerUrl + "/api/v1/upload/upload")
-                    .body(BodyInserters.fromMultipartData(body))
-                    .retrieve()
-                    .bodyToMono(JsonNode.class)
-                    .block();
-
-            if (response != null && response.get("success").asBoolean() && response.has("data")) {
-                String imageUrl = response.get("data").get("path").asText();
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                String imageUrl = response.getData().getPath();
+                log.debug("Successfully uploaded file: {}", imageUrl);
                 return imageUrl;
             } else {
-                log.error("Upload failed: {}", response != null ? response.get("message").asText() : "Unknown error");
+                log.error("Upload failed: {}", response != null ? response.getMessage() : "Unknown error");
                 throw new BadRequestException("Failed to upload profile image");
             }
         } catch (Exception e) {
@@ -108,7 +85,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     /**
-     * Deletes a single file from the media service via gRPC.
+     * Deletes a single file from the media service.
      *
      * @param fileUrl the URL of the file to delete
      */
@@ -121,7 +98,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     /**
-     * Deletes multiple files from the media service via gRPC.
+     * Deletes multiple files from the media service.
      * Errors are logged but not thrown to avoid blocking the main flow.
      *
      * @param fileUrls list of file URLs to delete
@@ -132,12 +109,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             return;
         }
         try {
-            webClient.method(HttpMethod.DELETE)
-                    .uri(teraboxWorkerUrl + "/api/v1/upload/files")
-                    .body(BodyInserters.fromValue(fileUrls))
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
+            teraBoxWorkerClient.deleteFiles(fileUrls);
         } catch (Exception e) {
             log.error("Error deleting files: ", e);
         }
