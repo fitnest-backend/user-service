@@ -21,5 +21,6 @@ public interface UserProfileService {
     SetupResponse getSetupStatus();
     FitnessLevelResponse getFitnessLevel();
     CompleteSetupResponse completeSetup();
+    CompleteSetupResponse skipSetup();
     SetupResponse setupProfile(SetupRequest request);
 }

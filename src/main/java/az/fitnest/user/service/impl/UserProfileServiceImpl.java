@@ -343,7 +343,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        if (profile.getHeightCm() == null || profile.getWeightKg() == null || profile.getGoalCode() == null) {
+        if (profile.getHeightCm() == null || profile.getWeightKg() == null || profile.getGoalCode() == null || profile.getGender() == null || profile.getBirthDate() == null) {
             throw new ConflictException("Setup incomplete");
         }
 
@@ -413,5 +413,21 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (bmi < 25) return "NORMAL";
         if (bmi < 30) return "OVERWEIGHT";
         return "OBESE";
+    }
+
+    @Transactional
+    @Override
+    public CompleteSetupResponse skipSetup() {
+        Long userId = UserContext.getCurrentUserId();
+
+        identityServiceClient.updateSetupRequired(userId, false);
+
+        return CompleteSetupResponse.builder()
+                .setupRequired(false)
+                .next(CompleteSetupResponse.NextSteps.builder()
+                        .workoutPlanReady(false)
+                        .nutritionPlanReady(false)
+                        .build())
+                .build();
     }
 }

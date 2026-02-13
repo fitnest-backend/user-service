@@ -176,6 +176,16 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.completeSetup()));
     }
 
+    @Operation(summary = "Skip profile setup", description = "Allows the user to skip the profile setup process.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup skipped successfully",
+                    content = @Content(schema = @Schema(implementation = CompleteSetupResponse.class)))
+    })
+    @PostMapping("/setup/skip")
+    public ResponseEntity<ApiResponse<CompleteSetupResponse>> skipSetup() {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.skipSetup()));
+    }
+
     @Operation(summary = "Get fitness level", description = "Returns the user's current fitness level.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Fitness level retrieved successfully",
