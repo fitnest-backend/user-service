@@ -113,10 +113,6 @@ identity:
   service:
     url: ${IDENTITY_SERVICE_URL:http://identity-service:8080}
 
-media:
-  service:
-    url: ${MEDIA_SERVICE_URL:http://media-service:8086}
-
 management:
   endpoints:
     web:
@@ -166,22 +162,6 @@ grpc:
       keep-alive-time: 30s
       keep-alive-timeout: 5s
       deadline-after: ${GRPC_DEADLINE:10s}
-    media-service:
-      address: 'static://media-service:9090'
-      enable-keep-alive: true
-      keep-alive-without-calls: true
-      negotiation-type: plaintext
-      keep-alive-time: 30s
-      keep-alive-timeout: 5s
-      deadline-after: ${GRPC_DEADLINE_MEDIA:30s}
-    terabox-worker:
-      address: 'static://terabox-worker-service:9090'
-      enable-keep-alive: true
-      keep-alive-without-calls: true
-      negotiation-type: plaintext
-      keep-alive-time: 30s
-      keep-alive-timeout: 5s
-      deadline-after: ${GRPC_DEADLINE_TERABOX:30s}
     identity:
       deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:30000}
       security:
@@ -189,7 +169,3 @@ grpc:
         trust-cert-collection: ${GRPC_TRUST_CERT:}
         client-cert-chain: ${GRPC_CLIENT_CERT:}
         client-private-key: ${GRPC_CLIENT_KEY:}
-    media:
-      deadline-ms: ${MEDIA_GRPC_DEADLINE_MS:30000}
-    terabox:
-      deadline-ms: ${TERABOX_GRPC_DEADLINE_MS:30000}

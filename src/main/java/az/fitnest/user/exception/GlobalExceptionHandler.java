@@ -82,7 +82,10 @@ public class GlobalExceptionHandler {
                 ex.getStatus().getCode(), ex.getStatus().getDescription(), ex.getCause());
 
         String errorCode = "SERVICE_UNAVAILABLE";
-        String errorMessage = "External service error";
+        String statusDescription = ex.getStatus().getDescription();
+        String errorMessage = (statusDescription != null && !statusDescription.isEmpty()) 
+                ? "Identity service error: " + statusDescription 
+                : "External service error";
         HttpStatus httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 
         switch (ex.getStatus().getCode()) {
@@ -91,23 +94,24 @@ public class GlobalExceptionHandler {
             case INVALID_ARGUMENT -> {
                 errorCode = "INVALID_REQUEST";
                 httpStatus = HttpStatus.BAD_REQUEST;
-                errorMessage = "Invalid request to identity service";
+                errorMessage = "Invalid request to identity service: " + (statusDescription != null ? statusDescription : "");
             }
             case NOT_FOUND -> {
                 errorCode = "RESOURCE_NOT_FOUND";
                 httpStatus = HttpStatus.NOT_FOUND;
-                errorMessage = "Resource not found in identity service";
+                errorMessage = "Resource not found in identity service: " + (statusDescription != null ? statusDescription : "");
             }
-            case INTERNAL -> errorMessage = "Identity service internal error";
+            case INTERNAL -> {
+                errorMessage = "Identity service internal error: " + (statusDescription != null ? statusDescription : "");
+            }
             case UNKNOWN -> {
-                errorMessage = "Identity service encountered an unknown error. Please try again later.";
+                errorMessage = "Identity service encountered an unknown error: " + (statusDescription != null ? statusDescription : "");
                 log.error("UNKNOWN gRPC error - this usually indicates a server-side issue", ex);
             }
             default -> {
-                String description = ex.getStatus().getDescription();
-                errorMessage = (description != null && !description.isEmpty())
-                        ? "Identity service error: " + description
-                        : "Identity service encountered an error. Please try again later.";
+                if (statusDescription == null || statusDescription.isEmpty()) {
+                    errorMessage = "Identity service encountered an error. Please try again later.";
+                }
             }
         }
 
