@@ -165,12 +165,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String newImageUrl = fileStorageService.saveFile(file);
 
-        try {
-            identityServiceClient.updateProfileImage(userId, newImageUrl);
-        } finally {
-            if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
-                fileStorageService.deleteFile(oldImageUrl);
-            }
+        identityServiceClient.updateProfileImage(userId, newImageUrl);
+
+        if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+            fileStorageService.deleteFile(oldImageUrl);
         }
     }
 
