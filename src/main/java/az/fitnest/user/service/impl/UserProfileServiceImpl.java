@@ -78,7 +78,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         return summary;
     }
 
-        @Override
+    @org.springframework.cache.annotation.Cacheable(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @Override
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
         UserResponse identityUser = identityServiceClient.getUserById(userId);
@@ -136,7 +137,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfileRepository.save(profile);
     }
 
-        @Override
+    @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @Override
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
@@ -153,8 +155,9 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-        @Override
-    public UserProfileResponse updateProfileImage(MultipartFile file) {
+        @CacheEvict(value = "user_profiles", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+    @Override
+    public String updateProfileImage(MultipartFile file) {
         Long userId = UserContext.getCurrentUserId();
 
         UserResponse currentUser = identityServiceClient.getUserById(userId);
@@ -163,17 +166,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         String newImageUrl = fileStorageService.saveFile(file);
 
         try {
-            UserResponse updatedUser = identityServiceClient.updateProfileImage(userId, newImageUrl);
-
-            return UserProfileResponse.builder()
-                    .userId(String.valueOf(updatedUser.getUserId()))
-                    .firstName(updatedUser.getFirstName())
-                    .lastName(updatedUser.getLastName())
-                    .mobile(updatedUser.getMobile())
-                    .email(updatedUser.getEmail())
-                    .profileImageUrl(updatedUser.getProfileImageUrl())
-                    .createdAt(parseCreatedAt(updatedUser.getCreatedAt()))
-                    .build();
+            identityServiceClient.updateProfileImage(userId, newImageUrl);
+            return newImageUrl;
         } finally {
             if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
                 fileStorageService.deleteFile(oldImageUrl);
