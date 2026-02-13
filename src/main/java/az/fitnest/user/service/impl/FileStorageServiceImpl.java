@@ -12,9 +12,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 import java.util.Arrays;
+import az.fitnest.user.client.MediaClient;
+import az.fitnest.user.dto.media.MediaUploadResponse;
+import az.fitnest.user.dto.media.MediaDeleteRequest;
 
 /**
  * Service for handling file storage operations.
@@ -42,9 +47,10 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String teraboxWorkerUrl;
 
     private final WebClient webClient = WebClient.create();
+    private final MediaClient mediaClient;
 
     /**
-     * Saves a file to the media service via gRPC.
+     * Saves a file to the terabox-worker service.
      *
      * @param file the multipart file to save
      * @return the URL of the uploaded file, or null if file is empty
@@ -74,11 +80,11 @@ public class FileStorageServiceImpl implements FileStorageService {
                 String imageUrl = response.get("data").get("path").asText();
                 return imageUrl;
             } else {
-                log.error("Upload failed via HTTP: {}", response != null ? response.get("message").asText() : "Unknown error");
+                log.error("Upload failed: {}", response != null ? response.get("message").asText() : "Unknown error");
                 throw new BadRequestException("Failed to upload profile image");
             }
         } catch (Exception e) {
-            log.error("Error calling terabox-worker HTTP service: ", e);
+            log.error("Error calling terabox-worker service: ", e);
             throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
         }
     }
@@ -125,7 +131,15 @@ public class FileStorageServiceImpl implements FileStorageService {
         if (fileUrls == null || fileUrls.isEmpty()) {
             return;
         }
-        // TODO: Implement HTTP delete if needed
-        log.warn("Delete files not implemented via HTTP: {}", fileUrls);
+        try {
+            webClient.method(HttpMethod.DELETE)
+                    .uri(teraboxWorkerUrl + "/api/v1/upload/files")
+                    .body(BodyInserters.fromValue(fileUrls))
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            log.error("Error deleting files: ", e);
+        }
     }
 }
