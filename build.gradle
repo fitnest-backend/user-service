@@ -9,14 +9,10 @@ group = 'az.fitnest'
 version = '1.0.0'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+	toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
-repositories {
-	mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencyManagement {
 	imports {
@@ -24,40 +20,52 @@ dependencyManagement {
 	}
 }
 
-bootJar {
-    archiveFileName = "user-service.jar"
-}
+bootJar { archiveFileName = "user-service.jar" }
 
 dependencies {
+	// Choose ONE:
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:0.11.2"
 	runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.11.2"
+
 	runtimeOnly 'org.postgresql:postgresql'
+
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'io.github.openfeign:feign-hc5'
+
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.kafka:spring-kafka'
+
 	implementation 'net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE'
 	implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE'
+
 	implementation 'com.google.protobuf:protobuf-java:3.25.1'
-	compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+	// Removed: compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+	// If you truly need annotations explicitly, prefer:
+	// compileOnly 'jakarta.annotation:jakarta.annotation-api'
+
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
 	testCompileOnly "org.projectlombok:lombok"
 	testAnnotationProcessor "org.projectlombok:lombok"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.awaitility:awaitility:4.2.0'
+
 	implementation 'commons-codec:commons-codec'
 }
 
@@ -67,41 +75,15 @@ tasks.named('test') {
 }
 
 protobuf {
-	protoc {
-		artifact = 'com.google.protobuf:protoc:3.25.1'
-	}
+	protoc { artifact = 'com.google.protobuf:protoc:3.25.1' }
 	plugins {
-		grpc {
-			artifact = 'io.grpc:protoc-gen-grpc-java:1.58.0'
-		}
+		grpc { artifact = 'io.grpc:protoc-gen-grpc-java:1.58.0' }
 	}
 	generateProtoTasks {
-		all()*.plugins {
-			grpc {}
+		all().configureEach { task ->
+			task.plugins {
+				grpc {}
+			}
 		}
 	}
-}
-
-tasks.withType(JavaCompile) {
-    sourceCompatibility = '17'
-    targetCompatibility = '17'
-}
-
-task printSourceSets {
-    doLast {
-        sourceSets.each { sourceSet ->
-            println "SourceSet: ${sourceSet.name}"
-            sourceSet.java.srcDirs.each { dir ->
-                println "  Java srcDir: ${dir}"
-            }
-        }
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-    }
 }
