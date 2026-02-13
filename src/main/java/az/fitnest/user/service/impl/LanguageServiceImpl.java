@@ -2,7 +2,7 @@ package az.fitnest.user.service.impl;
 
 import az.fitnest.user.dto.LanguageCreateRequest;
 import az.fitnest.user.dto.LanguageDto;
-import az.fitnest.user.entity.Language;
+import az.fitnest.user.model.entity.Language;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ResourceNotFoundException;
 import az.fitnest.user.repository.LanguageRepository;

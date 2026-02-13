@@ -1,6 +1,6 @@
 package az.fitnest.user.repository;
 
-import az.fitnest.user.entity.GoalReference;
+import az.fitnest.user.model.entity.GoalReference;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

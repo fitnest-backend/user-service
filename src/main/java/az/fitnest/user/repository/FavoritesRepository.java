@@ -3,7 +3,7 @@ package az.fitnest.user.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import az.fitnest.user.entity.Favorite;
+import az.fitnest.user.model.entity.Favorite;
 import az.fitnest.user.constants.EntityType;
 
 import java.util.List;

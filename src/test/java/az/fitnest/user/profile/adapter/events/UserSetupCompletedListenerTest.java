@@ -1,7 +1,7 @@
 package az.fitnest.user.profile.adapter.events;
 import az.fitnest.user.dto.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
-import az.fitnest.user.entity.UserProfile;
+import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.service.EventIdempotencyService;
 import az.fitnest.user.service.impl.UserSetupCompletedListener;
 import org.junit.jupiter.api.Test;

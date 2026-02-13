@@ -1,7 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.repository.GoalReferenceRepository;
-import az.fitnest.user.entity.GoalReference;
+import az.fitnest.user.model.entity.GoalReference;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

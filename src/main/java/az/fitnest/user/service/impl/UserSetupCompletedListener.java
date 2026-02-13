@@ -2,7 +2,7 @@ package az.fitnest.user.service.impl;
 
 import az.fitnest.user.dto.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
-import az.fitnest.user.entity.UserProfile;
+import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.service.EventIdempotencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;

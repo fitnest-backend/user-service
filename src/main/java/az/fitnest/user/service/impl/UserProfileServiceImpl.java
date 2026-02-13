@@ -29,8 +29,8 @@ import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.repository.LanguageRepository;
 import az.fitnest.user.constants.Gender;
-import az.fitnest.user.entity.UserLocation;
-import az.fitnest.user.entity.UserProfile;
+import az.fitnest.user.model.entity.UserLocation;
+import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
@@ -132,7 +132,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                     return newProfile;
                 });
 
-        if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm());
+        if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm().doubleValue());
         if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
         if (request.getGender() != null) profile.setGender(request.getGender());
         if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
@@ -218,7 +218,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
 
         return BodyInfoResponse.builder()
-                .heightCm(profile.getHeightCm())
+                .heightCm(profile.getHeightCm() != null ? profile.getHeightCm().intValue() : null)
                 .weightKg(profile.getWeightKg())
                 .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
                 .birthDate(profile.getBirthDate())
@@ -373,7 +373,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         if (request.getProfile() != null) {
             SetupRequest.ProfileInfo info = request.getProfile();
-            if (info.getHeightCm() != null) profile.setHeightCm(info.getHeightCm());
+            if (info.getHeightCm() != null) profile.setHeightCm(info.getHeightCm().doubleValue());
             if (info.getWeightKg() != null) profile.setWeightKg(info.getWeightKg());
             if (info.getGender() != null) {
                 try {
