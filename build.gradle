@@ -86,3 +86,14 @@ tasks.withType(JavaCompile) {
     sourceCompatibility = '17'
     targetCompatibility = '17'
 }
+
+task printSourceSets {
+    doLast {
+        sourceSets.each { sourceSet ->
+            println "SourceSet: ${sourceSet.name}"
+            sourceSet.java.srcDirs.each { dir ->
+                println "  Java srcDir: ${dir}"
+            }
+        }
+    }
+}
