@@ -137,15 +137,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm().doubleValue());
         if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
         if (request.getGender() != null) profile.setGender(request.getGender());
-        if (request.getBirthDate() != null) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate birthDate = LocalDate.parse(request.getBirthDate(), formatter);
-                profile.setBirthDate(birthDate);
-            } catch (Exception e) {
-                throw new BadRequestException("Invalid birth date format. Expected DD/MM/YYYY");
-            }
-        }
+        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
 
         userProfileRepository.save(profile);
     }
@@ -225,7 +217,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public BodyInfoResponse getBodyInfo() {
         Long userId = UserContext.getCurrentUserId();
-        UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
+        UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
+            UserProfile p = new UserProfile();
+            p.setUserId(userId);
+            return p;
+        });
 
         return BodyInfoResponse.builder()
                 .heightCm(profile.getHeightCm() != null ? profile.getHeightCm().intValue() : null)
@@ -239,7 +235,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public GoalResponse getGoal() {
         Long userId = UserContext.getCurrentUserId();
-        UserProfile profile = userProfileRepository.findById(userId).orElse(new UserProfile());
+        UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
+            UserProfile p = new UserProfile();
+            p.setUserId(userId);
+            return p;
+        });
         String goalCode = profile.getGoalCode();
 
         if (goalCode == null || goalCode.isBlank()) {
@@ -389,17 +389,11 @@ public class UserProfileServiceImpl implements UserProfileService {
                 try {
                     profile.setGender(Gender.valueOf(info.getGender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    profile.setGender(null);
+                    throw new BadRequestException("Invalid gender value");
                 }
             }
             if (info.getBirthDate() != null) {
-                try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate birthDate = LocalDate.parse(info.getBirthDate(), formatter);
-                    profile.setBirthDate(birthDate);
-                } catch (Exception e) {
-                    throw new BadRequestException("Invalid birth date format. Expected DD/MM/YYYY");
-                }
+                profile.setBirthDate(info.getBirthDate());
             }
             if (info.getGoal() != null) {
                 if (!goalReferenceRepository.existsById(info.getGoal())) {
