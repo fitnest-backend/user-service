@@ -8,11 +8,12 @@ WORKDIR /app
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
+COPY src/main/proto src/main/proto
 RUN ./gradlew dependencies --no-daemon
 
 # Copy source and build
 COPY src src
-RUN ./gradlew clean bootJar --no-daemon
+RUN ./gradlew clean bootJar --no-build-cache --no-daemon
 
 # -----------------------------
 # Stage 2: Runtime image
