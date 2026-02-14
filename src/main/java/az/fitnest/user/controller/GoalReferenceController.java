@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.util.UserContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -41,6 +42,7 @@ public class GoalReferenceController {
     private final FileStorageService fileStorageService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationService translationService;
+    private final ObjectMapper objectMapper;
 
     @Operation(
             summary = "Get all goal references",
@@ -146,8 +148,16 @@ public class GoalReferenceController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(
-            @Valid @ModelAttribute CreateGoalRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @RequestParam("request") String requestJson,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        CreateGoalRequest request = objectMapper.readValue(requestJson, CreateGoalRequest.class);
+        // Manual validation
+        if (request.getCode() == null || request.getCode().trim().isEmpty()) {
+            throw new BadRequestException("Code must not be blank");
+        }
+        if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
+            throw new BadRequestException("Title must not be blank");
+        }
         if (goalReferenceRepository.existsById(request.getCode())) {
             throw new ConflictException("Goal already exists: " + request.getCode());
         }
