@@ -6,7 +6,6 @@ import az.fitnest.user.dto.response.*;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
-import az.fitnest.user.grpc.UserResponse;
 import az.fitnest.user.model.entity.UserLocation;
 import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.model.entity.GoalReference;
@@ -53,12 +52,12 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Cacheable(cacheNames = "user_summaries", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", sync = true)
-    // Dedicated cache for SummaryResponse to prevent type collisions with identity_users (UserResponse only)
+    // Dedicated cache for SummaryResponse to prevent type collisions with identity_users
     @Transactional(readOnly = true)
     @Override
     public SummaryResponse getUserSummary() {
         Long userId = UserContext.getCurrentUserId();
-        UserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
         UserProfileResponse user = mapToUserProfileResponse(identityUser);
 
@@ -76,7 +75,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Cacheable(cacheNames = "user_me", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
-    // Dedicated cache for UserProfileResponse to prevent type collisions with identity_users (UserResponse only)
+    // Dedicated cache for UserProfileResponse to prevent type collisions with identity_users
     @Override
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
@@ -161,7 +160,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
-        UserResponse updated = cachedIdentityClient.updateUserProfile(
+        IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
                 userId, request.getFirstName(), request.getLastName(), request.getEmail()
         );
         return mapToUserProfileResponse(updated);
@@ -173,7 +172,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         validateImage(file);
 
         Long userId = UserContext.getCurrentUserId();
-        UserResponse currentUser = cachedIdentityClient.getUserById(userId);
+        IdentityUserResponse currentUser = cachedIdentityClient.getUserById(userId);
         String oldImageUrl = currentUser.getProfileImageUrl();
 
         String newImageUrl = null;
@@ -320,7 +319,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public SetupResponse getSetupStatus() {
         Long userId = UserContext.getCurrentUserId();
-        UserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
         return SetupResponse.builder()
                 .setupRequired(identityUser.getSetupRequired())
@@ -514,9 +513,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
     }
 
-    private UserProfileResponse mapToUserProfileResponse(UserResponse userResponse) {
+    private UserProfileResponse mapToUserProfileResponse(IdentityUserResponse userResponse) {
         return UserProfileResponse.builder()
-                .userId(String.valueOf(userResponse.getUserId()))
+                .userId(userResponse.getUserId())
                 .firstName(userResponse.getFirstName())
                 .lastName(userResponse.getLastName())
                 .mobile(userResponse.getMobile())

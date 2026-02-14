@@ -1,5 +1,6 @@
 package az.fitnest.user.client;
 
+import az.fitnest.user.dto.response.IdentityUserResponse;
 import az.fitnest.user.grpc.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,13 +12,20 @@ public class CachedIdentityGrpcClient {
 
     private final IdentityGrpcClient identityGrpcClient;
 
+    /**
+     * Returns a cache-safe DTO. The raw protobuf {@link UserResponse} contains
+     * circular references ({@code unknownFields → defaultInstanceForType}) that
+     * break Jackson/Redis serialization, so we convert it here.
+     */
     @Cacheable(cacheNames = "identity_users", key = "#userId", sync = true)
-    public UserResponse getUserById(Long userId) {
-        return identityGrpcClient.getUserById(userId);
+    public IdentityUserResponse getUserById(Long userId) {
+        UserResponse raw = identityGrpcClient.getUserById(userId);
+        return toDto(raw);
     }
 
-    public UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
-        return identityGrpcClient.updateUserProfile(userId, firstName, lastName, email);
+    public IdentityUserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
+        UserResponse raw = identityGrpcClient.updateUserProfile(userId, firstName, lastName, email);
+        return toDto(raw);
     }
 
     public void updateProfileImage(Long userId, String imageUrl) {
@@ -34,5 +42,19 @@ public class CachedIdentityGrpcClient {
 
     public void deleteUser(Long userId, String reason) {
         identityGrpcClient.deleteUser(userId, reason);
+    }
+
+    private IdentityUserResponse toDto(UserResponse r) {
+        return IdentityUserResponse.builder()
+                .userId(String.valueOf(r.getUserId()))
+                .firstName(r.getFirstName())
+                .lastName(r.getLastName())
+                .mobile(r.getMobile())
+                .email(r.getEmail())
+                .profileImageUrl(r.getProfileImageUrl())
+                .language(r.getLanguage())
+                .setupRequired(r.getSetupRequired())
+                .createdAt(r.getCreatedAt())
+                .build();
     }
 }

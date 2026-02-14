@@ -381,7 +381,7 @@ public class GoalReferenceController {
         Long userId = UserContext.getCurrentUserId();
         if (userId != null) {
             try {
-                az.fitnest.user.grpc.UserResponse user = cachedIdentityGrpcClient.getUserById(userId);
+                az.fitnest.user.dto.response.IdentityUserResponse user = cachedIdentityGrpcClient.getUserById(userId);
                 String language = user.getLanguage();
                 if (language != null && !language.isEmpty()) {
                     return language.toUpperCase();
