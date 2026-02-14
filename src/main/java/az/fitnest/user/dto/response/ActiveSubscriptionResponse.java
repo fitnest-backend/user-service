@@ -35,12 +35,12 @@ public class ActiveSubscriptionResponse {
 
         @JsonProperty("start_at")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
-        @Schema(description = "Subscription start timestamp", example = "15/01/2023 10:30:00")
+        @Schema(type = "string", description = "Subscription start timestamp", example = "15/01/2023 10:30:00", pattern = "^\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}$")
         private LocalDateTime startAt;
 
         @JsonProperty("end_at")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
-        @Schema(description = "Subscription end timestamp", example = "15/07/2023 10:30:00")
+        @Schema(type = "string", description = "Subscription end timestamp", example = "15/07/2023 10:30:00", pattern = "^\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}$")
         private LocalDateTime endAt;
 
         @JsonProperty("total_limit")

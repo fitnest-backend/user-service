@@ -27,6 +27,6 @@ public class BodyInfoResponse {
 
     @JsonProperty("birth_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @Schema(description = "User's birth date", example = "15/01/1990")
+    @Schema(type = "string", example = "15/01/1990", pattern = "^\\d{2}/\\d{2}/\\d{4}$", description = "User's birth date")
     private LocalDate birthDate;
 }

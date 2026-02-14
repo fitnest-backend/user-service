@@ -26,8 +26,8 @@ public class UpdateBodyRequest {
 
     @NotNull
     @Past
+    @Schema(type = "string", example = "15/01/1990", pattern = "^\\d{2}/\\d{2}/\\d{4}$")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    @Schema(description = "User's birth date", example = "15/01/1990")
     private LocalDate birthDate;
 
     public Integer getHeightCm() {
