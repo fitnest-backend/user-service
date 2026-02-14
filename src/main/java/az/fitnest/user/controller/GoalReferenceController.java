@@ -56,7 +56,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal references retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "[{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\"}]"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "[{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\", \"imageUrl\": \"/images/goals/weight_loss.jpg\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\", \"imageUrl\": \"/images/goals/muscle_gain.jpg\"}]"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -89,7 +89,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\", \"imageUrl\": \"/images/goals/weight_loss.jpg\"}"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -299,7 +299,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Image uploaded successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"imagePath\": \"/images/goals/weight_loss.jpg\"}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "/images/goals/weight_loss.jpg"))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -322,7 +322,7 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PostMapping(value = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> uploadGoalImage(
             @PathVariable String code,
