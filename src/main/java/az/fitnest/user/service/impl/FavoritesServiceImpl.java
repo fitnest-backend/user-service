@@ -11,6 +11,7 @@ import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
 import az.fitnest.user.util.UserContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,7 @@ public class FavoritesServiceImpl implements FavoritesService {
         return resp;
     }
 
+    @CacheEvict(value="user_summaries", key="T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Transactional
         @Override
     public FavoritesResponse addFavorites(FavoritesRequest request) {
@@ -81,6 +83,7 @@ public class FavoritesServiceImpl implements FavoritesService {
         return toResponse(saved);
     }
 
+    @CacheEvict(value="user_summaries", key="T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Transactional
         @Override
     public void deleteFavorites(Long favoritesId) {

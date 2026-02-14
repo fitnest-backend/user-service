@@ -14,9 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Language {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(unique = true, nullable = false, length = 10)
     private String code;
 }

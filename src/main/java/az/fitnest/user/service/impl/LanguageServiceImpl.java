@@ -28,8 +28,8 @@ public class LanguageServiceImpl implements LanguageService {
     }
 
     @Override
-    public LanguageDto getLanguageById(Long id) {
-        Language language = languageRepository.findById(id)
+    public LanguageDto getLanguageByCode(String code) {
+        Language language = languageRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Language not found"));
         return toDto(language);
     }
@@ -49,8 +49,8 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Transactional
     @Override
-    public LanguageDto updateLanguage(Long id, LanguageCreateRequest request) {
-        Language language = languageRepository.findById(id)
+    public LanguageDto updateLanguage(String code, LanguageCreateRequest request) {
+        Language language = languageRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Language not found"));
         if (!language.getCode().equals(request.getCode()) && languageRepository.existsByCode(request.getCode())) {
             throw new BadRequestException("Language code already exists");
@@ -62,16 +62,16 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Transactional
     @Override
-    public void deleteLanguage(Long id) {
-        if (!languageRepository.existsById(id)) {
+    public void deleteLanguage(String code) {
+        if (!languageRepository.existsById(code)) {
             throw new ResourceNotFoundException("Language not found");
         }
-        languageRepository.deleteById(id);
+        languageRepository.deleteById(code);
     }
 
     private LanguageDto toDto(Language language) {
         return LanguageDto.builder()
-                .id(language.getId())
+                .id(language.getCode())
                 .code(language.getCode())
                 .build();
     }

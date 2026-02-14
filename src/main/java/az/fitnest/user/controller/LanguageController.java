@@ -36,16 +36,16 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.getAllLanguages()));
     }
 
-    @Operation(summary = "Get language by ID", description = "Retrieves the details of a specific language using its unique ID. This endpoint is useful for administrators to view individual language configurations.")
+    @Operation(summary = "Get language by code", description = "Retrieves the details of a specific language using its unique code. This endpoint is useful for administrators to view individual language configurations.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language retrieved successfully",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<LanguageDto>> getLanguageById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(languageService.getLanguageById(id)));
+    @GetMapping("/{code}")
+    public ResponseEntity<ApiResponse<LanguageDto>> getLanguageByCode(@PathVariable String code) {
+        return ResponseEntity.ok(ApiResponse.success(languageService.getLanguageByCode(code)));
     }
 
     @Operation(summary = "Create a new language", description = "Adds a new language to the system with the provided code and name. This allows administrators to expand the list of supported languages for user preferences.")
@@ -68,9 +68,9 @@ public class LanguageController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request data")
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<LanguageDto>> updateLanguage(@PathVariable Long id, @Valid @RequestBody LanguageCreateRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(languageService.updateLanguage(id, request)));
+    @PutMapping("/{code}")
+    public ResponseEntity<ApiResponse<LanguageDto>> updateLanguage(@PathVariable String code, @Valid @RequestBody LanguageCreateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(languageService.updateLanguage(code, request)));
     }
 
     @Operation(summary = "Delete a language", description = "Removes a language from the system using its unique ID. This action is permanent and should be used carefully as it may affect users who have selected this language. Restricted to administrators.")
@@ -79,9 +79,9 @@ public class LanguageController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteLanguage(@PathVariable Long id) {
-        languageService.deleteLanguage(id);
+    @DeleteMapping("/{code}")
+    public ResponseEntity<ApiResponse<Void>> deleteLanguage(@PathVariable String code) {
+        languageService.deleteLanguage(code);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
