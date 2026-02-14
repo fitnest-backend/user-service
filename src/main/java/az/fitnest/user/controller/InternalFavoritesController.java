@@ -25,7 +25,7 @@ public class InternalFavoritesController {
 
     @Operation(
             summary = "Check if entity is favorited",
-            description = "Internal endpoint to check if a specific entity is favorited by a user."
+            description = "Internal service endpoint to verify if a specific entity (such as a gym or store) has been favorited by the given user. Returns a boolean indicating the favorite status."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -44,7 +44,7 @@ public class InternalFavoritesController {
 
     @Operation(
             summary = "Bulk check favorite status",
-            description = "Internal endpoint to check favorite status for multiple entities at once."
+            description = "Internal service endpoint for efficiently checking favorite status across multiple entities of the same type for a user. Accepts a list of entity IDs and returns a map with each ID mapped to its favorite boolean status."
     )
     @ApiResponses(value = {
             @ApiResponse(

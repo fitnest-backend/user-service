@@ -45,7 +45,7 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getUserMe()));
     }
 
-    @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile information.")
+    @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile information such as name, email, and other personal details. Only provided fields will be updated, leaving others unchanged. Validation is performed on the input data.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile updated successfully",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))

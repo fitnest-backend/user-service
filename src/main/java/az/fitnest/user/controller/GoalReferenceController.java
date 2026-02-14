@@ -3,7 +3,9 @@ package az.fitnest.user.controller;
 import az.fitnest.user.repository.GoalReferenceRepository;
 import az.fitnest.user.model.entity.GoalReference;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,13 +26,48 @@ public class GoalReferenceController {
 
     private final GoalReferenceRepository goalReferenceRepository;
 
-    @Operation(summary = "Get all goal references", description = "Returns a list of all fitness goal references.")
+    @Operation(
+            summary = "Get all goal references",
+            description = "Retrieves a comprehensive list of all predefined fitness and health goal references available in the system. The goals are ordered alphabetically by their unique code for easy reference and selection."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Goal references retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - authentication required",
+                    content = @Content
+            )
+    })
     @GetMapping
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<java.util.List<GoalReference>>> getAllGoals() {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.findAllByOrderByGoalCodeAsc()));
     }
 
-    @Operation(summary = "Get goal reference by code", description = "Returns details of a specific goal reference.")
+    @Operation(
+            summary = "Get goal reference by code",
+            description = "Retrieves detailed information about a specific fitness or health goal reference using its unique code identifier. This endpoint is useful for displaying goal details in user interfaces."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Goal reference retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - authentication required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Goal reference not found with the provided code",
+                    content = @Content
+            )
+    })
     @GetMapping("/{code}")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> getGoalByCode(@PathVariable String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
@@ -38,7 +75,37 @@ public class GoalReferenceController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }
 
-    @Operation(summary = "Create a new goal reference", description = "Creates a new goal reference.")
+    @Operation(
+            summary = "Create a new goal reference",
+            description = "Creates a new fitness or health goal reference in the system. This endpoint is restricted to administrators and requires a unique goal code. The goal will be available for users to select as their fitness objective."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Goal reference created successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data or validation failed",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - authentication required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Forbidden - admin role required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict - goal code already exists",
+                    content = @Content
+            )
+    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
@@ -52,7 +119,37 @@ public class GoalReferenceController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.save(goal)));
     }
 
-    @Operation(summary = "Update a goal reference", description = "Updates an existing goal reference.")
+    @Operation(
+            summary = "Update a goal reference",
+            description = "Updates the title and subtitle of an existing fitness or health goal reference. Only the provided fields will be updated, leaving others unchanged. This endpoint is restricted to administrators."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Goal reference updated successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data or validation failed",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - authentication required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Forbidden - admin role required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Goal reference not found with the provided code",
+                    content = @Content
+            )
+    })
     @PutMapping("/{code}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
@@ -67,7 +164,32 @@ public class GoalReferenceController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.save(goal)));
     }
 
-    @Operation(summary = "Delete a goal reference", description = "Deletes a goal reference.")
+    @Operation(
+            summary = "Delete a goal reference",
+            description = "Permanently removes a fitness or health goal reference from the system using its unique code. This action cannot be undone and may affect users who have selected this goal. Restricted to administrators only."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Goal reference deleted successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized - authentication required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Forbidden - admin role required",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Goal reference not found with the provided code",
+                    content = @Content
+            )
+    })
     @DeleteMapping("/{code}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<Void>> deleteGoal(@PathVariable String code) {

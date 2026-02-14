@@ -25,7 +25,7 @@ public class LanguageController {
 
     private final LanguageService languageService;
 
-    @Operation(summary = "Get all languages", description = "Returns a list of all languages.")
+    @Operation(summary = "Get all languages", description = "Retrieves a complete list of all supported languages in the system. This endpoint is restricted to administrators and provides language codes and names for configuration purposes.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Languages retrieved successfully",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class)))
@@ -36,7 +36,7 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.getAllLanguages()));
     }
 
-    @Operation(summary = "Get language by ID", description = "Returns a language by its ID.")
+    @Operation(summary = "Get language by ID", description = "Retrieves the details of a specific language using its unique ID. This endpoint is useful for administrators to view individual language configurations.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language retrieved successfully",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
@@ -48,7 +48,7 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.getLanguageById(id)));
     }
 
-    @Operation(summary = "Create a new language", description = "Creates a new language.")
+    @Operation(summary = "Create a new language", description = "Adds a new language to the system with the provided code and name. This allows administrators to expand the list of supported languages for user preferences.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Language created successfully",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
@@ -60,7 +60,7 @@ public class LanguageController {
         return ResponseEntity.status(201).body(ApiResponse.success(languageService.createLanguage(request)));
     }
 
-    @Operation(summary = "Update a language", description = "Updates an existing language.")
+    @Operation(summary = "Update a language", description = "Modifies the code and name of an existing language. Only the provided fields will be updated, allowing partial updates. This helps administrators correct or update language information.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
@@ -73,7 +73,7 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.updateLanguage(id, request)));
     }
 
-    @Operation(summary = "Delete a language", description = "Deletes a language by its ID.")
+    @Operation(summary = "Delete a language", description = "Removes a language from the system using its unique ID. This action is permanent and should be used carefully as it may affect users who have selected this language. Restricted to administrators.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language deleted successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found")

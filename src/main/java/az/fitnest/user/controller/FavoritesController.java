@@ -31,7 +31,7 @@ public class FavoritesController {
 
 	private final FavoritesService favoritesService;
 
-	@Operation(summary = "List favorites", description = "Returns current user's favorites.")
+	@Operation(summary = "List favorites", description = "Retrieves a list of all favorite entities (such as gyms or stores) that the authenticated user has saved. This allows users to quickly access their preferred locations without searching again.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Favorites returned", content = @Content(schema = @Schema(implementation = FavoritesResponses.class))),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
@@ -42,7 +42,7 @@ public class FavoritesController {
 		return ResponseEntity.status(HttpStatus.OK).body(favorites);
 	}
 
-	@Operation(summary = "Add favorite", description = "Adds a favorite entity (gym/store) for current user.")
+	@Operation(summary = "Add favorite", description = "Adds a new favorite entity (such as a gym or store) to the authenticated user's list of favorites. The entity is identified by its type and ID. If the favorite already exists, a conflict error is returned.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Favorite created", content = @Content(schema = @Schema(implementation = FavoritesResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
@@ -55,7 +55,7 @@ public class FavoritesController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 	
-	@Operation(summary = "Remove favorite", description = "Removes a favorite by id.")
+	@Operation(summary = "Remove favorite", description = "Removes a specific favorite from the authenticated user's list using the favorite's unique ID. This action permanently deletes the favorite association.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "204", description = "Favorite removed", content = @Content),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
