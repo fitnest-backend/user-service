@@ -42,6 +42,8 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             } else {
                 throw new BadRequestException("Failed to upload profile image");
             }
+        } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
         }
