@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class UserProfileController {
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Summary retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = SummaryResponse.class)))
+                    content = @Content(schema = @Schema(implementation = SummaryResponse.class), examples = @ExampleObject(value = "{\"totalWorkouts\": 25, \"totalCalories\": 1500}")))
     })
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<SummaryResponse>> getSummary() {
@@ -38,7 +39,7 @@ public class UserProfileController {
     @Operation(summary = "Get current user profile", description = "Returns the full profile details of the authenticated user.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
+                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\"}")))
     })
     @GetMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> getMe() {
@@ -48,7 +49,7 @@ public class UserProfileController {
     @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile information such as name, email, and other personal details. Only provided fields will be updated, leaving others unchanged. Validation is performed on the input data.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile updated successfully",
-                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class)))
+                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\"}")))
     })
     @PutMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> updateMe(@Valid @RequestBody UpdateUserProfileRequest request) {
@@ -67,7 +68,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update body metrics", description = "Updates user's physical metrics like height, weight, etc.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully", examples = @ExampleObject(value = "null"))
     })
     @PutMapping("/body")
     public ResponseEntity<ApiResponse<Void>> updateBody(@Valid @RequestBody UpdateBodyRequest request) {
@@ -110,7 +111,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user goal", description = "Updates the primary fitness or health goal of the user.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully", examples = @ExampleObject(value = "null"))
     })
     @PutMapping("/goal")
     public ResponseEntity<ApiResponse<Void>> updateGoal(@Valid @RequestBody UpdateGoalsRequest request) {
@@ -130,7 +131,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully", examples = @ExampleObject(value = "null"))
     })
     @PutMapping("/preferences")
     public ResponseEntity<ApiResponse<Void>> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request) {
@@ -140,7 +141,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user language", description = "Updates the user's preferred language.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully", examples = @ExampleObject(value = "null"))
     })
     @PutMapping("/language")
     public ResponseEntity<ApiResponse<Void>> updateLanguage(@Valid @RequestBody UpdateLanguageRequest request) {
@@ -210,7 +211,7 @@ public class UserProfileController {
 
     @Operation(summary = "Delete account", description = "Deletes the user's account and associated data.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully", examples = @ExampleObject(value = "null"))
     })
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
