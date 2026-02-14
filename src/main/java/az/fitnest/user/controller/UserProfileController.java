@@ -68,7 +68,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update body metrics", description = "Updates user's physical metrics like height, weight, etc.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully", examples = @ExampleObject(value = "null"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/body")
     public ResponseEntity<ApiResponse<Void>> updateBody(@Valid @RequestBody UpdateBodyRequest request) {
@@ -111,7 +111,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user goal", description = "Updates the primary fitness or health goal of the user.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully", examples = @ExampleObject(value = "null"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/goal")
     public ResponseEntity<ApiResponse<Void>> updateGoal(@Valid @RequestBody UpdateGoalsRequest request) {
@@ -131,7 +131,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully", examples = @ExampleObject(value = "null"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/preferences")
     public ResponseEntity<ApiResponse<Void>> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request) {
@@ -141,7 +141,7 @@ public class UserProfileController {
 
     @Operation(summary = "Update user language", description = "Updates the user's preferred language.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully", examples = @ExampleObject(value = "null"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/language")
     public ResponseEntity<ApiResponse<Void>> updateLanguage(@Valid @RequestBody UpdateLanguageRequest request) {
@@ -211,7 +211,7 @@ public class UserProfileController {
 
     @Operation(summary = "Delete account", description = "Deletes the user's account and associated data.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully", examples = @ExampleObject(value = "null"))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
