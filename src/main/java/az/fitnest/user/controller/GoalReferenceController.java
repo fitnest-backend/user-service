@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.util.UserContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -36,6 +38,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Tag(name = "Goal Management", description = "Endpoints for managing goal references")
 @SecurityRequirement(name = "bearerAuth")
 public class GoalReferenceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(GoalReferenceController.class);
 
     private final GoalReferenceRepository goalReferenceRepository;
     private final TranslationRepository translationRepository;
@@ -148,7 +152,9 @@ public class GoalReferenceController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
+        logger.info("Creating new goal with code: {}", request.getCode());
         if (goalReferenceRepository.existsById(request.getCode())) {
+            logger.warn("Attempt to create goal that already exists: {}", request.getCode());
             throw new ConflictException("Goal already exists: " + request.getCode());
         }
         GoalReference goal = new GoalReference();
@@ -156,11 +162,13 @@ public class GoalReferenceController {
 
 
         goalReferenceRepository.save(goal);
+        logger.info("Goal saved with code: {}", request.getCode());
 
         // Create translations for all languages
         createTranslationIfNotFound(request.getCode(), "EN", request.getTitle(), request.getSubtitle());
         createTranslationIfNotFound(request.getCode(), "AZ", request.getTitle(), request.getSubtitle());
         createTranslationIfNotFound(request.getCode(), "RU", request.getTitle(), request.getSubtitle());
+        logger.info("Translations created for goal: {}", request.getCode());
 
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }

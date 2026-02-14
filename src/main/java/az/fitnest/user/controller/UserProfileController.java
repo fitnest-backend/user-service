@@ -22,12 +22,16 @@ import az.fitnest.user.util.UserContext;
 import az.fitnest.user.repository.TranslationRepository;
 import az.fitnest.user.model.entity.Translation;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/me")
 @RequiredArgsConstructor
 @Tag(name = "User Profile", description = "Endpoints for managing user profile, settings, and account")
 public class UserProfileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
@@ -237,6 +241,7 @@ public class UserProfileController {
     @GetMapping("/translations/gender")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllGenderTranslations() {
+        logger.info("Retrieving all gender translations");
         java.util.List<Translation> translations = translationRepository.findByEntityType("Gender");
         return ResponseEntity.ok(ApiResponse.success(translations));
     }
@@ -249,6 +254,7 @@ public class UserProfileController {
     @GetMapping("/translations/bmi")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllBmiTranslations() {
+        logger.info("Retrieving all BMI message translations");
         java.util.List<Translation> translations = translationRepository.findByEntityType("Message");
         return ResponseEntity.ok(ApiResponse.success(translations));
     }
