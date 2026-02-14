@@ -10,8 +10,8 @@ import java.util.Map;
 
 public interface FavoritesService {
     Map<EntityType, Long> getFavoriteCounts(Long userId);
-    FavoritesResponses getFavorites();
-    FavoritesResponse addFavorites(FavoritesRequest request);
+    FavoritesResponses getFavorites(String language);
+    FavoritesResponse addFavorites(FavoritesRequest request, String language);
     void deleteFavorites(Long favoritesId);
     long countFavorites(Long userId, EntityType entityType);
     boolean isFavorited(Long userId, EntityType entityType, String entityId);

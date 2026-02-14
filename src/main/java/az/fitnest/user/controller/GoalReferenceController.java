@@ -1,8 +1,13 @@
 package az.fitnest.user.controller;
 
+import az.fitnest.user.client.CachedIdentityGrpcClient;
 import az.fitnest.user.repository.GoalReferenceRepository;
+import az.fitnest.user.repository.TranslationRepository;
 import az.fitnest.user.model.entity.GoalReference;
+import az.fitnest.user.model.entity.Translation;
 import az.fitnest.user.service.FileStorageService;
+import az.fitnest.user.service.TranslationService;
+import az.fitnest.user.dto.response.GoalItemResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,6 +27,7 @@ import az.fitnest.user.exception.ConflictException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import az.fitnest.user.exception.BadRequestException;
+import az.fitnest.user.util.UserContext;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -31,7 +37,10 @@ import az.fitnest.user.exception.BadRequestException;
 public class GoalReferenceController {
 
     private final GoalReferenceRepository goalReferenceRepository;
+    private final TranslationRepository translationRepository;
     private final FileStorageService fileStorageService;
+    private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
+    private final TranslationService translationService;
 
     @Operation(
             summary = "Get all goal references",
@@ -50,8 +59,20 @@ public class GoalReferenceController {
             )
     })
     @GetMapping
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<java.util.List<GoalReference>>> getAllGoals() {
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.findAllByOrderByGoalCodeAsc()));
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<java.util.List<GoalItemResponse>>> getAllGoals() {
+        String userLanguage = getUserLanguage();
+        java.util.List<GoalReference> goals = goalReferenceRepository.findAllByOrderByGoalCodeAsc();
+        java.util.List<GoalItemResponse> responses = goals.stream().map(goal -> {
+            String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
+            String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
+            return GoalItemResponse.builder()
+                    .code(goal.getGoalCode())
+                    .title(title)
+                    .subtitle(subtitle)
+                    .imageUrl(goal.getImageUrl())
+                    .build();
+        }).collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(responses));
     }
 
     @Operation(
@@ -76,10 +97,19 @@ public class GoalReferenceController {
             )
     })
     @GetMapping("/{code}")
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> getGoalByCode(@PathVariable String code) {
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalItemResponse>> getGoalByCode(@PathVariable String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
+        String userLanguage = getUserLanguage();
+        String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
+        String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
+        GoalItemResponse response = GoalItemResponse.builder()
+                .code(goal.getGoalCode())
+                .title(title)
+                .subtitle(subtitle)
+                .imageUrl(goal.getImageUrl())
+                .build();
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(response));
     }
 
     @Operation(
@@ -123,8 +153,6 @@ public class GoalReferenceController {
         }
         GoalReference goal = new GoalReference();
         goal.setGoalCode(request.getCode());
-        goal.setTitle(request.getTitle());
-        goal.setSubtitle(request.getSubtitle());
 
         if (image != null && !image.isEmpty()) {
             validateImage(image);
@@ -132,7 +160,12 @@ public class GoalReferenceController {
             goal.setImageUrl(imageUrl);
         }
 
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.save(goal)));
+        goalReferenceRepository.save(goal);
+
+        // Create translations for EN
+        createTranslationIfNotFound(request.getCode(), "EN", request.getTitle(), request.getSubtitle());
+
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }
 
     @Operation(
@@ -175,9 +208,6 @@ public class GoalReferenceController {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
 
-        goal.setTitle(request.getTitle());
-        goal.setSubtitle(request.getSubtitle());
-
         if (image != null && !image.isEmpty()) {
             // Delete old image if exists
             if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
@@ -190,9 +220,40 @@ public class GoalReferenceController {
             validateImage(image);
             String imageUrl = fileStorageService.saveFile(image);
             goal.setImageUrl(imageUrl);
+            goalReferenceRepository.save(goal);
         }
 
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceRepository.save(goal)));
+        // Update EN translation
+        translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", code, "EN", "title")
+                .ifPresentOrElse(translation -> {
+                    translation.setFieldValue(request.getTitle());
+                    translationRepository.save(translation);
+                }, () -> {
+                    Translation newTranslation = Translation.builder()
+                            .entityType("GoalReference")
+                            .entityId(code)
+                            .languageCode("EN")
+                            .fieldName("title")
+                            .fieldValue(request.getTitle())
+                            .build();
+                    translationRepository.save(newTranslation);
+                });
+        translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", code, "EN", "subtitle")
+                .ifPresentOrElse(translation -> {
+                    translation.setFieldValue(request.getSubtitle());
+                    translationRepository.save(translation);
+                }, () -> {
+                    Translation newTranslation = Translation.builder()
+                            .entityType("GoalReference")
+                            .entityId(code)
+                            .languageCode("EN")
+                            .fieldName("subtitle")
+                            .fieldValue(request.getSubtitle())
+                            .build();
+                    translationRepository.save(newTranslation);
+                });
+
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }
 
     @Operation(
@@ -301,6 +362,45 @@ public class GoalReferenceController {
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new BadRequestException("Only image files are allowed");
         }
+    }
+
+    private void createTranslationIfNotFound(String goalCode, String languageCode, String title, String subtitle) {
+        if (!translationRepository.existsByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", goalCode, languageCode, "title")) {
+            Translation translation = Translation.builder()
+                    .entityType("GoalReference")
+                    .entityId(goalCode)
+                    .languageCode(languageCode)
+                    .fieldName("title")
+                    .fieldValue(title)
+                    .build();
+            translationRepository.save(translation);
+        }
+        if (!translationRepository.existsByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", goalCode, languageCode, "subtitle")) {
+            Translation translation = Translation.builder()
+                    .entityType("GoalReference")
+                    .entityId(goalCode)
+                    .languageCode(languageCode)
+                    .fieldName("subtitle")
+                    .fieldValue(subtitle)
+                    .build();
+            translationRepository.save(translation);
+        }
+    }
+
+    private String getUserLanguage() {
+        Long userId = UserContext.getCurrentUserId();
+        if (userId != null) {
+            try {
+                az.fitnest.user.grpc.UserResponse user = cachedIdentityGrpcClient.getUserById(userId);
+                String language = user.getLanguage();
+                if (language != null && !language.isEmpty()) {
+                    return language.toUpperCase();
+                }
+            } catch (Exception e) {
+                // Log error or ignore
+            }
+        }
+        return "AZ"; // Default to Azerbaijan
     }
 
     @Data

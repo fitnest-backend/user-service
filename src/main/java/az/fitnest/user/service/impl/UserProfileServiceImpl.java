@@ -46,6 +46,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final UserLocationRepository userLocationRepository;
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final LanguageRepository languageRepository;
+    private final TranslationService translationService;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -239,7 +240,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Transactional(readOnly = true)
     @Override
-    public BodyInfoResponse getBodyInfo() {
+    public BodyInfoResponse getBodyInfo(String language) {
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
             UserProfile p = new UserProfile();
@@ -247,17 +248,22 @@ public class UserProfileServiceImpl implements UserProfileService {
             return p;
         });
 
+        String translatedGender = null;
+        if (profile.getGender() != null) {
+            translatedGender = translationService.getTranslatedValue("Gender", profile.getGender().name(), "label", language);
+        }
+
         return BodyInfoResponse.builder()
                 .heightCm(profile.getHeightCm() != null ? profile.getHeightCm().intValue() : null)
                 .weightKg(profile.getWeightKg())
-                .gender(profile.getGender() != null ? profile.getGender().name().toLowerCase() : null)
+                .gender(translatedGender)
                 .birthDate(profile.getBirthDate())
                 .build();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public GoalResponse getGoal() {
+    public GoalResponse getGoal(String language) {
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
             UserProfile p = new UserProfile();
@@ -273,14 +279,23 @@ public class UserProfileServiceImpl implements UserProfileService {
         var reference = goalReferenceRepository.findById(goalCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
 
-        return mapToGoalResponse(reference, goalCode);
+        return mapToGoalResponse(reference, goalCode, language);
     }
 
     @Transactional(readOnly = true)
     @Override
     public GoalsResponse getReferenceGoals() {
         var items = goalReferenceRepository.findAllByOrderByGoalCodeAsc().stream()
-                .map(this::mapToGoalItemResponse)
+                .map(goal -> {
+                    String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", "AZ");
+                    String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", "AZ");
+                    return GoalItemResponse.builder()
+                            .code(goal.getGoalCode())
+                            .title(title)
+                            .subtitle(subtitle)
+                            .imageUrl(goal.getImageUrl())
+                            .build();
+                })
                 .toList();
 
         return GoalsResponse.builder().items(items).build();
@@ -314,7 +329,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Transactional(readOnly = true)
     @Override
-    public FitnessLevelResponse getFitnessLevel() {
+    public FitnessLevelResponse getFitnessLevel(String language) {
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
@@ -335,13 +350,15 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .overweightMax(30.0)
                 .build();
 
+        String message = translationService.getTranslatedValue("Message", "BmiMessage", category, language);
+
         return FitnessLevelResponse.builder()
                 .level("BEGINNER")
                 .bmi(bmi)
                 .bmiCategory(category)
                 .bmiScale(bmiScale)
                 .goal(profile.getGoalCode())
-                .message(getBmiMessage(category))
+                .message(message)
                 .build();
     }
 
@@ -480,15 +497,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         return "OBESE";
     }
 
-    private String getBmiMessage(String category) {
-        return switch (category) {
-            case "UNDERWEIGHT" -> "Sizin çəkiniz normadan aşağıdır. Qidalanmanıza diqqət yetirin.";
-            case "NORMAL" -> "Sizin çəkiniz normal diapazondadır. Belə davam edin!";
-            case "OVERWEIGHT" -> "Sizin çəkiniz normadan artıqdır. Aktivliyinizi artırın.";
-            case "OBESE" -> "Sizin çəkiniz piylənmə diapazonundadır. Mütəxəssislə məsləhətləşin.";
-            default -> "Məlumat yoxdur.";
-        };
-    }
 
     private UserProfile getOrCreateProfile(Long userId) {
         Optional<UserProfile> existing = userProfileRepository.findById(userId);
@@ -522,17 +530,20 @@ public class UserProfileServiceImpl implements UserProfileService {
     private GoalItemResponse mapToGoalItemResponse(GoalReference goal) {
         return GoalItemResponse.builder()
                 .code(goal.getGoalCode())
-                .title(goal.getTitle())
-                .subtitle(goal.getSubtitle())
+                .title("") // Placeholder, as titles are in translations
+                .subtitle("") // Placeholder, as subtitles are in translations
                 .imageUrl(goal.getImageUrl())
                 .build();
     }
 
-    private GoalResponse mapToGoalResponse(GoalReference reference, String goalCode) {
+    private GoalResponse mapToGoalResponse(GoalReference reference, String goalCode, String language) {
+        String title = translationService.getTranslatedValue("GoalReference", goalCode, "title", language);
+        String subtitle = translationService.getTranslatedValue("GoalReference", goalCode, "subtitle", language);
+
         return GoalResponse.builder()
                 .goalCode(goalCode)
-                .title(reference.getTitle())
-                .subtitle(reference.getSubtitle())
+                .title(title)
+                .subtitle(subtitle)
                 .imageUrl(reference.getImageUrl())
                 .build();
     }

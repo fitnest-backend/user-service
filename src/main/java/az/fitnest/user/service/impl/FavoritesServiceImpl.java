@@ -29,6 +29,7 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     private final FavoritesRepository favoritesRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final TranslationService translationService;
 
         @Override
     public Map<EntityType, Long> getFavoriteCounts(Long userId) {
@@ -41,13 +42,13 @@ public class FavoritesServiceImpl implements FavoritesService {
     }
 
         @Override
-    public FavoritesResponses getFavorites() {
+    public FavoritesResponses getFavorites(String language) {
         Long userId = UserContext.getCurrentUserId();
         List<Favorite> favorites = favoritesRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
         
         FavoritesResponses resp = new FavoritesResponses();
         resp.setFavorites(favorites.stream()
-                .map(this::toResponse)
+                .map(favorite -> toResponse(favorite, language))
                 .collect(Collectors.toList()));
         return resp;
     }
@@ -55,7 +56,7 @@ public class FavoritesServiceImpl implements FavoritesService {
     @CacheEvict(value="user_summaries", key="T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Transactional
         @Override
-    public FavoritesResponse addFavorites(FavoritesRequest request) {
+    public FavoritesResponse addFavorites(FavoritesRequest request, String language) {
         Long userId = UserContext.getCurrentUserId();
         
         EntityType type;
@@ -80,7 +81,7 @@ public class FavoritesServiceImpl implements FavoritesService {
         // Publish event for cache invalidation
         publishFavoriteEvent("FAVORITE_ADDED", userId, type, request.getEntityId());
 
-        return toResponse(saved);
+        return toResponse(saved, language);
     }
 
     @CacheEvict(value="user_summaries", key="T(az.fitnest.user.util.UserContext).getCurrentUserId()")
@@ -127,6 +128,16 @@ public class FavoritesServiceImpl implements FavoritesService {
         FavoritesResponse response = new FavoritesResponse();
         response.setFavoriteId("f_" + favorite.getFavoriteId());
         response.setEntityType(favorite.getEntityType().name().toLowerCase());
+        response.setEntityId(favorite.getEntityId());
+        response.setCreatedAt(favorite.getCreatedAt());
+        return response;
+    }
+
+    private FavoritesResponse toResponse(Favorite favorite, String language) {
+        FavoritesResponse response = new FavoritesResponse();
+        response.setFavoriteId("f_" + favorite.getFavoriteId());
+        String translatedEntityType = translationService.getTranslatedValue("EntityType", favorite.getEntityType().name(), "label", language);
+        response.setEntityType(translatedEntityType);
         response.setEntityId(favorite.getEntityId());
         response.setCreatedAt(favorite.getCreatedAt());
         return response;

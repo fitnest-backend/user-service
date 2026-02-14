@@ -15,13 +15,13 @@ public interface UserProfileService {
     ActiveSubscriptionResponse getActiveSubscription();
     void deleteAccount(DeleteAccountRequest request);
     void updateGoal(UpdateGoalsRequest request);
-    BodyInfoResponse getBodyInfo();
-    GoalResponse getGoal();
+    BodyInfoResponse getBodyInfo(String language);
+    GoalResponse getGoal(String language);
     void updatePreferences(UpdatePreferencesRequest request);
     void updateLanguage(UpdateLanguageRequest request);
     GoalsResponse getReferenceGoals();
     SetupResponse getSetupStatus();
-    FitnessLevelResponse getFitnessLevel();
+    FitnessLevelResponse getFitnessLevel(String language);
     CompleteSetupResponse completeSetup();
     CompleteSetupResponse skipSetup();
     SetupResponse setupProfile(SetupRequest request);

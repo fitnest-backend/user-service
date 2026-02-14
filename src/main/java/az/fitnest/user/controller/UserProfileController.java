@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
+import az.fitnest.user.client.CachedIdentityGrpcClient;
+import az.fitnest.user.util.UserContext;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -25,6 +27,7 @@ import org.springframework.http.MediaType;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
+    private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
 
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
@@ -83,7 +86,8 @@ public class UserProfileController {
     })
     @GetMapping("/body")
     public ResponseEntity<ApiResponse<BodyInfoResponse>> getBody() {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getBodyInfo()));
+        String userLanguage = getUserLanguage();
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getBodyInfo(userLanguage)));
     }
 
     @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
@@ -126,7 +130,8 @@ public class UserProfileController {
     })
     @GetMapping("/goal")
     public ResponseEntity<ApiResponse<GoalResponse>> getGoal() {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal()));
+        String userLanguage = getUserLanguage();
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal(userLanguage)));
     }
 
     @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")
@@ -196,7 +201,8 @@ public class UserProfileController {
     })
     @GetMapping("/fitness-level")
     public ResponseEntity<ApiResponse<FitnessLevelResponse>> getFitnessLevel() {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel()));
+        String userLanguage = getUserLanguage();
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel(userLanguage)));
     }
 
     @Operation(summary = "Get active subscription", description = "Returns the user's active subscription details.")
@@ -217,5 +223,21 @@ public class UserProfileController {
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
         userProfileService.deleteAccount(request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    private String getUserLanguage() {
+        Long userId = UserContext.getCurrentUserId();
+        if (userId != null) {
+            try {
+                az.fitnest.user.grpc.UserResponse user = cachedIdentityGrpcClient.getUserById(userId);
+                String language = user.getLanguage();
+                if (language != null && !language.isEmpty()) {
+                    return language.toUpperCase();
+                }
+            } catch (Exception e) {
+                // Log error or ignore
+            }
+        }
+        return "AZ";
     }
 }
