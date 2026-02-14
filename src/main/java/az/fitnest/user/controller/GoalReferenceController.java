@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -35,7 +36,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal references retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": [{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\"}]}"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -56,7 +57,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -84,7 +85,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference created successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -128,7 +129,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference updated successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -173,7 +174,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference deleted successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": null}"))
             ),
             @ApiResponse(
                     responseCode = "401",
