@@ -415,6 +415,18 @@ public class GoalReferenceController {
         return "AZ"; // Default to Azerbaijan
     }
 
+    @Operation(summary = "Get all goal translations", description = "Retrieves all translations for goal references. Admin access required.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class)))
+    })
+    @GetMapping("/translations")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<java.util.List<Translation>>> getAllGoalTranslations() {
+        java.util.List<Translation> translations = translationRepository.findByEntityType("GoalReference");
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
+    }
+
     @Data
     @Schema(description = "Request to create a new goal reference")
     public static class CreateGoalRequest {

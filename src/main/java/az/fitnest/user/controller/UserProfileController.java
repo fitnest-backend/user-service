@@ -19,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 import az.fitnest.user.client.CachedIdentityGrpcClient;
 import az.fitnest.user.util.UserContext;
+import az.fitnest.user.repository.TranslationRepository;
+import az.fitnest.user.model.entity.Translation;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -28,6 +31,7 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
+    private final TranslationRepository translationRepository;
 
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
@@ -223,6 +227,30 @@ public class UserProfileController {
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
         userProfileService.deleteAccount(request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @Operation(summary = "Get all gender translations", description = "Retrieves all translations for gender values. Admin access required.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("/translations/gender")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllGenderTranslations() {
+        java.util.List<Translation> translations = translationRepository.findByEntityType("Gender");
+        return ResponseEntity.ok(ApiResponse.success(translations));
+    }
+
+    @Operation(summary = "Get all BMI message translations", description = "Retrieves all translations for BMI messages. Admin access required.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("/translations/bmi")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllBmiTranslations() {
+        java.util.List<Translation> translations = translationRepository.findByEntityType("Message");
+        return ResponseEntity.ok(ApiResponse.success(translations));
     }
 
     private String getUserLanguage() {

@@ -12,4 +12,5 @@ public interface TranslationRepository extends JpaRepository<Translation, Long> 
     List<Translation> findByEntityTypeAndEntityId(String entityType, String entityId);
     Optional<Translation> findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(String entityType, String entityId, String languageCode, String fieldName);
     boolean existsByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(String entityType, String entityId, String languageCode, String fieldName);
+    List<Translation> findByEntityType(String entityType);
 }
