@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class TranslationController {
                     content = @Content(schema = @Schema(implementation = Translation.class)))
     })
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<Translation>> createOrUpdateTranslation(@RequestBody CreateTranslationRequest request) {
         Translation existing = translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
                 request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
@@ -67,6 +69,7 @@ public class TranslationController {
             @ApiResponse(responseCode = "204", description = "Translation deleted successfully")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTranslation(@PathVariable Long id) {
         translationRepository.deleteById(id);
         return ResponseEntity.noContent().build();
