@@ -64,6 +64,27 @@ public class TranslationController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
     }
 
+    @GetMapping("/goals")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<Translation>>> getGoalTranslations() {
+        List<Translation> translations = translationRepository.findByEntityType("GoalReference");
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
+    }
+
+    @GetMapping("/gender")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<Translation>>> getGenderTranslations() {
+        List<Translation> translations = translationRepository.findByEntityType("Gender");
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
+    }
+
+    @GetMapping("/bmi")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<Translation>>> getBmiTranslations() {
+        List<Translation> translations = translationRepository.findByEntityType("Message");
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
+    }
+
     @Operation(summary = "Delete a translation", description = "Deletes a specific translation by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Translation deleted successfully")

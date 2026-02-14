@@ -233,32 +233,6 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @Operation(summary = "Get all gender translations", description = "Retrieves all translations for gender values. Admin access required.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    @GetMapping("/translations/gender")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllGenderTranslations() {
-        logger.info("Retrieving all gender translations");
-        java.util.List<Translation> translations = translationRepository.findByEntityType("Gender");
-        return ResponseEntity.ok(ApiResponse.success(translations));
-    }
-
-    @Operation(summary = "Get all BMI message translations", description = "Retrieves all translations for BMI messages. Admin access required.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    @GetMapping("/translations/bmi")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<java.util.List<Translation>>> getAllBmiTranslations() {
-        logger.info("Retrieving all BMI message translations");
-        java.util.List<Translation> translations = translationRepository.findByEntityType("Message");
-        return ResponseEntity.ok(ApiResponse.success(translations));
-    }
-
     private String getUserLanguage() {
         Long userId = UserContext.getCurrentUserId();
         if (userId != null) {
