@@ -25,6 +25,6 @@ public class BodyInfoResponse {
     private String gender;
 
     @JsonProperty("birth_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
 }
