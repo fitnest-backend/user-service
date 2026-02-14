@@ -172,8 +172,10 @@ public class GoalReferenceController {
 
         goalReferenceRepository.save(goal);
 
-        // Create translations for EN
+        // Create translations for all languages
         createTranslationIfNotFound(request.getCode(), "EN", request.getTitle(), request.getSubtitle());
+        createTranslationIfNotFound(request.getCode(), "AZ", request.getTitle(), request.getSubtitle());
+        createTranslationIfNotFound(request.getCode(), "RU", request.getTitle(), request.getSubtitle());
 
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }
