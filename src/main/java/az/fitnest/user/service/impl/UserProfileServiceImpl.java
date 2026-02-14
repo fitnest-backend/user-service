@@ -42,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
@@ -135,7 +137,15 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm().doubleValue());
         if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
         if (request.getGender() != null) profile.setGender(request.getGender());
-        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
+        if (request.getBirthDate() != null) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate birthDate = LocalDate.parse(request.getBirthDate(), formatter);
+                profile.setBirthDate(birthDate);
+            } catch (Exception e) {
+                throw new BadRequestException("Invalid birth date format. Expected DD/MM/YYYY");
+            }
+        }
 
         userProfileRepository.save(profile);
     }
@@ -383,7 +393,13 @@ public class UserProfileServiceImpl implements UserProfileService {
                 }
             }
             if (info.getBirthDate() != null) {
-                profile.setBirthDate(info.getBirthDate());
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate birthDate = LocalDate.parse(info.getBirthDate(), formatter);
+                    profile.setBirthDate(birthDate);
+                } catch (Exception e) {
+                    throw new BadRequestException("Invalid birth date format. Expected DD/MM/YYYY");
+                }
             }
             if (info.getGoal() != null) {
                 if (!goalReferenceRepository.existsById(info.getGoal())) {

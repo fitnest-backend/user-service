@@ -4,8 +4,6 @@ import az.fitnest.user.service.EventIdempotencyService;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
@@ -19,7 +17,6 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class EventIdempotencyServiceImpl implements EventIdempotencyService {
     private static final String KEY_PREFIX = "event:processed:";
-    private static final Logger log = LoggerFactory.getLogger(EventIdempotencyServiceImpl.class);
     private final StringRedisTemplate stringRedisTemplate;
     private final MeterRegistry meterRegistry;
 
@@ -48,7 +45,6 @@ public class EventIdempotencyServiceImpl implements EventIdempotencyService {
             return isNew;
         } catch (RedisConnectionFailureException | RedisSystemException | QueryTimeoutException e) {
             meterRegistry.counter("idempotency.redis_error").increment();
-            log.warn("Redis unavailable for idempotency check, failing open: {}", e.getMessage());
             return true;
         }
     }

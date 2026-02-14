@@ -11,7 +11,7 @@ public class FeignConfig {
 
     @Bean
     public feign.Logger.Level feignLoggerLevel() {
-        return feign.Logger.Level.FULL;
+        return feign.Logger.Level.NONE;
     }
 
     @Bean

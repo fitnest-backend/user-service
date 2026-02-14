@@ -1,14 +1,10 @@
 package az.fitnest.user.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 public class SetupRequest {
@@ -28,10 +24,8 @@ public class SetupRequest {
         private String gender;
 
         @JsonProperty("birth_date")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-        @Past(message = "Birth date must be in the past")
-        @Schema(description = "User's birth date", example = "15/01/1990")
-        private LocalDate birthDate;
+        @Schema(description = "User's birth date in DD/MM/YYYY format", example = "15/01/1990")
+        private String birthDate;
 
         private String goal;
     }
