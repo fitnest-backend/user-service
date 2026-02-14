@@ -145,30 +145,15 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(
-            @RequestParam("request") String requestJson,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
-        CreateGoalRequest request = objectMapper.readValue(requestJson, CreateGoalRequest.class);
-        // Manual validation
-        if (request.getCode() == null || request.getCode().trim().isEmpty()) {
-            throw new BadRequestException("Code must not be blank");
-        }
-        if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
-            throw new BadRequestException("Title must not be blank");
-        }
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
         if (goalReferenceRepository.existsById(request.getCode())) {
             throw new ConflictException("Goal already exists: " + request.getCode());
         }
         GoalReference goal = new GoalReference();
         goal.setGoalCode(request.getCode());
 
-        if (image != null && !image.isEmpty()) {
-            validateImage(image);
-            String imageUrl = fileStorageService.saveFile(image);
-            goal.setImageUrl(imageUrl);
-        }
 
         goalReferenceRepository.save(goal);
 
@@ -211,29 +196,14 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{code}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{code}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
-            @Valid @ModelAttribute az.fitnest.user.dto.request.UpdateGoalRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @Valid @RequestBody az.fitnest.user.dto.request.UpdateGoalRequest request) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
 
-        if (image != null && !image.isEmpty()) {
-            // Delete old image if exists
-            if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
-                try {
-                    fileStorageService.deleteFile(goal.getImageUrl());
-                } catch (Exception e) {
-                    // log or ignore
-                }
-            }
-            validateImage(image);
-            String imageUrl = fileStorageService.saveFile(image);
-            goal.setImageUrl(imageUrl);
-            goalReferenceRepository.save(goal);
-        }
 
         // Update EN translation
         translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", code, "EN", "title")
