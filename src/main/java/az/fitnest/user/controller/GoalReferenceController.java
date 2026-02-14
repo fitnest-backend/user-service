@@ -36,7 +36,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal references retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": [{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\"}]}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "[{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\"}]"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -57,7 +57,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -85,7 +85,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference created successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -129,7 +129,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference updated successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": {\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -174,7 +174,7 @@ public class GoalReferenceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Goal reference deleted successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"data\": null}"))
+                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "null"))
             ),
             @ApiResponse(
                     responseCode = "401",
