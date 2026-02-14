@@ -2,6 +2,7 @@ package az.fitnest.user.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -27,7 +28,8 @@ public class FavoritesResponse {
 	  private String entityId;
 
 	  @JsonProperty("created_at")
-	  @Schema(description = "Timestamp when the favorite was created", example = "2023-01-15T10:30:00")
+	  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+	  @Schema(description = "Timestamp when the favorite was created", example = "15/01/2023 10:30:00")
 	  private LocalDateTime createdAt;
 
 }
