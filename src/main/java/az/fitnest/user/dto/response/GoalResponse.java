@@ -18,4 +18,6 @@ public class GoalResponse {
     private String title;
 
     private String subtitle;
+
+    private String imageUrl;
 }

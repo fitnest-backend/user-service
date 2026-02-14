@@ -27,4 +27,8 @@ public class GoalReference {
     @Column(nullable = false)
     @Schema(description = "Subtitle or brief description of the goal", example = "Burn fat and achieve your ideal weight")
     private String subtitle;
+
+    @Column
+    @Schema(description = "URL of the goal image", example = "https://example.com/goal-image.jpg")
+    private String imageUrl;
 }

@@ -524,6 +524,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .code(goal.getGoalCode())
                 .title(goal.getTitle())
                 .subtitle(goal.getSubtitle())
+                .imageUrl(goal.getImageUrl())
                 .build();
     }
 
@@ -532,6 +533,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .goalCode(goalCode)
                 .title(reference.getTitle())
                 .subtitle(reference.getSubtitle())
+                .imageUrl(reference.getImageUrl())
                 .build();
     }
 }
