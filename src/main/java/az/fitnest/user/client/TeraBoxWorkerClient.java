@@ -31,6 +31,6 @@ public interface TeraBoxWorkerClient {
             @RequestBody List<String> paths
     );
 
-    @GetMapping("/api/v1/upload/download/{fileId}")
-    ResponseEntity<DownloadResponse> downloadFile(@PathVariable String fileId);
+    @GetMapping("/api/v1/upload/download")
+    ResponseEntity<DownloadResponse> downloadFile(@RequestParam("fileId") String fileId);
 }
