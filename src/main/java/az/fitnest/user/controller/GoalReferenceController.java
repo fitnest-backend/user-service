@@ -1,6 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.client.CachedIdentityGrpcClient;
+import az.fitnest.user.client.TeraBoxWorkerClient;
 import az.fitnest.user.repository.GoalReferenceRepository;
 import az.fitnest.user.repository.TranslationRepository;
 import az.fitnest.user.model.entity.GoalReference;
@@ -47,6 +48,7 @@ public class GoalReferenceController {
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationService translationService;
     private final ObjectMapper objectMapper;
+    private final TeraBoxWorkerClient teraBoxWorkerClient;
 
     @Operation(
             summary = "Get all goal references",
@@ -71,11 +73,12 @@ public class GoalReferenceController {
         java.util.List<GoalItemResponse> responses = goals.stream().map(goal -> {
             String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
             String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
+            String imageUrl = getFullImageUrl(goal.getImageUrl());
             return GoalItemResponse.builder()
                     .code(goal.getGoalCode())
                     .title(title)
                     .subtitle(subtitle)
-                    .imageUrl(goal.getImageUrl())
+                    .imageUrl(imageUrl)
                     .build();
         }).collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(responses));
@@ -113,7 +116,7 @@ public class GoalReferenceController {
                 .code(goal.getGoalCode())
                 .title(title)
                 .subtitle(subtitle)
-                .imageUrl(goal.getImageUrl())
+                .imageUrl(getFullImageUrl(goal.getImageUrl()))
                 .build();
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(response));
     }
@@ -390,6 +393,21 @@ public class GoalReferenceController {
             }
         }
         return "AZ"; // Default to Azerbaijan
+    }
+
+    private String getFullImageUrl(String fsId) {
+        if (fsId == null || fsId.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            ResponseEntity<DownloadResponse> response = teraBoxWorkerClient.downloadFile(fsId);
+            if (response.getBody() != null && response.getBody().isSuccess()) {
+                return response.getBody().getDownload_url();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to get download URL for fsId: {}", fsId, e);
+        }
+        return null;
     }
 
     @Data

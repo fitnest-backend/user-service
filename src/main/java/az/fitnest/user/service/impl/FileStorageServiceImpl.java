@@ -42,7 +42,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             MediaUploadResponse response = responseEntity.getBody();
 
             if (response != null && response.isSuccess() && response.getData() != null) {
-                String imageUrl = response.getData().getPath();
+                String imageUrl = String.valueOf(response.getData().getFs_id());
                 return imageUrl;
             } else {
                 throw new BadRequestException("Failed to upload profile image");

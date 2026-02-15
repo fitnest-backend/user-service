@@ -2,10 +2,13 @@ package az.fitnest.user.client;
 
 import az.fitnest.user.dto.response.MediaUploadResponse;
 import az.fitnest.user.dto.response.MediaDeleteResponse;
+import az.fitnest.user.dto.response.DownloadResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -27,4 +30,7 @@ public interface TeraBoxWorkerClient {
     ResponseEntity<MediaDeleteResponse> deleteFiles(
             @RequestBody List<String> paths
     );
+
+    @GetMapping("/api/v1/upload/download/{fileId}")
+    ResponseEntity<DownloadResponse> downloadFile(@PathVariable String fileId);
 }
