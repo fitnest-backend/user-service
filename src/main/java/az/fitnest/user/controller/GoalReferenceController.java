@@ -298,8 +298,7 @@ public class GoalReferenceController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Image uploaded successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "/images/goals/weight_loss.jpg"))
+                    description = "Image uploaded successfully"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -324,7 +323,7 @@ public class GoalReferenceController {
     })
     @PutMapping(value = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> uploadGoalImage(
+    public ResponseEntity<Void> uploadGoalImage(
             @PathVariable String code,
             @RequestParam("file") MultipartFile file) {
         GoalReference goal = goalReferenceRepository.findById(code)
@@ -337,7 +336,7 @@ public class GoalReferenceController {
         goal.setImageUrl(imageUrl);
         goalReferenceRepository.save(goal);
 
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(imageUrl));
+        return ResponseEntity.ok().build();
     }
 
     private void validateImage(MultipartFile file) {
