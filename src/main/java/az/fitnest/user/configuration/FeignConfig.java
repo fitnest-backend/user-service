@@ -39,6 +39,12 @@ public class FeignConfig {
                 org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
             
             if (attributes != null) {
+                // Skip sending Authorization header to terabox-worker-service as it doesn't need user tokens
+                // and forwarding them might cause 403 errors if the token is rejected downstream
+                if (requestTemplate.feignTarget() != null && "terabox-worker-service".equals(requestTemplate.feignTarget().name())) {
+                    return;
+                }
+
                 String authHeader = attributes.getRequest().getHeader("Authorization");
                 if (authHeader != null) {
                     requestTemplate.header("Authorization", authHeader);
