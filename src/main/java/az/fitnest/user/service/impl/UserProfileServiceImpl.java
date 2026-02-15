@@ -341,23 +341,16 @@ public class UserProfileServiceImpl implements UserProfileService {
         double bmi = profile.getWeightKg() / (heightM * heightM);
         bmi = Math.round(bmi * 10.0) / 10.0;
 
-        String category = getBmiCategory(bmi);
-
-        FitnessLevelResponse.BmiScale bmiScale = FitnessLevelResponse.BmiScale.builder()
+        BmiScaleResponse bmiScale = BmiScaleResponse.builder()
                 .underweightMax(18.5)
                 .normalMax(25.0)
                 .overweightMax(30.0)
                 .build();
 
-        String message = translationService.getTranslatedValue("Message", "BmiMessage", category, language);
-
         return FitnessLevelResponse.builder()
-                .level("BEGINNER")
                 .bmi(bmi)
-                .bmiCategory(category)
                 .bmiScale(bmiScale)
                 .goal(profile.getGoalCode())
-                .message(message)
                 .build();
     }
 
@@ -489,12 +482,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
     }
 
-    private String getBmiCategory(double bmi) {
-        if (bmi < 18.5) return "UNDERWEIGHT";
-        if (bmi < 25) return "NORMAL";
-        if (bmi < 30) return "OVERWEIGHT";
-        return "OBESE";
-    }
+
 
 
     private UserProfile getOrCreateProfile(Long userId) {

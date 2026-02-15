@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FitnessLevelResponse {
+public class BmiScaleResponse {
+    @JsonProperty("underweight_max")
+    private Double underweightMax;
 
-    private Double bmi;
+    @JsonProperty("normal_max")
+    private Double normalMax;
 
-    @JsonProperty("bmi_scale")
-    private BmiScaleResponse bmiScale;
-
-    private String goal;
+    @JsonProperty("overweight_max")
+    private Double overweightMax;
 }
