@@ -25,6 +25,11 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
 
     @Override
     public String saveFile(MultipartFile file) {
+        return saveFile(file, "/uploads");
+    }
+
+    @Override
+    public String saveFile(MultipartFile file, String directory) {
         if (file == null || file.isEmpty()) {
             return null;
         }
@@ -32,7 +37,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         validateFile(file);
 
         try {
-            ResponseEntity<MediaUploadResponse> responseEntity = teraBoxWorkerClient.uploadFile(file, "/uploads");
+            ResponseEntity<MediaUploadResponse> responseEntity = teraBoxWorkerClient.uploadFile(file, directory);
 
             MediaUploadResponse response = responseEntity.getBody();
 

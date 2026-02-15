@@ -177,7 +177,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String newImageUrl = null;
         try {
-            newImageUrl = fileStorageService.saveFile(file);
+            newImageUrl = fileStorageService.saveFile(file, "/profiles");
 
             try {
                 cachedIdentityClient.updateProfileImage(userId, newImageUrl);
