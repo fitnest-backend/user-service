@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class TeraBoxWorkerFeignConfig {
 
     @Bean
-    public RequestInterceptor requestInterceptor() {
+    public RequestInterceptor teraBoxRequestInterceptor() {
         return requestTemplate -> {
             requestTemplate.removeHeader("Authorization");
             requestTemplate.header("X-Internal-Token", "shared-secret-token");
