@@ -50,6 +50,7 @@ public class GoalReferenceController {
     private final TranslationService translationService;
     private final ObjectMapper objectMapper;
     private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
+    private final az.fitnest.user.service.ImageCacheService imageCacheService;
 
     @Operation(
             summary = "Get all goal references",
@@ -409,14 +410,29 @@ public class GoalReferenceController {
     )
     @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
+        byte[] cachedImage = imageCacheService.getImage(fsId);
+        
+        if (cachedImage != null) {
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
+                    .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
+                    .body(outputStream -> {
+                        outputStream.write(cachedImage);
+                        outputStream.flush();
+                    });
+        }
+
         return ResponseEntity.ok()
                 .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
+                    java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
                     teraBoxGrpcClient.downloadFile(fsId, response -> {
                         if (response.hasFileData()) {
                             try {
-                                outputStream.write(response.getFileData().toByteArray());
+                                byte[] data = response.getFileData().toByteArray();
+                                outputStream.write(data);
+                                baos.write(data);
                             } catch (java.io.IOException e) {
                                 throw new RuntimeException("Failed to stream file", e);
                             }
@@ -424,6 +440,9 @@ public class GoalReferenceController {
                     });
                     try {
                         outputStream.flush();
+                        if (baos.size() > 0) {
+                            imageCacheService.cacheImage(fsId, baos.toByteArray());
+                        }
                     } catch (java.io.IOException e) {
                         // Ignore or log
                     }

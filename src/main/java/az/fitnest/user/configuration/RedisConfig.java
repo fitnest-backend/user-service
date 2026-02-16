@@ -42,6 +42,19 @@ public class RedisConfig {
     }
 
     @Bean
+    public RedisTemplate<String, byte[]> binaryRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, byte[]> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new org.springframework.data.redis.serializer.JdkSerializationRedisSerializer()); 
+        // Or better, just use raw bytes with ByteArraySerializer if available in spring data redis version
+        // Actually, JdkSerializationRedisSerializer might add overhead. 
+        // Let's use RedisSerializer.byteArray() if available or just raw bytes.
+        template.setValueSerializer(org.springframework.data.redis.serializer.RedisSerializer.byteArray());
+        return template;
+    }
+
+    @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper());
 
