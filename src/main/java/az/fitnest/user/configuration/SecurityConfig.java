@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable) // Handled by Gateway/Istio usually, but keep simple here
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers.cacheControl(org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.CacheControlConfig::disable))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/internal/**").hasRole("INTERNAL")
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
