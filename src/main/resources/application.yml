@@ -87,6 +87,8 @@ spring:
 
   cloud:
     openfeign:
+      cache:
+        enabled: false
       client:
         config:
           default:

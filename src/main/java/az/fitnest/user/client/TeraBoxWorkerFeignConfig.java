@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Bean;
 
 public class TeraBoxWorkerFeignConfig {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TeraBoxWorkerFeignConfig.class);
+
     @Bean
     public RequestInterceptor teraBoxRequestInterceptor() {
         return requestTemplate -> {
-            System.out.println("TeraBoxWorkerFeignConfig: Injecting X-Internal-Token header");
+            logger.debug("TeraBoxWorkerFeignConfig: Injecting X-Internal-Token header for URL: {}", requestTemplate.url());
             requestTemplate.removeHeader("Authorization");
             requestTemplate.header("X-Internal-Token", "shared-secret-token");
         };
