@@ -20,17 +20,17 @@ import java.util.List;
 @FeignClient(name = "terabox-worker-service", url = "${terabox.worker.url:http://terabox-worker-service:9090}", configuration = TeraBoxWorkerFeignConfig.class)
 public interface TeraBoxWorkerClient {
 
-    @PostMapping(value = "/api/v1/upload/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/v1/files/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<MediaUploadResponse> uploadFile(
             @RequestPart("file") MultipartFile file,
             @RequestPart(value = "directory", required = false) String directory
     );
 
-    @DeleteMapping("/api/v1/upload/files")
+    @DeleteMapping("/api/v1/files")
     ResponseEntity<MediaDeleteResponse> deleteFiles(
             @RequestBody List<String> paths
     );
 
-    @GetMapping("/api/v1/upload/download")
+    @GetMapping("/api/v1/files/download")
     ResponseEntity<DownloadResponse> downloadFile(@RequestParam("fileId") String fileId);
 }

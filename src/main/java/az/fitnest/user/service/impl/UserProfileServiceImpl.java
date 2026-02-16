@@ -1,6 +1,7 @@
 package az.fitnest.user.service.impl;
 
 import az.fitnest.user.client.CachedIdentityGrpcClient;
+import az.fitnest.user.client.TeraBoxWorkerClient;
 import az.fitnest.user.dto.request.*;
 import az.fitnest.user.dto.response.*;
 import az.fitnest.user.exception.BadRequestException;
@@ -46,6 +47,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final LanguageRepository languageRepository;
     private final TranslationService translationService;
+    private final TeraBoxWorkerClient teraBoxWorkerClient;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -502,13 +504,23 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     private UserProfileResponse mapToUserProfileResponse(IdentityUserResponse userResponse) {
+        String profileImageUrl = userResponse.getProfileImageUrl();
+        if (profileImageUrl != null && profileImageUrl.startsWith("/")) {
+            try {
+                var response = teraBoxWorkerClient.downloadFile(profileImageUrl);
+                profileImageUrl = response.getDownload_url();
+            } catch (Exception e) {
+                logger.warn("Failed to get profile image URL for {}", profileImageUrl, e);
+                // keep original
+            }
+        }
         return UserProfileResponse.builder()
                 .userId(userResponse.getUserId())
                 .firstName(userResponse.getFirstName())
                 .lastName(userResponse.getLastName())
                 .mobile(userResponse.getMobile())
                 .email(userResponse.getEmail())
-                .profileImageUrl(userResponse.getProfileImageUrl())
+                .profileImageUrl(profileImageUrl)
                 .createdAt(parseCreatedAt(userResponse.getCreatedAt()))
                 .build();
     }
