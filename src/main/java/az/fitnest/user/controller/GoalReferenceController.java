@@ -1,7 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.client.CachedIdentityGrpcClient;
-import az.fitnest.user.client.TeraBoxWorkerClient;
+
 import az.fitnest.user.repository.GoalReferenceRepository;
 import az.fitnest.user.repository.TranslationRepository;
 import az.fitnest.user.model.entity.GoalReference;
@@ -49,7 +49,7 @@ public class GoalReferenceController {
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationService translationService;
     private final ObjectMapper objectMapper;
-    private final TeraBoxWorkerClient teraBoxWorkerClient;
+    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
 
     @Operation(
             summary = "Get all goal references",
@@ -401,10 +401,7 @@ public class GoalReferenceController {
             return null;
         }
         try {
-            ResponseEntity<DownloadResponse> response = teraBoxWorkerClient.downloadFile(fsId);
-            if (response.getBody() != null && response.getBody().isSuccess()) {
-                return response.getBody().getDownload_url();
-            }
+            return teraBoxGrpcClient.getDownloadUrl(fsId);
         } catch (Exception e) {
             logger.error("Failed to get download URL for fsId: {}", fsId, e);
         }

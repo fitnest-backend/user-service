@@ -1,6 +1,6 @@
 package az.fitnest.user.service.impl;
 
-import az.fitnest.user.client.TeraBoxWorkerClient;
+
 import az.fitnest.user.dto.response.MediaUploadResponse;
 import az.fitnest.user.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             "image/jpeg", "image/jpg", "image/png"
     );
 
-    private final TeraBoxWorkerClient teraBoxWorkerClient;
+    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
 
     @Override
     public String saveFile(MultipartFile file) {
@@ -37,16 +37,8 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         validateFile(file);
 
         try {
-            ResponseEntity<MediaUploadResponse> responseEntity = teraBoxWorkerClient.uploadFile(file, directory);
-
-            MediaUploadResponse response = responseEntity.getBody();
-
-            if (response != null && response.isSuccess() && response.getData() != null) {
-                String imageUrl = String.valueOf(response.getData().getFs_id());
-                return imageUrl;
-            } else {
-                throw new BadRequestException("Failed to upload profile image");
-            }
+            az.fitnest.user.dto.response.TeraBoxFileData data = teraBoxGrpcClient.uploadFile(file, directory);
+            return String.valueOf(data.getFs_id());
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -79,7 +71,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             return;
         }
         try {
-            teraBoxWorkerClient.deleteFiles(fileUrls);
+            teraBoxGrpcClient.deleteFiles(fileUrls);
         } catch (Exception e) {
         }
     }

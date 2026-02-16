@@ -1,7 +1,7 @@
 package az.fitnest.user.service.impl;
 
 import az.fitnest.user.client.CachedIdentityGrpcClient;
-import az.fitnest.user.client.TeraBoxWorkerClient;
+
 import az.fitnest.user.dto.request.*;
 import az.fitnest.user.dto.response.*;
 import az.fitnest.user.exception.BadRequestException;
@@ -47,7 +47,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final LanguageRepository languageRepository;
     private final TranslationService translationService;
-    private final TeraBoxWorkerClient teraBoxWorkerClient;
+    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -507,8 +507,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         String profileImageUrl = userResponse.getProfileImageUrl();
         if (profileImageUrl != null && profileImageUrl.startsWith("/")) {
             try {
-                var response = teraBoxWorkerClient.downloadFile(profileImageUrl);
-                profileImageUrl = response.getBody().getDownload_url();
+                profileImageUrl = teraBoxGrpcClient.getDownloadUrl(profileImageUrl);
             } catch (Exception e) {
                 logger.warn("Failed to get profile image URL for {}", profileImageUrl, e);
                 // keep original

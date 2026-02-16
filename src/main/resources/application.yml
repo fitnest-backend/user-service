@@ -165,6 +165,9 @@ grpc:
       keep-alive-time: 30s
       keep-alive-timeout: 5s
       deadline-after: ${GRPC_DEADLINE:10s}
+    terabox-worker-service:
+      address: 'static://terabox-worker-service:9090'
+      negotiation-type: plaintext
     identity:
       deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:30000}
       security:
