@@ -411,17 +411,22 @@ public class GoalReferenceController {
     public ResponseEntity<org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
         return ResponseEntity.ok()
                 .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
                     teraBoxGrpcClient.downloadFile(fsId, response -> {
                         if (response.hasFileData()) {
                             try {
                                 outputStream.write(response.getFileData().toByteArray());
-                                outputStream.flush();
                             } catch (java.io.IOException e) {
                                 throw new RuntimeException("Failed to stream file", e);
                             }
                         }
                     });
+                    try {
+                        outputStream.flush();
+                    } catch (java.io.IOException e) {
+                        // Ignore or log
+                    }
                 });
     }
 
