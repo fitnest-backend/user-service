@@ -508,7 +508,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (profileImageUrl != null && profileImageUrl.startsWith("/")) {
             try {
                 var response = teraBoxWorkerClient.downloadFile(profileImageUrl);
-                profileImageUrl = response.getDownload_url();
+                profileImageUrl = response.getBody().getDownload_url();
             } catch (Exception e) {
                 logger.warn("Failed to get profile image URL for {}", profileImageUrl, e);
                 // keep original
