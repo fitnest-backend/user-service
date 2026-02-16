@@ -1,6 +1,5 @@
 package az.fitnest.user.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +12,6 @@ import lombok.NoArgsConstructor;
 public class FitnessLevelResponse {
 
     private Double bmi;
-
-    @JsonProperty("bmi_scale")
-    private BmiScaleResponse bmiScale;
 
     private String goal;
 }

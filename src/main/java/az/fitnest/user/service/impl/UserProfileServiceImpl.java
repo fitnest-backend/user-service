@@ -343,16 +343,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         double bmi = profile.getWeightKg() / (heightM * heightM);
         bmi = Math.round(bmi * 10.0) / 10.0;
 
-        BmiScaleResponse bmiScale = BmiScaleResponse.builder()
-                .underweightMax(18.5)
-                .normalMax(25.0)
-                .overweightMax(30.0)
-                .build();
+        String goalTitle = null;
+        if (profile.getGoalCode() != null && !profile.getGoalCode().isBlank()) {
+            goalTitle = translationService.getTranslatedValue("GoalReference", profile.getGoalCode(), "title", language);
+        }
 
         return FitnessLevelResponse.builder()
                 .bmi(bmi)
-                .bmiScale(bmiScale)
-                .goal(profile.getGoalCode())
+                .goal(goalTitle)
                 .build();
     }
 
