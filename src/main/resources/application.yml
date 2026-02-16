@@ -150,6 +150,7 @@ springdoc:
 logging:
   level:
     az.fitnest.user.profile.adapter.client.IdentityServiceClient: DEBUG
+    az.fitnest.user.client: DEBUG
     feign.Logger: OFF
 
 grpc:
