@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+// Force rebuild 1
+
+
+package az.fitnest.terabox;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.terabox.grpc";
+option java_outer_classname = "TeraBoxProto";
+
+service TeraBoxService {
+  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse);
+  rpc GetDownloadUrl(GetDownloadUrlRequest) returns (GetDownloadUrlResponse);
+  rpc DeleteFiles(DeleteFilesRequest) returns (DeleteFilesResponse);
+}
+
+message UploadFileRequest {
+  oneof request {
+    FileMetadata metadata = 1;
+    bytes chunk_data = 2;
+  }
+}
+
+message FileMetadata {
+  string filename = 1;
+  string directory = 2;
+  string content_type = 3;
+}
+
+message UploadFileResponse {
+  bool success = 1;
+  string message = 2;
+  TeraBoxFileData data = 3;
+}
+
+message TeraBoxFileData {
+  string path = 1;
+  int64 size = 2;
+  string md5 = 3;
+  int64 fs_id = 4;
+}
+
+message GetDownloadUrlRequest {
+  string file_id = 1;
+}
+
+message GetDownloadUrlResponse {
+  bool success = 1;
+  string message = 2;
+  string download_url = 3;
+}
+
+message DeleteFilesRequest {
+  repeated string paths = 1;
+}
+
+message DeleteFilesResponse {
+  bool success = 1;
+  string message = 2;
+}
