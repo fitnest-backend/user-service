@@ -278,7 +278,7 @@ public class GoalReferenceController {
     })
     @DeleteMapping("/{code}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<Void>> deleteGoal(@PathVariable String code) {
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> deleteGoal(@PathVariable String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
 
@@ -292,7 +292,7 @@ public class GoalReferenceController {
         }
 
         goalReferenceRepository.deleteById(code);
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(null));
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success("Goal reference deleted successfully"));
     }
 
     @Operation(
