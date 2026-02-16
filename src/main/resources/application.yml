@@ -1,7 +1,7 @@
 server:
   port: 8080
   http2:
-    enabled: true
+    enabled: false
   compression:
     enabled: true
     mime-types: application/json,text/plain,text/css,application/javascript,application/openapi+json,application/vnd.api+json

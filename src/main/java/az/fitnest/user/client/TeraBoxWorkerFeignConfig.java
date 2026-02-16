@@ -13,6 +13,11 @@ public class TeraBoxWorkerFeignConfig {
             logger.debug("TeraBoxWorkerFeignConfig: Injecting X-Internal-Token header for URL: {}", requestTemplate.url());
             requestTemplate.removeHeader("Authorization");
             requestTemplate.header("X-Internal-Token", "shared-secret-token");
+            
+            // Log all headers for debugging
+            requestTemplate.headers().forEach((key, value) -> 
+                logger.debug("Header '{}': {}", key, value)
+            );
         };
     }
 
