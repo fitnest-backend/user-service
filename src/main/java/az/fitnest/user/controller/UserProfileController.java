@@ -111,14 +111,15 @@ public class UserProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Get goal references", description = "Returns available health and fitness goals for reference.")
+    @Operation(summary = "Get goal reference assigned to user", description = "Returns the health and fitness goal assigned to the user.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal references retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = GoalsResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal reference retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = GoalResponse.class)))
     })
     @GetMapping("/reference/goals")
-    public ResponseEntity<ApiResponse<GoalsResponse>> getReferenceGoals() {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getReferenceGoals()));
+    public ResponseEntity<ApiResponse<GoalResponse>> getReferenceGoal() {
+        String userLanguage = getUserLanguage();
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal(userLanguage)));
     }
 
     @Operation(summary = "Update user goal", description = "Updates the primary fitness or health goal of the user.")
