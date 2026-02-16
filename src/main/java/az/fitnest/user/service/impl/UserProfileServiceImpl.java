@@ -503,13 +503,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private UserProfileResponse mapToUserProfileResponse(IdentityUserResponse userResponse) {
         String profileImageUrl = userResponse.getProfileImageUrl();
-        if (profileImageUrl != null && profileImageUrl.startsWith("/")) {
-            try {
-                profileImageUrl = teraBoxGrpcClient.getDownloadUrl(profileImageUrl);
-            } catch (Exception e) {
-                logger.warn("Failed to get profile image URL for {}", profileImageUrl, e);
-                // keep original
-            }
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
+        } else {
+            profileImageUrl = null;
         }
         return UserProfileResponse.builder()
                 .userId(userResponse.getUserId())

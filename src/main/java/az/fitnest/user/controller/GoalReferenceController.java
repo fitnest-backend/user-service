@@ -122,6 +122,7 @@ public class GoalReferenceController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(response));
     }
 
+    // --- ADMIN ENDPOINTS ---
     @Operation(
             summary = "Create a new goal reference",
             description = "Creates a new fitness or health goal reference in the system. This endpoint is restricted to administrators and requires a unique goal code. The goal will be available for users to select as their fitness objective."
@@ -153,7 +154,7 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PostMapping
+    @PostMapping(path = "/admin/goals")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
         logger.info("Creating new goal with code: {}", request.getCode());
@@ -208,7 +209,7 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PutMapping("/{code}")
+    @PutMapping(path = "/admin/goals/{code}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
@@ -276,7 +277,7 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{code}")
+    @DeleteMapping(path = "/admin/goals/{code}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> deleteGoal(@PathVariable String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
@@ -325,7 +326,7 @@ public class GoalReferenceController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = "/admin/goals/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> uploadGoalImage(
             @PathVariable String code,

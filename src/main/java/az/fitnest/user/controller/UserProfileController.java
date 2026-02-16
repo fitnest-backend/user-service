@@ -24,6 +24,9 @@ import az.fitnest.user.model.entity.Translation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import az.fitnest.user.client.TeraBoxGrpcClient;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -36,6 +39,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationRepository translationRepository;
+    private final TeraBoxGrpcClient teraBoxGrpcClient;
 
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
@@ -232,6 +236,29 @@ public class UserProfileController {
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
         userProfileService.deleteAccount(request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @GetMapping("/profile/images/{fsId}")
+    public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
+                .body(outputStream -> {
+                    teraBoxGrpcClient.downloadFile(fsId, response -> {
+                        if (response.hasFileData()) {
+                            try {
+                                outputStream.write(response.getFileData().toByteArray());
+                            } catch (java.io.IOException e) {
+                                throw new RuntimeException("Failed to stream file", e);
+                            }
+                        }
+                    });
+                    try {
+                        outputStream.flush();
+                    } catch (java.io.IOException e) {
+                        // Ignore or log
+                    }
+                });
     }
 
     private String getUserLanguage() {
