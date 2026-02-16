@@ -125,4 +125,14 @@ public class TeraBoxGrpcClient {
             throw new RuntimeException("Delete failed: " + response.getMessage());
         }
     }
+    public void downloadFile(String fileId, java.util.function.Consumer<az.fitnest.terabox.grpc.DownloadFileResponse> observer) {
+        az.fitnest.terabox.grpc.DownloadFileRequest request = az.fitnest.terabox.grpc.DownloadFileRequest.newBuilder()
+                .setFileId(fileId)
+                .build();
+
+        final CountDownLatch finishLatch = new CountDownLatch(1);
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+
+        blockingStub.downloadFile(request).forEachRemaining(observer);
+    }
 }

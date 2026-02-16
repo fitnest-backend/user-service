@@ -400,12 +400,29 @@ public class GoalReferenceController {
         if (fsId == null || fsId.trim().isEmpty()) {
             return null;
         }
-        try {
-            return teraBoxGrpcClient.getDownloadUrl(fsId);
-        } catch (Exception e) {
-            logger.error("Failed to get download URL for fsId: {}", fsId, e);
-        }
-        return null;
+        return "/api/v1/goals/images/" + fsId;
+    }
+
+    @Operation(
+            summary = "Stream goal image",
+            description = "Streams the image file for a specific goal reference directly from the storage provider."
+    )
+    @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    public ResponseEntity<org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(outputStream -> {
+                    teraBoxGrpcClient.downloadFile(fsId, response -> {
+                        if (response.hasFileData()) {
+                            try {
+                                outputStream.write(response.getFileData().toByteArray());
+                                outputStream.flush();
+                            } catch (java.io.IOException e) {
+                                throw new RuntimeException("Failed to stream file", e);
+                            }
+                        }
+                    });
+                });
     }
 
     @Data
