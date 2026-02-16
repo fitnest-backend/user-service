@@ -1,0 +1,17 @@
+package az.fitnest.user.client;
+
+import feign.RequestInterceptor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class TeraBoxWorkerFeignConfig {
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return requestTemplate -> {
+            requestTemplate.removeHeader("Authorization");
+            requestTemplate.header("X-Internal-Token", "shared-secret-token");
+        };
+    }
+}

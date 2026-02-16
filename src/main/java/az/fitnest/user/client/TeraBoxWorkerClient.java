@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FeignClient(name = "terabox-worker-service", url = "${terabox.worker.url:http://terabox-worker-service:9090}")
+@FeignClient(name = "terabox-worker-service", url = "${terabox.worker.url:http://terabox-worker-service:9090}", configuration = TeraBoxWorkerFeignConfig.class)
 public interface TeraBoxWorkerClient {
 
     @PostMapping(value = "/api/v1/upload/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
