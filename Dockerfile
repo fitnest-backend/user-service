@@ -12,7 +12,7 @@ COPY src/main/proto src/main/proto
 RUN ./gradlew dependencies --no-daemon
 
 # Copy source and build
-COPY src src
+COPY . .
 RUN ./gradlew clean bootJar --no-build-cache --no-daemon
 
 # -----------------------------
