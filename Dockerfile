@@ -18,7 +18,7 @@ RUN ./gradlew clean bootJar --no-build-cache --no-daemon
 # -----------------------------
 # Stage 2: Runtime image
 # -----------------------------
-FROM eclipse-temurin:17.0.10_7-jre-alpine
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
