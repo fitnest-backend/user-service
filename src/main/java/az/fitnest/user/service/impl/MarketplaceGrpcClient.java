@@ -3,8 +3,8 @@ package az.fitnest.user.service.impl;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import marketplace.GymServiceGrpc;
-import marketplace.GetMainPageGymsRequest;
-import marketplace.GetMainPageGymsResponse;
+import marketplace.GymServiceOuterClass.GetMainPageGymsRequest;
+import marketplace.GymServiceOuterClass.GetMainPageGymsResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +25,3 @@ public class MarketplaceGrpcClient {
         return gymServiceStub.getMainPageGyms(request);
     }
 }
-

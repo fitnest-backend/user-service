@@ -29,9 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import marketplace.GymServiceOuterClass.GymSummary;
 
 @Service
 @RequiredArgsConstructor
