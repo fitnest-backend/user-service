@@ -175,3 +175,7 @@ grpc:
         trust-cert-collection: ${GRPC_TRUST_CERT:}
         client-cert-chain: ${GRPC_CLIENT_CERT:}
         client-private-key: ${GRPC_CLIENT_KEY:}
+    marketplace:
+      grpc:
+        host: marketplace-service
+        port: 9090

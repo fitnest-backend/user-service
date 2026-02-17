@@ -48,6 +48,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final LanguageRepository languageRepository;
     private final TranslationService translationService;
     private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
+    private final MarketplaceGrpcClient marketplaceGrpcClient;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -434,6 +435,10 @@ public class UserProfileServiceImpl implements UserProfileService {
                         .nutritionPlanReady(false)
                         .build())
                 .build();
+    }
+
+    public List<GymSummary> getMainPageGymsFromMarketplace() {
+        return marketplaceGrpcClient.getMainPageGyms().getGymsList();
     }
 
     // ----------------- Helpers -----------------
