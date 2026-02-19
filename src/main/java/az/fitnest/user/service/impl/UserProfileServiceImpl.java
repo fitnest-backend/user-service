@@ -10,7 +10,6 @@ import az.fitnest.user.exception.ResourceNotFoundException;
 import az.fitnest.user.model.entity.UserLocation;
 import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.model.entity.GoalReference;
-import az.fitnest.user.model.enums.EntityType;
 import az.fitnest.user.model.enums.Gender;
 import az.fitnest.user.repository.LanguageRepository;
 import az.fitnest.user.repository.UserLocationRepository;
@@ -45,7 +44,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final CachedIdentityGrpcClient cachedIdentityClient;
     private final UserProfileRepository userProfileRepository;
     private final FileStorageService fileStorageService;
-    private final FavoritesService favoritesService;
     private final UserLocationRepository userLocationRepository;
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final LanguageRepository languageRepository;
@@ -66,12 +64,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
         UserProfileResponse user = mapToUserProfileResponse(identityUser);
-
-        Map<EntityType, Long> favoriteCounts = favoritesService.getFavoriteCounts(userId);
-
+ 
         CountersResponse counters = new CountersResponse();
-        counters.setFavorite_gyms(favoriteCounts.getOrDefault(EntityType.GYM, 0L));
-        counters.setFavorite_stores(favoriteCounts.getOrDefault(EntityType.STORE, 0L));
+        counters.setFavorite_gyms(0L);
+        counters.setFavorite_stores(0L);
 
         SummaryResponse summary = new SummaryResponse();
         summary.setUser(user);
