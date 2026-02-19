@@ -42,12 +42,13 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         validateFile(file);
 
         try {
-            az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory, oldPath);
+            String extractedOldPath = extractIdFromUrl(oldPath);
+            az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory, extractedOldPath);
             return String.valueOf(data.getFsId());
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            throw new BadRequestException("Failed to upload profile image: " + e.getMessage());
+            throw new BadRequestException("Failed to upload image: " + e.getMessage());
         }
     }
 
@@ -76,8 +77,25 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             return;
         }
         try {
-            storageGrpcClient.deleteFiles(fileUrls);
+            List<String> ids = fileUrls.stream()
+                    .map(this::extractIdFromUrl)
+                    .filter(id -> id != null && !id.isBlank())
+                    .toList();
+            if (!ids.isEmpty()) {
+                storageGrpcClient.deleteFiles(ids);
+            }
         } catch (Exception e) {
         }
+    }
+
+    private String extractIdFromUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return null;
+        }
+        if (url.contains("/")) {
+            String[] parts = url.split("/");
+            return parts[parts.length - 1];
+        }
+        return url;
     }
 }
