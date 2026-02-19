@@ -328,16 +328,21 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public FitnessLevelResponse getFitnessLevel(String language) {
         Long userId = UserContext.getCurrentUserId();
-        UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+        UserProfile profile = userProfileRepository.findById(userId).orElseGet(() -> {
+            UserProfile p = new UserProfile();
+            p.setUserId(userId);
+            return p;
+        });
 
-        if (profile.getHeightCm() == null || profile.getWeightKg() == null) {
-            throw new ConflictException("Profile incomplete");
+        // Only compute BMI when height, weight, gender and birthDate are present
+        Double bmiValue = null;
+        if (profile.getHeightCm() != null && profile.getWeightKg() != null
+                && profile.getGender() != null && profile.getBirthDate() != null) {
+            double heightM = profile.getHeightCm() / 100.0;
+            double bmi = profile.getWeightKg() / (heightM * heightM);
+            bmi = Math.round(bmi * 10.0) / 10.0;
+            bmiValue = bmi;
         }
-
-        double heightM = profile.getHeightCm() / 100.0;
-        double bmi = profile.getWeightKg() / (heightM * heightM);
-        bmi = Math.round(bmi * 10.0) / 10.0;
 
         String goalTitle = null;
         if (profile.getGoalCode() != null && !profile.getGoalCode().isBlank()) {
@@ -345,7 +350,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         return FitnessLevelResponse.builder()
-                .bmi(bmi)
+                .bmi(bmiValue)
                 .goal(goalTitle)
                 .build();
     }

@@ -13,34 +13,28 @@ import java.time.LocalDate;
 public class SetupRequest {
 
     @Valid
-    @NotNull(message = "Profile is required")
     private ProfileInfo profile;
 
     @Data
     public static class ProfileInfo {
         @JsonProperty("height_cm")
-        @NotNull
         @Min(100)
         @Max(250)
         private Integer heightCm;
 
         @JsonProperty("weight_kg")
-        @NotNull
         @DecimalMin("30.0")
         @DecimalMax("300.0")
         private Double weightKg;
 
-        @NotNull
         private String gender;
 
         @JsonProperty("birth_date")
-        @NotNull
         @Past
         @Schema(type = "string", example = "15/01/1990", pattern = "^\\d{2}/\\d{2}/\\d{4}$")
         @JsonFormat(pattern = "dd/MM/yyyy")
         private LocalDate birthDate;
 
-        @NotBlank
         private String goal;
     }
 }
