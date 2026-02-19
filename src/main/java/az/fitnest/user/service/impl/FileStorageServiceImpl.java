@@ -30,6 +30,11 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
 
     @Override
     public String saveFile(MultipartFile file, String directory) {
+        return saveFile(file, directory, null);
+    }
+
+    @Override
+    public String saveFile(MultipartFile file, String directory, String oldPath) {
         if (file == null || file.isEmpty()) {
             return null;
         }
@@ -37,7 +42,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         validateFile(file);
 
         try {
-            az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory);
+            az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory, oldPath);
             return String.valueOf(data.getFsId());
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;

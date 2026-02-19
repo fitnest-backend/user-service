@@ -32,6 +32,10 @@ public class StorageGrpcClient {
     private StorageServiceGrpc.StorageServiceBlockingStub blockingStub;
 
     public StorageFileData uploadFile(MultipartFile file, String directory) {
+        return uploadFile(file, directory, null);
+    }
+
+    public StorageFileData uploadFile(MultipartFile file, String directory, String oldPath) {
         final CountDownLatch finishLatch = new CountDownLatch(1);
         final AtomicReference<StorageFileData> responseData = new AtomicReference<>();
         final AtomicReference<Throwable> error = new AtomicReference<>();
@@ -66,13 +70,16 @@ public class StorageGrpcClient {
 
         try {
             // Send metadata
-            FileMetadata metadata = FileMetadata.newBuilder()
+            FileMetadata.Builder metadataBuilder = FileMetadata.newBuilder()
                     .setFilename(file.getOriginalFilename())
                     .setDirectory(directory != null ? directory : "/uploads")
-                    .setContentType(file.getContentType() != null ? file.getContentType() : "application/octet-stream")
-                    .build();
+                    .setContentType(file.getContentType() != null ? file.getContentType() : "application/octet-stream");
 
-            requestObserver.onNext(UploadFileRequest.newBuilder().setMetadata(metadata).build());
+            if (oldPath != null) {
+                metadataBuilder.setOldPath(oldPath);
+            }
+
+            requestObserver.onNext(UploadFileRequest.newBuilder().setMetadata(metadataBuilder.build()).build());
 
             // Send file content in chunks
             byte[] buffer = new byte[1024 * 64]; // 64KB chunks

@@ -24,6 +24,7 @@ message FileMetadata {
   string filename = 1;
   string directory = 2;
   string content_type = 3;
+  string old_path = 4;
 }
 
 message UploadFileResponse {

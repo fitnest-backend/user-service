@@ -183,7 +183,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String newImageUrl = null;
         try {
-            newImageUrl = fileStorageService.saveFile(file, "/profiles");
+            // Pass oldImageUrl to storage service for atomic replacement
+            newImageUrl = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
 
             try {
                 cachedIdentityClient.updateProfileImage(userId, newImageUrl);
@@ -195,15 +196,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                     logger.warn("Failed to delete orphan file after identity update failure: {}", newImageUrl, deleteEx);
                 }
                 throw e;
-            }
-
-            // best-effort
-            if (oldImageUrl != null && !oldImageUrl.isBlank()) {
-                try {
-                    fileStorageService.deleteFile(oldImageUrl);
-                } catch (Exception e) {
-                    logger.warn("Failed to delete old profile image: {}", oldImageUrl, e);
-                }
             }
         } catch (Exception e) {
             logger.error("Failed to update profile image for user {}", userId, e);
