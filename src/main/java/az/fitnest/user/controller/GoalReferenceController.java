@@ -335,8 +335,9 @@ public class GoalReferenceController {
                 .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
 
         validateImage(file);
-        String imageUrl = fileStorageService.saveFile(file, "/goals");
-
+        // Pass current imageUrl as oldPath to ensure it's deleted upon success
+        String imageUrl = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
+ 
         // Update the goal reference with the new image url
         goal.setImageUrl(imageUrl);
         goalReferenceRepository.save(goal);
