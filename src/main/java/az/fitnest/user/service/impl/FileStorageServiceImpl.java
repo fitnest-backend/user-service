@@ -38,7 +38,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
 
         try {
             az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory);
-            return String.valueOf(data.getFs_id());
+            return String.valueOf(data.getFsId());
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;
         } catch (Exception e) {

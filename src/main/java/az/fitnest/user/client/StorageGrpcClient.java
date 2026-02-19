@@ -45,7 +45,7 @@ public class StorageGrpcClient {
                     data.setPath(grpcData.getPath());
                     data.setSize(grpcData.getSize());
                     data.setMd5(grpcData.getMd5());
-                    data.setFs_id(grpcData.getFsId());
+                    data.setFsId(grpcData.getFsId());
                     responseData.set(data);
                 }
             }

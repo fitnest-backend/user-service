@@ -7,5 +7,5 @@ public class StorageFileData {
     private String path;
     private long size;
     private String md5;
-    private long fs_id;
+    private long fsId;
 }
