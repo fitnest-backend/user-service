@@ -50,7 +50,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final LanguageRepository languageRepository;
     private final TranslationService translationService;
-    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
+    private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
     private final MarketplaceGrpcClient marketplaceGrpcClient;
 
     private Long currentUserId() {

@@ -24,7 +24,7 @@ import az.fitnest.user.model.entity.Translation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import az.fitnest.user.client.TeraBoxGrpcClient;
+import az.fitnest.user.client.StorageGrpcClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -39,7 +39,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationRepository translationRepository;
-    private final TeraBoxGrpcClient teraBoxGrpcClient;
+    private final StorageGrpcClient storageGrpcClient;
 
     @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
     @ApiResponses(value = {
@@ -244,7 +244,7 @@ public class UserProfileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
-                    teraBoxGrpcClient.downloadFile(fsId, response -> {
+                    storageGrpcClient.downloadFile(fsId, response -> {
                         if (response.hasFileData()) {
                             try {
                                 outputStream.write(response.getFileData().toByteArray());

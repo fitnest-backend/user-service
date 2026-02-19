@@ -21,7 +21,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             "image/jpeg", "image/jpg", "image/png"
     );
 
-    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
+    private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
 
     @Override
     public String saveFile(MultipartFile file) {
@@ -37,7 +37,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         validateFile(file);
 
         try {
-            az.fitnest.user.dto.response.TeraBoxFileData data = teraBoxGrpcClient.uploadFile(file, directory);
+            az.fitnest.user.dto.response.StorageFileData data = storageGrpcClient.uploadFile(file, directory);
             return String.valueOf(data.getFs_id());
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;
@@ -71,7 +71,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
             return;
         }
         try {
-            teraBoxGrpcClient.deleteFiles(fileUrls);
+            storageGrpcClient.deleteFiles(fileUrls);
         } catch (Exception e) {
         }
     }

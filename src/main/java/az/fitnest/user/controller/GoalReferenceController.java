@@ -49,7 +49,7 @@ public class GoalReferenceController {
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationService translationService;
     private final ObjectMapper objectMapper;
-    private final az.fitnest.user.client.TeraBoxGrpcClient teraBoxGrpcClient;
+    private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
 
     @Operation(
             summary = "Get all goal references",
@@ -414,7 +414,7 @@ public class GoalReferenceController {
                 .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
-                    teraBoxGrpcClient.downloadFile(fsId, response -> {
+                    storageGrpcClient.downloadFile(fsId, response -> {
                         if (response.hasFileData()) {
                             try {
                                 outputStream.write(response.getFileData().toByteArray());
