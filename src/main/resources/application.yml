@@ -151,9 +151,11 @@ springdoc:
   writer-with-default-pretty-printer: false
 logging:
   level:
-    az.fitnest.user.profile.adapter.client.IdentityServiceClient: DEBUG
-    az.fitnest.user.client: DEBUG
-    feign.Logger: OFF
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    az.fitnest.user.profile.adapter.client.IdentityServiceClient: ${LOGGING_LEVEL_AZ_FITNEST_USER_PROFILE_ADAPTER_IDENTITYCLIENT:DEBUG}
+    az.fitnest.user.client: ${LOGGING_LEVEL_AZ_FITNEST_USER:DEBUG}
+    org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY:DEBUG}
+    feign.Logger: ${LOGGING_LEVEL_FEIGN_LOGGER:OFF}
 
 grpc:
   client:
