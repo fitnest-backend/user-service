@@ -1,7 +1,6 @@
 package az.fitnest.user.profile.adapter.events;
 import az.fitnest.user.dto.event.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
-import az.fitnest.user.repository.FavoritesRepository;
 import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.GoalReferenceRepository;
 import az.fitnest.user.service.EventIdempotencyService;
@@ -35,8 +34,6 @@ class UserSetupCompletedKafkaIT {
     private UserProfileRepository userProfileRepository;
     @MockBean
     private EventIdempotencyService idempotencyService;
-    @MockBean
-    private FavoritesRepository favoritesRepository;
     @MockBean
     private UserLocationRepository userLocationRepository;
     @MockBean
