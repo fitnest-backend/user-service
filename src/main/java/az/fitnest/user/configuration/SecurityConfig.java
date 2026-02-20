@@ -29,9 +29,11 @@ public class SecurityConfig {
                 .headers(headers -> headers.cacheControl(org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.CacheControlConfig::disable))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/internal/**").hasRole("INTERNAL")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/translations/**", "/api/v1/languages/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/goals/images/**").permitAll()
                         .requestMatchers("/actuator/**", "/health/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -22,7 +22,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FitnestSecurityFilter extends OncePerRequestFilter {
 
+    private static final java.util.Set<String> SKIP_FILTER_PATH_PREFIXES = java.util.Set.of(
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/actuator",
+            "/webjars"
+    );
+
     private final JwtUtil jwtUtil;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return SKIP_FILTER_PATH_PREFIXES.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
