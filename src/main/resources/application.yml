@@ -4,7 +4,7 @@ server:
     enabled: false
   compression:
     enabled: true
-    mime-types: application/json,text/plain,text/css,application/javascript,application/openapi+json,application/vnd.api+json
+    mime-types: application/json,text/plain,text/css,application/javascript,application/openapi+json,application/vnd.api+json,application/vnd.oai.openapi+json
     min-response-size: 2048
   tomcat:
     threads:
