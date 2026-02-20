@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FeignClient(name = "media-service", url = "${media.service.url:http://media-service:8086}")
+@FeignClient(name = "storage-service", url = "${storage.service.url:http://storage-service:9090}")
 public interface MediaClient {
 
     @PostMapping(value = "/api/v1/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

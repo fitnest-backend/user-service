@@ -29,16 +29,43 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-        String internalUserId = request.getHeader("X-User-Id");
+        String gatewayFlag = request.getHeader("X-From-Gateway");
+        String userIdHeader = request.getHeader("X-User-Id");
+        String requestId = request.getHeader("X-Request-Id");
+        String caller = request.getHeader("X-Service-Name");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            authenticateViaJwt(authHeader.substring(7));
-        } else if (internalUserId != null && !internalUserId.isBlank()) {
-            authenticateViaInternalHeaders(request);
+        // Prefer Pattern A headers if from Gateway
+        if ("1".equals(gatewayFlag) && userIdHeader != null && !userIdHeader.isBlank()) {
+            authenticateViaPatternA(request, userIdHeader, requestId, caller);
+        } else {
+            // Legacy/Direct JWT support
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authenticateViaJwt(authHeader.substring(7));
+            }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void authenticateViaPatternA(HttpServletRequest request, String userIdStr, String requestId, String caller) {
+        try {
+            Long userId = Long.parseLong(userIdStr);
+            String scopes = request.getHeader("X-Scopes");
+
+            List<String> roles = new ArrayList<>();
+            if (scopes != null && !scopes.isBlank()) {
+                roles.addAll(Arrays.stream(scopes.split(" "))
+                        .map(String::trim)
+                        .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                        .toList());
+            } else {
+                roles.add("ROLE_USER");
+            }
+
+            setAuthentication(userId, "PatternA:" + caller + ":" + requestId, roles);
+        } catch (Exception e) {
+        }
     }
 
     private void authenticateViaJwt(String token) {

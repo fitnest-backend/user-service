@@ -113,7 +113,7 @@ jwt:
 
 identity:
   service:
-    url: ${IDENTITY_SERVICE_URL:http://identity-service:8080}
+    url: ${IDENTITY_SERVICE_URL:http://identity-service:9090}
 
 management:
   endpoints:
