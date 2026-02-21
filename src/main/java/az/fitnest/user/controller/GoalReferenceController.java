@@ -1,449 +1,133 @@
 package az.fitnest.user.controller;
 
-import az.fitnest.user.client.CachedIdentityGrpcClient;
-
-import az.fitnest.user.repository.GoalReferenceRepository;
-import az.fitnest.user.repository.TranslationRepository;
+import az.fitnest.user.service.GoalReferenceService;
 import az.fitnest.user.model.entity.GoalReference;
-import az.fitnest.user.model.entity.Translation;
-import az.fitnest.user.service.FileStorageService;
-import az.fitnest.user.service.TranslationService;
 import az.fitnest.user.dto.response.GoalItemResponse;
+import az.fitnest.user.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import az.fitnest.user.exception.ConflictException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import az.fitnest.user.exception.BadRequestException;
-import az.fitnest.user.util.UserContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import az.fitnest.user.dto.response.DownloadResponse;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/goals")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Tag(name = "Goal Management", description = "Endpoints for managing goal references")
+@Tag(name = "Goal Management", description = "Endpoints for managing wellness and fitness goal categories (e.g., Lose Weight, Build Muscle).")
 @SecurityRequirement(name = "bearerAuth")
 public class GoalReferenceController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GoalReferenceController.class);
+    private final GoalReferenceService goalReferenceService;
 
-    private final GoalReferenceRepository goalReferenceRepository;
-    private final TranslationRepository translationRepository;
-    private final FileStorageService fileStorageService;
-    private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
-    private final TranslationService translationService;
-    private final ObjectMapper objectMapper;
-    private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
+    // --- Public & User Endpoints ---
 
-    @Operation(
-            summary = "Get all goal references",
-            description = "Retrieves a comprehensive list of all predefined fitness and health goal references available in the system. The goals are ordered alphabetically by their unique code for easy reference and selection."
-    )
+    @GetMapping("/goals")
+    @Operation(summary = "Get all goal references", description = "Retrieves a list of all available goals, translated to the user's preferred language.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Goal references retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "[{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\", \"imageUrl\": \"/images/goals/weight_loss.jpg\"}, {\"goalCode\": \"MUSCLE_GAIN\", \"title\": \"Gain Muscle\", \"subtitle\": \"Build strength and muscle mass\", \"imageUrl\": \"/images/goals/muscle_gain.jpg\"}]"))
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            )
+            @ApiResponse(responseCode = "200", description = "Goals retrieved successfully", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
     })
-    @GetMapping
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<java.util.List<GoalItemResponse>>> getAllGoals() {
-        String userLanguage = getUserLanguage();
-        java.util.List<GoalReference> goals = goalReferenceRepository.findAllByOrderByGoalCodeAsc();
-        java.util.List<GoalItemResponse> responses = goals.stream().map(goal -> {
-            String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
-            String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
-            String imageUrl = getFullImageUrl(goal.getImageUrl());
-            return GoalItemResponse.builder()
-                    .code(goal.getGoalCode())
-                    .title(title)
-                    .subtitle(subtitle)
-                    .imageUrl(imageUrl)
-                    .build();
-        }).collect(java.util.stream.Collectors.toList());
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(responses));
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<GoalItemResponse>>> getAllGoals() {
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceService.getAllGoals()));
     }
 
-    @Operation(
-            summary = "Get goal reference by code",
-            description = "Retrieves detailed information about a specific fitness or health goal reference using its unique code identifier. This endpoint is useful for displaying goal details in user interfaces."
-    )
+    @GetMapping("/goals/{code}")
+    @Operation(summary = "Get goal by code", description = "Retrieves a specific goal by its unique code.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Goal reference retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\", \"imageUrl\": \"/images/goals/weight_loss.jpg\"}"))
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Goal reference not found with the provided code",
-                    content = @Content
-            )
+            @ApiResponse(responseCode = "200", description = "Goal found"),
+            @ApiResponse(responseCode = "404", description = "Goal not found")
     })
-    @GetMapping("/{code}")
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalItemResponse>> getGoalByCode(@PathVariable String code) {
-        GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-        String userLanguage = getUserLanguage();
-        String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
-        String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
-        GoalItemResponse response = GoalItemResponse.builder()
-                .code(goal.getGoalCode())
-                .title(title)
-                .subtitle(subtitle)
-                .imageUrl(getFullImageUrl(goal.getImageUrl()))
-                .build();
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(response));
+    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalItemResponse>> getGoalByCode(
+            @Parameter(description = "Unique code of the goal (e.g., LOSE_WEIGHT)") @PathVariable String code) {
+        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceService.getGoalByCode(code)));
     }
 
-    // --- ADMIN ENDPOINTS ---
-    @Operation(
-            summary = "Create a new goal reference",
-            description = "Creates a new fitness or health goal reference in the system. This endpoint is restricted to administrators and requires a unique goal code. The goal will be available for users to select as their fitness objective."
-    )
+    @GetMapping(value = "/goals/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @Operation(summary = "Stream goal image", description = "Streams the image file associated with a goal from storage.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Goal reference created successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid request data or validation failed",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Forbidden - admin role required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "409",
-                    description = "Conflict - goal code already exists",
-                    content = @Content
-            )
+            @ApiResponse(responseCode = "200", description = "Image stream started"),
+            @ApiResponse(responseCode = "404", description = "Image not found")
     })
-    @PostMapping(path = "/admin/goals")
+    public ResponseEntity<StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
+                .body(goalReferenceService.streamGoalImage(fsId));
+    }
+
+    // --- Admin Endpoints ---
+
+    @PostMapping("/admin/goals")
+    @Operation(summary = "Create goal (Admin)", description = "Creates a new goal reference and initializes translations. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Goal created successfully"),
+            @ApiResponse(responseCode = "409", description = "Goal with this code already exists")
+    })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
-        logger.info("Creating new goal with code: {}", request.getCode());
-        if (goalReferenceRepository.existsById(request.getCode())) {
-            logger.warn("Attempt to create goal that already exists: {}", request.getCode());
-            throw new ConflictException("Goal already exists: " + request.getCode());
-        }
-        GoalReference goal = new GoalReference();
-        goal.setGoalCode(request.getCode());
-
-
-        goalReferenceRepository.save(goal);
-        logger.info("Goal saved with code: {}", request.getCode());
-
-        // Create translations for all languages
-        createTranslationIfNotFound(request.getCode(), "EN", request.getTitle(), request.getSubtitle());
-        createTranslationIfNotFound(request.getCode(), "AZ", request.getTitle(), request.getSubtitle());
-        createTranslationIfNotFound(request.getCode(), "RU", request.getTitle(), request.getSubtitle());
-        logger.info("Translations created for goal: {}", request.getCode());
-
-        return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
+        GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
+        return ResponseEntity.status(201).body(az.fitnest.user.dto.ApiResponse.success(goal));
     }
 
-    @Operation(
-            summary = "Update a goal reference",
-            description = "Updates the title and subtitle of an existing fitness or health goal reference. Only the provided fields will be updated, leaving others unchanged. This endpoint is restricted to administrators."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Goal reference updated successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "{\"goalCode\": \"WEIGHT_LOSS\", \"title\": \"Lose Weight\", \"subtitle\": \"Burn fat and achieve your ideal weight\"}"))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid request data or validation failed",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Forbidden - admin role required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Goal reference not found with the provided code",
-                    content = @Content
-            )
-    })
-    @PutMapping(path = "/admin/goals/{code}")
+    @PutMapping("/admin/goals/{code}")
+    @Operation(summary = "Update goal (Admin)", description = "Updates the title and subtitle of a goal reference. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Goal updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Goal not found")
+    })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
             @Valid @RequestBody az.fitnest.user.dto.request.UpdateGoalRequest request) {
-        GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-
-
-        // Update EN translation
-        translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", code, "EN", "title")
-                .ifPresentOrElse(translation -> {
-                    translation.setFieldValue(request.getTitle());
-                    translationRepository.save(translation);
-                }, () -> {
-                    Translation newTranslation = Translation.builder()
-                            .entityType("GoalReference")
-                            .entityId(code)
-                            .languageCode("EN")
-                            .fieldName("title")
-                            .fieldValue(request.getTitle())
-                            .build();
-                    translationRepository.save(newTranslation);
-                });
-        translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", code, "EN", "subtitle")
-                .ifPresentOrElse(translation -> {
-                    translation.setFieldValue(request.getSubtitle());
-                    translationRepository.save(translation);
-                }, () -> {
-                    Translation newTranslation = Translation.builder()
-                            .entityType("GoalReference")
-                            .entityId(code)
-                            .languageCode("EN")
-                            .fieldName("subtitle")
-                            .fieldValue(request.getSubtitle())
-                            .build();
-                    translationRepository.save(newTranslation);
-                });
-
+        GoalReference goal = goalReferenceService.updateGoal(code, request.getTitle(), request.getSubtitle());
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goal));
     }
 
-    @Operation(
-            summary = "Delete a goal reference",
-            description = "Permanently removes a fitness or health goal reference from the system using its unique code. This action cannot be undone and may affect users who have selected this goal. Restricted to administrators only."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Goal reference deleted successfully",
-                    content = @Content(schema = @Schema(implementation = az.fitnest.user.dto.ApiResponse.class), examples = @ExampleObject(value = "null"))
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Forbidden - admin role required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Goal reference not found with the provided code",
-                    content = @Content
-            )
-    })
-    @DeleteMapping(path = "/admin/goals/{code}")
+    @DeleteMapping("/admin/goals/{code}")
+    @Operation(summary = "Delete goal (Admin)", description = "Permanently deletes a goal reference and its image. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Goal deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Goal not found")
+    })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> deleteGoal(@PathVariable String code) {
-        GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-
-        // Delete associated image if exists
-        if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
-            try {
-                fileStorageService.deleteFile(goal.getImageUrl());
-            } catch (Exception e) {
-                // log or ignore
-            }
-        }
-
-        goalReferenceRepository.deleteById(code);
+        goalReferenceService.deleteGoal(code);
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success("Goal reference deleted successfully"));
     }
 
-    @Operation(
-            summary = "Upload an image for a goal reference",
-            description = "Uploads an image file for a specific goal reference, which can be used for display in user interfaces. The image is associated with the goal reference and can be updated or removed later."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Image uploaded successfully"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid request data or validation failed",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized - authentication required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Forbidden - admin role required",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Goal reference not found with the provided code",
-                    content = @Content
-            )
-    })
     @PutMapping(path = "/admin/goals/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload goal image (Admin)", description = "Uploads or replaces the image for a goal. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Image uploaded successfully")
+    })
     public ResponseEntity<Void> uploadGoalImage(
             @PathVariable String code,
-            @RequestParam("file") MultipartFile file) {
-        GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new az.fitnest.user.exception.ResourceNotFoundException("Goal not found: " + code));
-
-        validateImage(file);
-        // Pass current imageUrl as oldPath to ensure it's deleted upon success
-        String imageUrl = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
- 
-        // Update the goal reference with the new image url
-        goal.setImageUrl(imageUrl);
-        goalReferenceRepository.save(goal);
-
+            @Parameter(description = "Image file to upload (Max 5MB)") @RequestParam("file") MultipartFile file) {
+        goalReferenceService.uploadGoalImage(code, file);
         return ResponseEntity.ok().build();
     }
 
-    private void validateImage(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new BadRequestException("File is required");
-        }
-        long maxSize = 5 * 1024 * 1024; // 5MB
-        if (file.getSize() > maxSize) {
-            throw new BadRequestException("File size exceeds 5MB");
-        }
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new BadRequestException("Only image files are allowed");
-        }
-    }
-
-    private void createTranslationIfNotFound(String goalCode, String languageCode, String title, String subtitle) {
-        if (!translationRepository.existsByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", goalCode, languageCode, "title")) {
-            Translation translation = Translation.builder()
-                    .entityType("GoalReference")
-                    .entityId(goalCode)
-                    .languageCode(languageCode)
-                    .fieldName("title")
-                    .fieldValue(title)
-                    .build();
-            translationRepository.save(translation);
-        }
-        if (!translationRepository.existsByEntityTypeAndEntityIdAndLanguageCodeAndFieldName("GoalReference", goalCode, languageCode, "subtitle")) {
-            Translation translation = Translation.builder()
-                    .entityType("GoalReference")
-                    .entityId(goalCode)
-                    .languageCode(languageCode)
-                    .fieldName("subtitle")
-                    .fieldValue(subtitle)
-                    .build();
-            translationRepository.save(translation);
-        }
-    }
-
-    private String getUserLanguage() {
-        Long userId = UserContext.getCurrentUserId();
-        if (userId != null) {
-            try {
-                az.fitnest.user.dto.response.IdentityUserResponse user = cachedIdentityGrpcClient.getUserById(userId);
-                String language = user.getLanguage();
-                if (language != null && !language.isEmpty()) {
-                    return language.toUpperCase();
-                }
-            } catch (Exception e) {
-                // Log error or ignore
-            }
-        }
-        return "AZ"; // Default to Azerbaijan
-    }
-
-    private String getFullImageUrl(String fsId) {
-        if (fsId == null || fsId.trim().isEmpty()) {
-            return null;
-        }
-        return "/api/v1/goals/images/" + fsId;
-    }
-
-    @Operation(
-            summary = "Stream goal image",
-            description = "Streams the image file for a specific goal reference directly from the storage provider."
-    )
-    @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity<org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
-        return ResponseEntity.ok()
-                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline")
-                .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
-                .body(outputStream -> {
-                    storageGrpcClient.downloadFile(fsId, response -> {
-                        if (response.hasFileData()) {
-                            try {
-                                outputStream.write(response.getFileData().toByteArray());
-                            } catch (java.io.IOException e) {
-                                throw new RuntimeException("Failed to stream file", e);
-                            }
-                        }
-                    });
-                    try {
-                        outputStream.flush();
-                    } catch (java.io.IOException e) {
-                        // Ignore or log
-                    }
-                });
-    }
-
     @Data
-    @Schema(description = "Request to create a new goal reference")
     public static class CreateGoalRequest {
-        @NotBlank
-        @Schema(description = "Unique code for the goal", example = "WEIGHT_LOSS")
-        private String code;
-
-        @NotBlank
-        @Schema(description = "Display title for the goal", example = "Lose Weight")
-        private String title;
-
-        @Schema(description = "Optional subtitle or description", example = "Burn fat and achieve your ideal weight")
+        @NotBlank private String code;
+        @NotBlank private String title;
         private String subtitle;
     }
 }
