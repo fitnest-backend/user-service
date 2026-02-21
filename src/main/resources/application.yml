@@ -181,3 +181,7 @@ grpc:
       grpc:
         host: marketplace-service
         port: 9090
+    notifications-service:
+      address: 'static://notifications-service:9090'
+      negotiation-type: plaintext
+

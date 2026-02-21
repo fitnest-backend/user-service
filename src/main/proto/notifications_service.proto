@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package az.fitnest.notifications;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.notifications.grpc";
+option java_outer_classname = "NotificationsServiceProto";
+
+service NotificationsService {
+  rpc SendSMS (SendSMSRequest) returns (SendSMSResponse);
+  rpc SendHtmlEmail (SendHtmlEmailRequest) returns (SendEmailResponse);
+  rpc SendSimpleEmail (SendSimpleEmailRequest) returns (SendEmailResponse);
+  rpc SendPushNotification (SendPushNotificationRequest) returns (SendPushNotificationResponse);
+  rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse);
+}
+
+message SendPushNotificationRequest {
+  int64 user_id = 1;
+  string title = 2;
+  string body = 3;
+  map<string, string> data = 4;
+}
+
+message SendPushNotificationResponse {
+  bool success = 1;
+  string error_message = 2;
+  int32 target_devices = 3;
+}
+
+message SendSMSRequest {
+  string to = 1;
+  string message = 2;
+}
+
+message SendSMSResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message SendHtmlEmailRequest {
+  string to = 1;
+  string subject = 2;
+  string template_name = 3;
+  map<string, string> variables = 4;
+}
+
+message SendSimpleEmailRequest {
+  string to = 1;
+  string subject = 2;
+  string body = 3;
+}
+
+message SendEmailResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message GetNotificationsRequest {
+  int64 user_id = 1;
+  int32 page = 2;
+  int32 size = 3;
+}
+
+message NotificationDto {
+  int64 id = 1;
+  string title = 2;
+  string body = 3;
+  bool is_read = 4;
+  string created_at = 5;
+}
+
+message GetNotificationsResponse {
+  repeated NotificationDto notifications = 1;
+  int32 total_pages = 2;
+  int64 total_elements = 3;
+  int32 current_page = 4;
+}
