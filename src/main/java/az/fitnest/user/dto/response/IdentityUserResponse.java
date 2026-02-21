@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class IdentityUserResponse implements Serializable {
 
     @JsonProperty("user_id")
-    private String userId;
+    private Long userId;
 
     @JsonProperty("first_name")
     private String firstName;

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,7 +40,7 @@ public class GoalReferenceController {
     @GetMapping("/goals")
     @Operation(summary = "Get all goal references", description = "Retrieves a list of all available goals, translated to the user's preferred language.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goals retrieved successfully", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goals retrieved successfully", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
     })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<GoalItemResponse>>> getAllGoals() {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(goalReferenceService.getAllGoals()));
@@ -50,8 +49,8 @@ public class GoalReferenceController {
     @GetMapping("/goals/{code}")
     @Operation(summary = "Get goal by code", description = "Retrieves a specific goal by its unique code.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goal found"),
-            @ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
     })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalItemResponse>> getGoalByCode(
             @Parameter(description = "Unique code of the goal (e.g., LOSE_WEIGHT)") @PathVariable String code) {
@@ -61,8 +60,8 @@ public class GoalReferenceController {
     @GetMapping(value = "/goals/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @Operation(summary = "Stream goal image", description = "Streams the image file associated with a goal from storage.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Image stream started"),
-            @ApiResponse(responseCode = "404", description = "Image not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Image stream started"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Image not found")
     })
     public ResponseEntity<StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
         return ResponseEntity.ok()
@@ -77,8 +76,8 @@ public class GoalReferenceController {
     @Operation(summary = "Create goal (Admin)", description = "Creates a new goal reference and initializes translations. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Goal created successfully"),
-            @ApiResponse(responseCode = "409", description = "Goal with this code already exists")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Goal created successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Goal with this code already exists")
     })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
         GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
@@ -89,8 +88,8 @@ public class GoalReferenceController {
     @Operation(summary = "Update goal (Admin)", description = "Updates the title and subtitle of a goal reference. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goal updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
     })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
@@ -103,8 +102,8 @@ public class GoalReferenceController {
     @Operation(summary = "Delete goal (Admin)", description = "Permanently deletes a goal reference and its image. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goal deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal deleted successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
     })
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<String>> deleteGoal(@PathVariable String code) {
         goalReferenceService.deleteGoal(code);
@@ -115,7 +114,7 @@ public class GoalReferenceController {
     @Operation(summary = "Upload goal image (Admin)", description = "Uploads or replaces the image for a goal. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Image uploaded successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Image uploaded successfully")
     })
     public ResponseEntity<Void> uploadGoalImage(
             @PathVariable String code,

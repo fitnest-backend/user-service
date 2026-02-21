@@ -46,7 +46,7 @@ public class CachedIdentityGrpcClient {
 
     private IdentityUserResponse toDto(UserResponse r) {
         return IdentityUserResponse.builder()
-                .userId(String.valueOf(r.getUserId()))
+                .userId(r.getUserId())
                 .firstName(r.getFirstName())
                 .lastName(r.getLastName())
                 .mobile(r.getMobile())

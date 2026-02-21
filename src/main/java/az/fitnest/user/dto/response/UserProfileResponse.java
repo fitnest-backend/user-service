@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class UserProfileResponse {
 
     @JsonProperty("user_id")
-    private String userId;
+    private Long userId;
 
     @JsonProperty("first_name")
     private String firstName;
@@ -31,6 +31,11 @@ public class UserProfileResponse {
 
     @JsonProperty("profile_image_url")
     private String profileImageUrl;
+
+    @JsonProperty("setup_required")
+    private boolean setupRequired;
+
+    private String language;
 
     @JsonProperty("created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")

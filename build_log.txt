@@ -1,501 +1,502 @@
-Reusing configuration cache.
-> Task :extractProto UP-TO-DATE
-> Task :extractIncludeProto UP-TO-DATE
-> Task :generateProto UP-TO-DATE
+> Task :clean
+> Task :extractIncludeProto
+> Task :extractProto
+> Task :generateProto FROM-CACHE
+> Task :processResources
+> Task :check
+> Task :generateEffectiveLombokConfig
 
 > Task :compileJava FAILED
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:9: error: a type with the same simple name is already defined by the single-type-import of ApiResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:12: error: a type with the same simple name is already defined by the single-type-import of ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/FileController.java:9: error: a type with the same simple name is already defined by the single-type-import of ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/client/MediaClientConfig.java:3: error: package az.fitnest.user.configuration does not exist
-import az.fitnest.user.configuration.FeignConfig;
-                                    ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:38: error: cannot find symbol
-    @GetMapping
-     ^
-  symbol:   class GetMapping
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:45: error: cannot find symbol
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<GoalReference>> getGoalByCode(@PathVariable String code) {
-                                                                                         ^
-  symbol:   class PathVariable
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:44: error: cannot find symbol
-    @GetMapping("/{code}")
-     ^
-  symbol:   class GetMapping
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:66: error: cannot find symbol
-            @PathVariable String code,
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:44: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Goals retrieved successfully", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
              ^
-  symbol:   class PathVariable
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:63: error: cannot find symbol
-    @PutMapping("/{code}")
-     ^
-  symbol:   class PutMapping
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:80: error: cannot find symbol
-    public ResponseEntity<az.fitnest.user.dto.ApiResponse<Void>> deleteGoal(@PathVariable String code) {
-                                                                             ^
-  symbol:   class PathVariable
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:78: error: cannot find symbol
-    @DeleteMapping("/{code}")
-     ^
-  symbol:   class DeleteMapping
-  location: class GoalReferenceController
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/client/MediaClientConfig.java:14: error: cannot find symbol
-@Import(FeignConfig.class)
-        ^
-  symbol: class FeignConfig
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ApiResponse.java:23: error: cannot find symbol
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:53: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Goal found"),
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:54: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "404", description = "Goal not found")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:64: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Image stream started"),
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:65: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "404", description = "Image not found")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:80: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "201", description = "Goal created successfully"),
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:81: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "409", description = "Goal with this code already exists")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:92: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Goal updated successfully"),
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:93: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "404", description = "Goal not found")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:106: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Goal deleted successfully"),
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:107: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "404", description = "Goal not found")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:118: error: reference to ApiResponse is ambiguous
+            @ApiResponse(responseCode = "200", description = "Image uploaded successfully")
+             ^
+  both class az.fitnest.user.dto.ApiResponse in az.fitnest.user.dto and class io.swagger.v3.oas.annotations.responses.ApiResponse in io.swagger.v3.oas.annotations.responses match
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/dto/ApiResponse.java:33: error: cannot find symbol
         return ApiResponse.<T>builder()
                           ^
   symbol:   method <T>builder()
   location: class ApiResponse
   where T is a type-variable:
     T extends Object declared in method <T>success(T)
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ApiResponse.java:32: error: constructor ApiError in class ApiError cannot be applied to given types;
-                .error(new ApiError(code, message))
-                       ^
-  required: no arguments
-  found:    String,String
-  reason: actual and formal argument lists differ in length
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ApiResponse.java:30: error: cannot find symbol
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/dto/ApiResponse.java:39: error: cannot find symbol
         return ApiResponse.<T>builder()
                           ^
   symbol:   method <T>builder()
   location: class ApiResponse
   where T is a type-variable:
-    T extends Object declared in method <T>error(String,String)
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:42: error: cannot find symbol
-        if (errorResponse.getDetails() != null && errorResponse.getDetails().containsKey("validationErrors")) {
-                         ^
-  symbol:   method getDetails()
-  location: variable errorResponse of type ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:42: error: cannot find symbol
-        if (errorResponse.getDetails() != null && errorResponse.getDetails().containsKey("validationErrors")) {
-                                                               ^
-  symbol:   method getDetails()
-  location: variable errorResponse of type ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:44: error: cannot find symbol
-            Map<String, String> validationErrors = (Map<String, String>) errorResponse.getDetails().get("validationErrors");
-                                                                                      ^
-  symbol:   method getDetails()
-  location: variable errorResponse of type ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:47: error: cannot find symbol
-                        .map(entry -> FieldIssue.builder()
+    T extends Object declared in method <T>error(ApiError)
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/configuration/DataInitializer.java:47: error: cannot find symbol
+            language.setCode(code);
+                    ^
+  symbol:   method setCode(String)
+  location: variable language of type Language
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/configuration/DataInitializer.java:62: error: cannot find symbol
+            goal.setGoalCode(goalCode);
+                ^
+  symbol:   method setGoalCode(String)
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/configuration/DataInitializer.java:186: error: cannot find symbol
+            Translation translation = Translation.builder()
+                                                 ^
+  symbol:   method builder()
+  location: class Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:36: error: cannot find symbol
+                request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
+                       ^
+  symbol:   method getEntityType()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:36: error: cannot find symbol
+                request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
                                                 ^
-  symbol:   method builder()
-  location: class FieldIssue
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:51: error: incompatible types: List<Object> cannot be converted to List<FieldIssue>
-                        .toList();
-                               ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:55: error: cannot find symbol
-        return ErrorWrapper.builder()
-                           ^
-  symbol:   method builder()
-  location: class ErrorWrapper
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:56: error: cannot find symbol
-                .error(ErrorDetail.builder()
-                                  ^
-  symbol:   method builder()
-  location: class ErrorDetail
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:57: error: cannot find symbol
-                        .code(errorResponse.getCode())
-                                           ^
-  symbol:   method getCode()
-  location: variable errorResponse of type ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorWrapper.java:58: error: cannot find symbol
-                        .message(errorResponse.getMessage())
-                                              ^
-  symbol:   method getMessage()
-  location: variable errorResponse of type ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorResponse.java:30: error: cannot find symbol
-        return ErrorResponse.builder()
-                            ^
-  symbol:   method builder()
-  location: class ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorResponse.java:38: error: cannot find symbol
-        return ErrorResponse.builder()
-                            ^
-  symbol:   method builder()
-  location: class ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/dto/ErrorResponse.java:47: error: cannot find symbol
-        return ErrorResponse.builder()
-                            ^
-  symbol:   method builder()
-  location: class ErrorResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/security/FitnestSecurityFilter.java:52: error: cannot find symbol
-            log.warn("JWT validation failed: {}", e.getMessage());
-            ^
-  symbol:   variable log
-  location: class FitnestSecurityFilter
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/security/FitnestSecurityFilter.java:75: error: cannot find symbol
-            log.warn("Internal header authentication failed: {}", e.getMessage());
-            ^
-  symbol:   variable log
-  location: class FitnestSecurityFilter
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:27: error: cannot find symbol
-        log.info("🚀 Starting application warm-up for user-service...");
-        ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:32: error: cannot find symbol
-        log.info("✅ Application warm-up completed.");
-        ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:37: error: cannot find symbol
-            log.info("  -> Warming up Database connection pool...");
-            ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:39: error: cannot find symbol
-            log.info("  -> DB pool warmed.");
-            ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:41: error: cannot find symbol
-            log.warn("  -> DB warm-up failed: {}", e.getMessage());
-            ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/StartupWarmupListener.java:47: error: cannot find symbol
-        log.info("  -> JWKS pre-fetch path enabled. (Pre-warming auth context)");
-        ^
-  symbol:   variable log
-  location: class StartupWarmupListener
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/configuration/FeignErrorDecoder.java:17: error: cannot find symbol
-        log.error("Feign error - method: {}, status: {}, reason: {}",
-        ^
-  symbol:   variable log
-  location: class FeignErrorDecoder
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:61: error: cannot find symbol
-        resp.setFavorites(favorites.stream()
-            ^
-  symbol:   method setFavorites(List<FavoritesResponse>)
-  location: variable resp of type FavoritesResponses
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:73: error: cannot find symbol
-            type = EntityType.valueOf(request.getEntityType().toUpperCase());
-                                             ^
-  symbol:   method getEntityType()
-  location: variable request of type FavoritesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:78: error: cannot find symbol
-        if (favoritesRepository.existsByUserIdAndEntityTypeAndEntityId(userId, type, request.getEntityId())) {
-                                                                                            ^
   symbol:   method getEntityId()
-  location: variable request of type FavoritesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:83: error: cannot find symbol
-        favorite.setUserId(userId);
-                ^
-  symbol:   method setUserId(Long)
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:84: error: cannot find symbol
-        favorite.setEntityType(type);
-                ^
-  symbol:   method setEntityType(EntityType)
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:85: error: cannot find symbol
-        favorite.setEntityId(request.getEntityId());
-                                    ^
-  symbol:   method getEntityId()
-  location: variable request of type FavoritesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:86: error: cannot find symbol
-        favorite.setCreatedAt(LocalDateTime.now());
-                ^
-  symbol:   method setCreatedAt(LocalDateTime)
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:91: error: cannot find symbol
-        publishFavoriteEvent("FAVORITE_ADDED", userId, type, request.getEntityId());
-                                                                    ^
-  symbol:   method getEntityId()
-  location: variable request of type FavoritesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:103: error: cannot find symbol
-        publishFavoriteEvent("FAVORITE_REMOVED", userId, favorite.getEntityType(), favorite.getEntityId());
-                                                                 ^
-  symbol:   method getEntityType()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:103: error: cannot find symbol
-        publishFavoriteEvent("FAVORITE_REMOVED", userId, favorite.getEntityType(), favorite.getEntityId());
-                                                                                           ^
-  symbol:   method getEntityId()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:124: error: invalid method reference
-                .map(Favorite::getEntityId)
-                     ^
-  cannot find symbol
-    symbol:   method getEntityId()
-    location: class Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:133: error: cannot find symbol
-        response.setFavoriteId("f_" + favorite.getFavoriteId());
-                                              ^
-  symbol:   method getFavoriteId()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:134: error: cannot find symbol
-        response.setEntityType(favorite.getEntityType().name().toLowerCase());
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:36: error: cannot find symbol
+                request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
+                                                                       ^
+  symbol:   method getLanguageCode()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:36: error: cannot find symbol
+                request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
+                                                                                                                ^
+  symbol:   method getFieldName()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:40: error: cannot find symbol
+            existing.setFieldValue(request.getFieldValue());
+                                          ^
+  symbol:   method getFieldValue()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:44: error: cannot find symbol
+            Translation translation = Translation.builder()
+                                                 ^
+  symbol:   method builder()
+  location: class Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:45: error: cannot find symbol
+                    .entityType(request.getEntityType())
                                        ^
   symbol:   method getEntityType()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:135: error: cannot find symbol
-        response.setEntityId(favorite.getEntityId());
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:46: error: cannot find symbol
+                    .entityId(request.getEntityId())
                                      ^
   symbol:   method getEntityId()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/FavoritesService.java:136: error: cannot find symbol
-        response.setCreatedAt(favorite.getCreatedAt());
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:47: error: cannot find symbol
+                    .languageCode(request.getLanguageCode().toUpperCase())
+                                         ^
+  symbol:   method getLanguageCode()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:48: error: cannot find symbol
+                    .fieldName(request.getFieldName())
                                       ^
-  symbol:   method getCreatedAt()
-  location: variable favorite of type Favorite
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:56: error: cannot find symbol
-        goal.setGoalCode(request.getCode());
-                                ^
+  symbol:   method getFieldName()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/TranslationController.java:49: error: cannot find symbol
+                    .fieldValue(request.getFieldValue())
+                                       ^
+  symbol:   method getFieldValue()
+  location: variable request of type CreateTranslationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:84: error: cannot find symbol
+        GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
+                                                                    ^
   symbol:   method getCode()
   location: variable request of type @jakarta.validation.Valid CreateGoalRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:57: error: cannot find symbol
-        goal.setTitle(request.getTitle());
-                             ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:84: error: cannot find symbol
+        GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
+                                                                                       ^
   symbol:   method getTitle()
   location: variable request of type @jakarta.validation.Valid CreateGoalRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:58: error: cannot find symbol
-        goal.setSubtitle(request.getSubtitle());
-                                ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:84: error: cannot find symbol
+        GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
+                                                                                                           ^
   symbol:   method getSubtitle()
   location: variable request of type @jakarta.validation.Valid CreateGoalRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:71: error: cannot find symbol
-        goal.setTitle(request.getTitle());
-                             ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:98: error: cannot find symbol
+        GoalReference goal = goalReferenceService.updateGoal(code, request.getTitle(), request.getSubtitle());
+                                                                          ^
   symbol:   method getTitle()
   location: variable request of type UpdateGoalRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:72: error: cannot find symbol
-        goal.setSubtitle(request.getSubtitle());
-                                ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/GoalReferenceController.java:98: error: cannot find symbol
+        GoalReference goal = goalReferenceService.updateGoal(code, request.getTitle(), request.getSubtitle());
+                                                                                              ^
   symbol:   method getSubtitle()
   location: variable request of type UpdateGoalRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:44: error: incompatible types: az.fitnest.user.client.UserResponse cannot be converted to az.fitnest.user.grpc.UserResponse
-        UserResponse identityUser = identityServiceClient.getUserById(userId);
-                                                                     ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:46: error: cannot find symbol
-        UserProfileResponse user = UserProfileResponse.builder()
-                                                      ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/controller/UserProfileController.java:269: error: cannot find symbol
+                String language = user.getLanguage();
+                                      ^
+  symbol:   method getLanguage()
+  location: variable user of type IdentityUserResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/client/CachedIdentityGrpcClient.java:48: error: cannot find symbol
+        return IdentityUserResponse.builder()
+                                   ^
   symbol:   method builder()
-  location: class UserProfileResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:56: error: cannot find symbol
-        counters.setFavorite_gyms(favoriteCounts.getOrDefault(EntityType.GYM, 0L));
+  location: class IdentityUserResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/client/StorageGrpcClient.java:49: error: cannot find symbol
+                    data.setPath(grpcData.getPath());
+                        ^
+  symbol:   method setPath(String)
+  location: variable data of type StorageFileData
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/client/StorageGrpcClient.java:50: error: cannot find symbol
+                    data.setSize(grpcData.getSize());
+                        ^
+  symbol:   method setSize(long)
+  location: variable data of type StorageFileData
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/client/StorageGrpcClient.java:51: error: cannot find symbol
+                    data.setMd5(grpcData.getMd5());
+                        ^
+  symbol:   method setMd5(String)
+  location: variable data of type StorageFileData
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/client/StorageGrpcClient.java:52: error: cannot find symbol
+                    data.setFsId(grpcData.getFsId());
+                        ^
+  symbol:   method setFsId(long)
+  location: variable data of type StorageFileData
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:62: error: cannot find symbol
+                        log.error("Failed to stream goal image: {}", fsId, e);
+                        ^
+  symbol:   variable log
+  location: class GoalReferenceServiceImpl
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:69: error: cannot find symbol
+                log.warn("Failed to flush output stream for goal image: {}", fsId);
                 ^
-  symbol:   method setFavorite_gyms(Long)
-  location: variable counters of type CountersResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:57: error: cannot find symbol
-        counters.setFavorite_stores(favoriteCounts.getOrDefault(EntityType.STORE, 0L));
+  symbol:   variable log
+  location: class GoalReferenceServiceImpl
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:81: error: cannot find symbol
+        goal.setGoalCode(code);
+            ^
+  symbol:   method setGoalCode(String)
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:109: error: cannot find symbol
+        if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
                 ^
-  symbol:   method setFavorite_stores(Long)
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:109: error: cannot find symbol
+        if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
+                                               ^
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:111: error: cannot find symbol
+                fileStorageService.deleteFile(goal.getImageUrl());
+                                                  ^
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:113: error: cannot find symbol
+                log.warn("Failed to delete image: {} for goal: {}", goal.getImageUrl(), code);
+                ^
+  symbol:   variable log
+  location: class GoalReferenceServiceImpl
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:113: error: cannot find symbol
+                log.warn("Failed to delete image: {} for goal: {}", goal.getImageUrl(), code);
+                                                                        ^
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:127: error: cannot find symbol
+        String imageUrl = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
+                                                                          ^
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:128: error: cannot find symbol
+        goal.setImageUrl(imageUrl);
+            ^
+  symbol:   method setImageUrl(String)
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:133: error: cannot find symbol
+        String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
+                                                                                  ^
+  symbol:   method getGoalCode()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:134: error: cannot find symbol
+        String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
+                                                                                     ^
+  symbol:   method getGoalCode()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:135: error: cannot find symbol
+        return GoalItemResponse.builder()
+                               ^
+  symbol:   method builder()
+  location: class GoalItemResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:136: error: cannot find symbol
+                .code(goal.getGoalCode())
+                          ^
+  symbol:   method getGoalCode()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:139: error: cannot find symbol
+                .imageUrl(getFullImageUrl(goal.getImageUrl()))
+                                              ^
+  symbol:   method getImageUrl()
+  location: variable goal of type GoalReference
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:146: error: cannot find symbol
+                    t.setFieldValue(value);
+                     ^
+  symbol:   method setFieldValue(String)
+  location: variable t of type Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:149: error: cannot find symbol
+                    Translation t = Translation.builder()
+                                               ^
+  symbol:   method builder()
+  location: class Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:169: error: cannot find symbol
+            translationRepository.save(Translation.builder().entityType("GoalReference").entityId(goalCode).languageCode(languageCode).fieldName("title").fieldValue(title).build());
+                                                  ^
+  symbol:   method builder()
+  location: class Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:172: error: cannot find symbol
+            translationRepository.save(Translation.builder().entityType("GoalReference").entityId(goalCode).languageCode(languageCode).fieldName("subtitle").fieldValue(subtitle).build());
+                                                  ^
+  symbol:   method builder()
+  location: class Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:180: error: cannot find symbol
+                return cachedIdentityGrpcClient.getUserById(userId).getLanguage().toUpperCase();
+                                                                   ^
+  symbol:   method getLanguage()
+  location: class IdentityUserResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/GoalReferenceServiceImpl.java:182: error: cannot find symbol
+                log.warn("Failed to fetch user language via gRPC for userId: {}. Defaulting to AZ.", userId);
+                ^
+  symbol:   variable log
+  location: class GoalReferenceServiceImpl
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/TranslationService.java:16: error: cannot find symbol
+                .map(translation -> translation.getFieldValue())
+                                               ^
+  symbol:   method getFieldValue()
+  location: variable translation of type Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/TranslationService.java:20: error: cannot find symbol
+                            .map(translation -> translation.getFieldValue())
+                                                           ^
+  symbol:   method getFieldValue()
+  location: variable translation of type Translation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/TranslationService.java:17: error: incompatible types: Object cannot be converted to String
+                .orElseGet(() ->
+                          ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserSetupCompletedListener.java:19: error: cannot find symbol
+        if (event == null || event.getUserId() == null) return;
+                                  ^
+  symbol:   method getUserId()
+  location: variable event of type UserSetupCompletedEvent
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserSetupCompletedListener.java:20: error: cannot find symbol
+        if (!idempotencyService.markProcessedIfNew(event.getEventId())) return;
+                                                        ^
+  symbol:   method getEventId()
+  location: variable event of type UserSetupCompletedEvent
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserSetupCompletedListener.java:21: error: cannot find symbol
+        Long userId = event.getUserId();
+                           ^
+  symbol:   method getUserId()
+  location: variable event of type UserSetupCompletedEvent
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserSetupCompletedListener.java:24: error: cannot find symbol
+            p.setUserId(userId);
+             ^
+  symbol:   method setUserId(Long)
+  location: variable p of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:69: error: cannot find symbol
+        counters.setFavorite_gyms(0L);
+                ^
+  symbol:   method setFavorite_gyms(long)
   location: variable counters of type CountersResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:60: error: cannot find symbol
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:70: error: cannot find symbol
+        counters.setFavorite_stores(0L);
+                ^
+  symbol:   method setFavorite_stores(long)
+  location: variable counters of type CountersResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:73: error: cannot find symbol
         summary.setUser(user);
                ^
   symbol:   method setUser(UserProfileResponse)
   location: variable summary of type SummaryResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:61: error: cannot find symbol
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:74: error: cannot find symbol
         summary.setCounters(counters);
                ^
   symbol:   method setCounters(CountersResponse)
   location: variable summary of type SummaryResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:62: error: cannot find symbol
-        summary.setUnreadNotifications(0); // Placeholder
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:75: error: cannot find symbol
+        summary.setUnreadNotifications(0); // placeholder
                ^
   symbol:   method setUnreadNotifications(int)
   location: variable summary of type SummaryResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:68: error: incompatible types: az.fitnest.user.client.UserResponse cannot be converted to az.fitnest.user.grpc.UserResponse
-        UserResponse identityUser = identityServiceClient.getUserById(userId);
-                                                                     ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:70: error: cannot find symbol
-        return UserProfileResponse.builder()
-                                  ^
-  symbol:   method builder()
-  location: class UserProfileResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:86: error: cannot find symbol
-                .orElseGet(() -> new UserLocation(userId, request.getLat(), request.getLng(), LocalDateTime.now()));
-                                                                                   ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:94: error: cannot find symbol
+                new UserLocation(userId, request.getLat(), request.getLng(), LocalDateTime.now())
+                                                                  ^
   symbol:   method getLng()
   location: variable request of type UpdateLocationRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:86: error: cannot find symbol
-                .orElseGet(() -> new UserLocation(userId, request.getLat(), request.getLng(), LocalDateTime.now()));
-                                                                 ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:94: error: cannot find symbol
+                new UserLocation(userId, request.getLat(), request.getLng(), LocalDateTime.now())
+                                                ^
   symbol:   method getLat()
   location: variable request of type UpdateLocationRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:88: error: cannot find symbol
-        location.setLat(request.getLat());
-                               ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:98: error: cannot find symbol
+        boolean latChanged = !Objects.equals(location.getLat(), request.getLat());
+                                                     ^
+  symbol:   method getLat()
+  location: variable location of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:98: error: cannot find symbol
+        boolean latChanged = !Objects.equals(location.getLat(), request.getLat());
+                                                                       ^
   symbol:   method getLat()
   location: variable request of type UpdateLocationRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:89: error: cannot find symbol
-        location.setLng(request.getLng());
-                               ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:99: error: cannot find symbol
+        boolean lngChanged = !Objects.equals(location.getLng(), request.getLng());
+                                                     ^
+  symbol:   method getLng()
+  location: variable location of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:99: error: cannot find symbol
+        boolean lngChanged = !Objects.equals(location.getLng(), request.getLng());
+                                                                       ^
   symbol:   method getLng()
   location: variable request of type UpdateLocationRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:90: error: cannot find symbol
-        location.setUpdatedAt(LocalDateTime.now());
-                ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:102: error: cannot find symbol
+            location.setLat(request.getLat());
+                                   ^
+  symbol:   method getLat()
+  location: variable request of type UpdateLocationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:103: error: cannot find symbol
+            location.setLng(request.getLng());
+                                   ^
+  symbol:   method getLng()
+  location: variable request of type UpdateLocationRequest
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:104: error: cannot find symbol
+            location.setUpdatedAt(LocalDateTime.now());
+                    ^
   symbol:   method setUpdatedAt(LocalDateTime)
   location: variable location of type UserLocation
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:94: error: cannot find symbol
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:107: error: cannot find symbol
+            return LocationResponse.builder()
+                                   ^
+  symbol:   method builder()
+  location: class LocationResponse
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:108: error: cannot find symbol
+                    .lat(saved.getLat())
+                              ^
+  symbol:   method getLat()
+  location: variable saved of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:109: error: cannot find symbol
+                    .lng(saved.getLng())
+                              ^
+  symbol:   method getLng()
+  location: variable saved of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:110: error: cannot find symbol
+                    .updatedAt(saved.getUpdatedAt())
+                                    ^
+  symbol:   method getUpdatedAt()
+  location: variable saved of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:114: error: cannot find symbol
         return LocationResponse.builder()
                                ^
   symbol:   method builder()
   location: class LocationResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:95: error: cannot find symbol
-                .lat(saved.getLat())
-                          ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:115: error: cannot find symbol
+                .lat(location.getLat())
+                             ^
   symbol:   method getLat()
-  location: variable saved of type UserLocation
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:96: error: cannot find symbol
-                .lng(saved.getLng())
-                          ^
+  location: variable location of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:116: error: cannot find symbol
+                .lng(location.getLng())
+                             ^
   symbol:   method getLng()
-  location: variable saved of type UserLocation
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:97: error: cannot find symbol
-                .updatedAt(saved.getUpdatedAt())
-                                ^
+  location: variable location of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:117: error: cannot find symbol
+                .updatedAt(location.getUpdatedAt())
+                                   ^
   symbol:   method getUpdatedAt()
-  location: variable saved of type UserLocation
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:109: error: cannot find symbol
-                    newProfile.setUserId(userId);
-                              ^
-  symbol:   method setUserId(Long)
-  location: variable newProfile of type UserProfile
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:113: error: cannot find symbol
-        if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm());
-                   ^
+  location: variable location of type UserLocation
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:132: error: cannot find symbol
+            if (!Objects.equals(profile.getHeightCm(), newHeight)) {
+                                       ^
   symbol:   method getHeightCm()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:113: error: cannot find symbol
-        if (request.getHeightCm() != null) profile.setHeightCm(request.getHeightCm());
-                                                                      ^
-  symbol:   method getHeightCm()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:114: error: cannot find symbol
-        if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
-                   ^
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:133: error: cannot find symbol
+                profile.setHeightCm(newHeight);
+                       ^
+  symbol:   method setHeightCm(Double)
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:138: error: cannot find symbol
+            if (!Objects.equals(profile.getWeightKg(), request.getWeightKg())) {
+                                       ^
   symbol:   method getWeightKg()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:114: error: cannot find symbol
-        if (request.getWeightKg() != null) profile.setWeightKg(request.getWeightKg());
-                                                                      ^
-  symbol:   method getWeightKg()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:115: error: cannot find symbol
-        if (request.getGender() != null) profile.setGender(request.getGender());
-                   ^
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:139: error: cannot find symbol
+                profile.setWeightKg(request.getWeightKg());
+                       ^
+  symbol:   method setWeightKg(Double)
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:144: error: cannot find symbol
+            if (!Objects.equals(profile.getGender(), request.getGender())) {
+                                       ^
   symbol:   method getGender()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:115: error: cannot find symbol
-        if (request.getGender() != null) profile.setGender(request.getGender());
-                                                                  ^
-  symbol:   method getGender()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:116: error: cannot find symbol
-        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
-                   ^
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:145: error: cannot find symbol
+                profile.setGender(request.getGender());
+                       ^
+  symbol:   method setGender(Gender)
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:150: error: cannot find symbol
+            if (!Objects.equals(profile.getBirthDate(), request.getBirthDate())) {
+                                       ^
   symbol:   method getBirthDate()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:116: error: cannot find symbol
-        if (request.getBirthDate() != null) profile.setBirthDate(request.getBirthDate());
-                                                                        ^
-  symbol:   method getBirthDate()
-  location: variable request of type UpdateBodyRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:124: error: cannot find symbol
-        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, request.getFirstName(), request.getLastName(), request.getEmail());
-                                                                                          ^
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:151: error: cannot find symbol
+                profile.setBirthDate(request.getBirthDate());
+                       ^
+  symbol:   method setBirthDate(LocalDate)
+  location: variable profile of type UserProfile
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:166: error: cannot find symbol
+                userId, request.getFirstName(), request.getLastName(), request.getEmail()
+                               ^
   symbol:   method getFirstName()
   location: variable request of type UpdateUserProfileRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:124: error: cannot find symbol
-        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, request.getFirstName(), request.getLastName(), request.getEmail());
-                                                                                                                  ^
+/Users/aousganeh/Desktop/fitnest/code/user-service/src/main/java/az/fitnest/user/service/impl/UserProfileServiceImpl.java:166: error: cannot find symbol
+                userId, request.getFirstName(), request.getLastName(), request.getEmail()
+                                                       ^
   symbol:   method getLastName()
   location: variable request of type UpdateUserProfileRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:124: error: cannot find symbol
-        UserResponse updatedUser = identityServiceClient.updateUserProfile(userId, request.getFirstName(), request.getLastName(), request.getEmail());
-                                                                                                                                         ^
-  symbol:   method getEmail()
-  location: variable request of type UpdateUserProfileRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:126: error: cannot find symbol
-        return UserProfileResponse.builder()
-                                  ^
-  symbol:   method builder()
-  location: class UserProfileResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:140: error: incompatible types: az.fitnest.user.client.UserResponse cannot be converted to az.fitnest.user.grpc.UserResponse
-        UserResponse currentUser = identityServiceClient.getUserById(userId);
-                                                                    ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:146: error: incompatible types: az.fitnest.user.client.UserResponse cannot be converted to az.fitnest.user.grpc.UserResponse
-            UserResponse updatedUser = identityServiceClient.updateProfileImage(userId, newImageUrl);
-                                                                               ^
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:148: error: cannot find symbol
-            return UserProfileResponse.builder()
-                                      ^
-  symbol:   method builder()
-  location: class UserProfileResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:165: error: cannot find symbol
-        return ActiveSubscriptionResponse.builder()
-                                         ^
-  symbol:   method builder()
-  location: class ActiveSubscriptionResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:171: error: cannot find symbol
-        if (!Boolean.TRUE.equals(request.getConfirm())) {
-                                        ^
-  symbol:   method getConfirm()
-  location: variable request of type DeleteAccountRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:175: error: cannot find symbol
-        identityServiceClient.deleteUser(userId, request.getReason());
-                                                        ^
-  symbol:   method getReason()
-  location: variable request of type DeleteAccountRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:182: error: cannot find symbol
-        if (!goalReferenceRepository.existsById(request.getGoalCode())) {
-                                                       ^
-  symbol:   method getGoalCode()
-  location: variable request of type UpdateGoalsRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:189: error: cannot find symbol
-                    newProfile.setUserId(userId);
-                              ^
-  symbol:   method setUserId(Long)
-  location: variable newProfile of type UserProfile
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:193: error: cannot find symbol
-        profile.setGoalCode(request.getGoalCode());
-                                   ^
-  symbol:   method getGoalCode()
-  location: variable request of type UpdateGoalsRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:200: error: cannot find symbol
-        if (request.getLanguage() != null) {
-                   ^
-  symbol:   method getLanguage()
-  location: variable request of type UpdatePreferencesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:201: error: cannot find symbol
-            identityServiceClient.updateLanguage(userId, request.getLanguage());
-                                                                ^
-  symbol:   method getLanguage()
-  location: variable request of type UpdatePreferencesRequest
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:210: error: cannot find symbol
-                .map(goal -> GoalItemResponse.builder()
-                                             ^
-  symbol:   method builder()
-  location: class GoalItemResponse
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:211: error: cannot find symbol
-                        .code(goal.getGoalCode())
-                                  ^
-  symbol:   method getGoalCode()
-  location: variable goal of type GoalReference
-/Users/aousganeh/Desktop/fix/code/user-service/src/main/java/az/fitnest/user/service/UserProfileService.java:212: error: cannot find symbol
-                        .title(goal.getTitle())
-                                   ^
-  symbol:   method getTitle()
-  location: variable goal of type GoalReference
-Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
 100 errors
-only showing the first 100 errors, of 175 total; use -Xmaxerrs if you would like to see more
+only showing the first 100 errors, of 194 total; use -Xmaxerrs if you would like to see more
 
 FAILURE: Build failed with an exception.
 
@@ -507,6 +508,5 @@ Execution failed for task ':compileJava'.
 > Run with --info option to get more log output.
 > Run with --scan to get full insights.
 
-BUILD FAILED in 444ms
-4 actionable tasks: 1 executed, 3 up-to-date
-Configuration cache entry reused.
+BUILD FAILED in 1s
+7 actionable tasks: 6 executed, 1 from cache
