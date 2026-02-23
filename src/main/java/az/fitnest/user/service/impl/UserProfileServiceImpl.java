@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import marketplace.GymServiceOuterClass.GymSummary;
+import catalog.GymServiceOuterClass.GymSummary;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final LanguageRepository languageRepository;
     private final TranslationService translationService;
     private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
-    private final MarketplaceGrpcClient marketplaceGrpcClient;
+    private final CatalogGrpcClient catalogGrpcClient;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -433,8 +433,8 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    public List<GymSummary> getMainPageGymsFromMarketplace() {
-        return marketplaceGrpcClient.getMainPageGyms().getGymsList();
+    public List<GymSummary> getMainPageGymsFromCatalog() {
+        return catalogGrpcClient.getMainPageGyms().getGymsList();
     }
 
     // ----------------- Helpers -----------------

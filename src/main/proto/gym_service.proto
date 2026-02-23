@@ -1,8 +1,8 @@
 // Copy of gym_service.proto for gRPC client stub generation
-// ...full contents from marketplace-service/protos/gym_service.proto...
+// ...full contents from catalog-service/protos/gym_service.proto...
 syntax = "proto3";
 
-package marketplace;
+package catalog;
 
 service GymService {
   rpc GetMainPageGyms(GetMainPageGymsRequest) returns (GetMainPageGymsResponse);

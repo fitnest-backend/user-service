@@ -177,9 +177,9 @@ grpc:
         trust-cert-collection: ${GRPC_TRUST_CERT:}
         client-cert-chain: ${GRPC_CLIENT_CERT:}
         client-private-key: ${GRPC_CLIENT_KEY:}
-    marketplace:
+    catalog:
       grpc:
-        host: marketplace-service
+        host: catalog-service
         port: 9090
     notifications-service:
       address: 'static://notifications-service:9090'
