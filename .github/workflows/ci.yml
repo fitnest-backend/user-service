@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ghcr.io/fitnest-backend/user-service
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
   HELM_VALUES_FILE: values.yaml
 
 jobs:
