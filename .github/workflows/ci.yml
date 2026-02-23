@@ -51,10 +51,8 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_BRANCH }}-${{ env.IMAGE_TAG }}
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_BRANCH }}
           cache-from: |
-            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
             type=gha
           cache-to: |
-            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
             type=gha,mode=max
 
   update-helm-chart:
