@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import catalog.GymServiceOuterClass.GymSummary;
+import az.fitnest.catalog.grpc.GymMainPage;
 
 @Service
 @RequiredArgsConstructor
@@ -433,8 +433,8 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    public List<GymSummary> getMainPageGymsFromCatalog() {
-        return catalogGrpcClient.getMainPageGyms().getGymsList();
+    public List<GymMainPage> getMainPageGymsFromCatalog() {
+        return catalogGrpcClient.getMainPageGyms().getItemsList();
     }
 
     // ----------------- Helpers -----------------
