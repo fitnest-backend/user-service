@@ -2,6 +2,7 @@ package az.fitnest.user.service;
 
 import az.fitnest.user.dto.request.*;
 import az.fitnest.user.dto.response.*;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,4 +26,6 @@ public interface UserProfileService {
     CompleteSetupResponse completeSetup();
     CompleteSetupResponse skipSetup();
     SetupResponse setupProfile(SetupRequest request);
+    List<LanguageDto> getAllLanguages();
+    LanguageDto getCurrentLanguage();
 }

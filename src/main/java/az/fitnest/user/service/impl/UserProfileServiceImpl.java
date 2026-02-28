@@ -53,6 +53,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
     private final CatalogGrpcClient catalogGrpcClient;
     private final OrderGrpcClient orderGrpcClient;
+    private final LanguageService languageService;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -495,6 +496,22 @@ public class UserProfileServiceImpl implements UserProfileService {
                         .nutritionPlanReady(false)
                         .build())
                 .build();
+    }
+
+    @Override
+    public List<LanguageDto> getAllLanguages() {
+        return languageService.getAllLanguages();
+    }
+
+    @Override
+    public LanguageDto getCurrentLanguage() {
+        Long userId = UserContext.getCurrentUserId();
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        String langCode = identityUser.getLanguage();
+        if (langCode == null || langCode.isBlank()) {
+            langCode = "AZ"; // Default
+        }
+        return languageService.getLanguageByCode(langCode);
     }
 
     public List<GymMainPage> getMainPageGymsFromCatalog() {

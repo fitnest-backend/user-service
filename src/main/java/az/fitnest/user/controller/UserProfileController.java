@@ -167,6 +167,26 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @Operation(summary = "Mövcud dilləri əldə edin", description = "Tətbiqdə mövcud olan bütün dilləri qaytarır.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dillər uğurla əldə edildi",
+                    content = @Content(schema = @Schema(implementation = LanguageDto.class)))
+    })
+    @GetMapping("/languages")
+    public ResponseEntity<ApiResponse<java.util.List<LanguageDto>>> getLanguages() {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getAllLanguages()));
+    }
+
+    @Operation(summary = "Cari dili əldə edin", description = "İstifadəçinin seçdiyi cari dili qaytarır.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Cari dil uğurla əldə edildi",
+                    content = @Content(schema = @Schema(implementation = LanguageDto.class)))
+    })
+    @GetMapping("/language")
+    public ResponseEntity<ApiResponse<LanguageDto>> getCurrentLanguage() {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.getCurrentLanguage()));
+    }
+
     @Operation(summary = "Quraşdırma statusunu əldə edin", description = "İstifadəçi profilinin quraşdırılmasının cari tərəqqisini qaytarır.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Quraşdırma statusu uğurla əldə edildi",

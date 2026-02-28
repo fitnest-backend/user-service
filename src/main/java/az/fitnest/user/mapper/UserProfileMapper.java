@@ -17,7 +17,6 @@ public final class UserProfileMapper {
                 .mobile(userResponse.getMobile())
                 .email(userResponse.getEmail())
                 .profileImageUrl(profileImageUrl)
-                .createdAt(parseCreatedAt(userResponse.getCreatedAt()))
                 .currentSubscription(currentSubscription)
                 .build();
     }
