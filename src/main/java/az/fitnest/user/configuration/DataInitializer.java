@@ -1,15 +1,14 @@
-package az.fitnest.user.configuration;
-
-import az.fitnest.user.model.entity.GoalReference;
-import az.fitnest.user.model.entity.Language;
-import az.fitnest.user.model.entity.Translation;
-import az.fitnest.user.repository.GoalReferenceRepository;
-import az.fitnest.user.repository.LanguageRepository;
-import az.fitnest.user.repository.TranslationRepository;
+import az.fitnest.user.model.entity.UserLocation;
+import az.fitnest.user.model.entity.UserProfile;
+import az.fitnest.user.model.enums.Gender;
+import az.fitnest.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,6 +17,8 @@ public class DataInitializer {
     private final LanguageRepository languageRepository;
     private final GoalReferenceRepository goalReferenceRepository;
     private final TranslationRepository translationRepository;
+    private final UserProfileRepository userProfileRepository;
+    private final UserLocationRepository userLocationRepository;
 
     @Bean
     public CommandLineRunner initData() {
@@ -32,6 +33,8 @@ public class DataInitializer {
             initGenderTranslations();
             initEntityTypeTranslations();
             initBmiMessageTranslations();
+            initUserProfiles();
+            initUserLocations();
         };
     }
 
@@ -179,6 +182,50 @@ public class DataInitializer {
         createTranslationIfNotFound("Message", "BmiMessage", "AZ", "OBESE", "Sizin çəkiniz piylənmə diapazonundadır. Mütəxəssislə məsləhətləşin.");
         createTranslationIfNotFound("Message", "BmiMessage", "EN", "OBESE", "Your weight is in the obesity range. Consult a specialist.");
         createTranslationIfNotFound("Message", "BmiMessage", "RU", "OBESE", "Ваш вес в диапазоне ожирения. Обратитесь к специалисту.");
+    }
+
+    private void initUserProfiles() {
+        if (userProfileRepository.count() == 0) {
+            // Admin user (ID 1)
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(1L)
+                    .heightCm(180.0)
+                    .weightKg(85.0)
+                    .gender(Gender.MALE)
+                    .birthDate(LocalDate.of(1990, 1, 1))
+                    .goalCode("MUSCLE_GAIN")
+                    .build());
+
+            // Super Admin user (ID 2)
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(2L)
+                    .heightCm(175.0)
+                    .weightKg(70.0)
+                    .gender(Gender.MALE)
+                    .birthDate(LocalDate.of(1985, 5, 15))
+                    .goalCode("WEIGHT_LOSS")
+                    .build());
+        }
+    }
+
+    private void initUserLocations() {
+        if (userLocationRepository.count() == 0) {
+            // Admin user
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(1L)
+                    .lat(40.4093)
+                    .lng(49.8671)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+
+            // Super Admin user
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(2L)
+                    .lat(40.4095)
+                    .lng(49.8675)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+        }
     }
 
     private void createTranslationIfNotFound(String entityType, String entityId, String languageCode, String fieldName, String fieldValue) {
