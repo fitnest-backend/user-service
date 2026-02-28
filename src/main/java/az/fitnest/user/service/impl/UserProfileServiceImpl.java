@@ -75,7 +75,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         String currentSubscription = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+            if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
@@ -111,7 +111,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         String currentSubscription = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+            if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
@@ -220,7 +220,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         String currentSubscription = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+            if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
