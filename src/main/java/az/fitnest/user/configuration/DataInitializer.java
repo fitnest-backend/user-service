@@ -93,8 +93,6 @@ public class DataInitializer {
         createTranslationIfNotFound("GoalReference", "ENDURANCE", "RU", "subtitle", "Повысьте выносливость и сердечно-сосудистое здоровье");
     }
 
-    }
-
     private void initGenderTranslations() {
         // MALE
         createTranslationIfNotFound("Gender", "MALE", "AZ", "label", "Kişi");
