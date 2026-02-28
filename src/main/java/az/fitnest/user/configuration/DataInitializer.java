@@ -29,10 +29,6 @@ public class DataInitializer {
             initLanguages();
             initGoals();
             initGoalTranslations();
-            initGymTranslations();
-            initMembershipPlanTranslations();
-            initStoreTranslations();
-            initTrainerTranslations();
             initGenderTranslations();
             initEntityTypeTranslations();
             initBmiMessageTranslations();
@@ -97,38 +93,6 @@ public class DataInitializer {
         createTranslationIfNotFound("GoalReference", "ENDURANCE", "RU", "subtitle", "Повысьте выносливость и сердечно-сосудистое здоровье");
     }
 
-    private void initGymTranslations() {
-        // Assuming gym with ID "1"
-        createTranslationIfNotFound("Gym", "1", "AZ", "name", "Premium Fitness Mərkəzi");
-        createTranslationIfNotFound("Gym", "1", "AZ", "description", "Müasir avadanlıqlar və peşəkar məşqçilər ilə yüksək keyfiyyətli fitness mərkəzi");
-        createTranslationIfNotFound("Gym", "1", "EN", "name", "Premium Fitness Center");
-        createTranslationIfNotFound("Gym", "1", "EN", "description", "High-quality fitness center with modern equipment and professional trainers");
-        createTranslationIfNotFound("Gym", "1", "RU", "name", "Премиум Фитнес Центр");
-        createTranslationIfNotFound("Gym", "1", "RU", "description", "Высококачественный фитнес-центр с современным оборудованием и профессиональными тренерами");
-    }
-
-    private void initMembershipPlanTranslations() {
-        // Assuming membership plan with ID "1"
-        createTranslationIfNotFound("MembershipPlan", "1", "AZ", "name", "Əsas Abunəlik");
-        createTranslationIfNotFound("MembershipPlan", "1", "EN", "name", "Basic Membership");
-        createTranslationIfNotFound("MembershipPlan", "1", "RU", "name", "Базовое Членство");
-    }
-
-    private void initStoreTranslations() {
-        // Assuming store with ID "1"
-        createTranslationIfNotFound("Store", "1", "AZ", "name", "İdman Mağazası");
-        createTranslationIfNotFound("Store", "1", "AZ", "description", "İdman avadanlıqları və geyimləri");
-        createTranslationIfNotFound("Store", "1", "EN", "name", "Sports Store");
-        createTranslationIfNotFound("Store", "1", "EN", "description", "Sports equipment and clothing");
-        createTranslationIfNotFound("Store", "1", "RU", "name", "Спортивный Магазин");
-        createTranslationIfNotFound("Store", "1", "RU", "description", "Спортивное оборудование и одежда");
-    }
-
-    private void initTrainerTranslations() {
-        // Assuming trainer with ID "1"
-        createTranslationIfNotFound("Trainer", "1", "AZ", "specialization", "Kardio və güc məşqləri");
-        createTranslationIfNotFound("Trainer", "1", "EN", "specialization", "Cardio and strength training");
-        createTranslationIfNotFound("Trainer", "1", "RU", "specialization", "Кардио и силовые тренировки");
     }
 
     private void initGenderTranslations() {
