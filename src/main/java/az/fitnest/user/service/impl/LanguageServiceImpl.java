@@ -71,7 +71,6 @@ public class LanguageServiceImpl implements LanguageService {
 
     private LanguageDto toDto(Language language) {
         return LanguageDto.builder()
-                .id(language.getCode())
                 .code(language.getCode())
                 .build();
     }

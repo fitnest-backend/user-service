@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LanguageDto {
-    private String id;
     private String code;
 }
