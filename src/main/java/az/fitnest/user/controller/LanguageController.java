@@ -20,14 +20,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/languages")
 @RequiredArgsConstructor
-@Tag(name = "Languages", description = "Endpoints for managing languages")
+@Tag(name = "Languages", description = "Dilləri idarə etmək üçün ucluqlar")
 public class LanguageController {
 
     private final LanguageService languageService;
 
-    @Operation(summary = "Get all languages", description = "Retrieves a complete list of all supported languages in the system. This endpoint is restricted to administrators and provides language codes and names for configuration purposes.")
+    @Operation(summary = "Bütün dilləri əldə edin", description = "Sistemdə dəstəklənən bütün dillərin tam siyahısını əldə edir. Bu ucluq administratorlar üçün məhdudlaşdırılıb və konfiqurasiya məqsədləri üçün dil kodlarını və adlarını təqdim edir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Languages retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dillər uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,11 +36,11 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.getAllLanguages()));
     }
 
-    @Operation(summary = "Get language by code", description = "Retrieves the details of a specific language using its unique code. This endpoint is useful for administrators to view individual language configurations.")
+    @Operation(summary = "Dili kod vasitəsilə əldə edin", description = "Unikal kodu vasitəsilə xüsusi dilin təfərrüatlarını əldə edir. Bu ucluq administratorlar üçün fərdi dil konfiqurasiyalarına baxmaq üçün faydalıdır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dil uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Dil tapılmadı")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{code}")
@@ -48,11 +48,11 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.getLanguageByCode(code)));
     }
 
-    @Operation(summary = "Create a new language", description = "Adds a new language to the system with the provided code and name. This allows administrators to expand the list of supported languages for user preferences.")
+    @Operation(summary = "Yeni dil yaradın", description = "Təqdim olunan kod və adla sistemə yeni dil əlavə edir. Bu, administratorlara istifadəçi seçimləri üçün dəstəklənən dillərin siyahısını genişləndirməyə imkan verir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Language created successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Dil uğurla yaradıldı",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request data")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -60,12 +60,12 @@ public class LanguageController {
         return ResponseEntity.status(201).body(ApiResponse.success(languageService.createLanguage(request)));
     }
 
-    @Operation(summary = "Update a language", description = "Modifies the code and name of an existing language. Only the provided fields will be updated, allowing partial updates. This helps administrators correct or update language information.")
+    @Operation(summary = "Dili yeniləyin", description = "Mövcud dilin kodunu və adını dəyişdirir. Yalnız təqdim olunan sahələr yenilənəcək, bu da qismən yeniləmələrə imkan verir. Bu, administratorlara dil məlumatlarını düzəltməyə və ya yeniləməyə kömək edir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dil uğurla yeniləndi",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request data")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Dil tapılmadı"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{code}")
@@ -73,10 +73,10 @@ public class LanguageController {
         return ResponseEntity.ok(ApiResponse.success(languageService.updateLanguage(code, request)));
     }
 
-    @Operation(summary = "Delete a language", description = "Removes a language from the system using its unique ID. This action is permanent and should be used carefully as it may affect users who have selected this language. Restricted to administrators.")
+    @Operation(summary = "Dili silin", description = "Unikal ID vasitəsilə dili sistemdən silir. Bu hərəkət daimidir və ehtiyatla istifadə edilməlidir, çünki bu dili seçmiş istifadəçilərə təsir göstərə bilər. Administratorlar üçün məhdudlaşdırılıb.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language deleted successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Language not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dil uğurla silindi"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Dil tapılmadı")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{code}")

@@ -29,37 +29,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/goals")
 @RequiredArgsConstructor
-@Tag(name = "Goal Management", description = "Endpoints for viewing wellness and fitness goal categories.")
+@Tag(name = "Goal Management", description = "Sağlamlıq və fitnes hədəf kateqoriyalarına baxmaq üçün ucluqlar.")
 @SecurityRequirement(name = "bearerAuth")
 public class GoalReferenceController {
 
     private final GoalReferenceService goalReferenceService;
 
     @GetMapping
-    @Operation(summary = "Get all goal references", description = "Retrieves a list of all available goals.")
+    @Operation(summary = "Bütün hədəf arayışlarını əldə edin", description = "Mövcud olan bütün hədəflərin siyahısını əldə edir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goals retrieved successfully", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəflər uğurla əldə edildi", content = @Content(schema = @Schema(implementation = GoalItemResponse.class)))
     })
     public ResponseEntity<ApiResponse<List<GoalItemResponse>>> getAllGoals() {
         return ResponseEntity.ok(ApiResponse.success(goalReferenceService.getAllGoals()));
     }
 
     @GetMapping("/{code}")
-    @Operation(summary = "Get goal by code", description = "Retrieves a specific goal by its unique code.")
+    @Operation(summary = "Hədəfi kod vasitəsilə əldə edin", description = "Unikal kodu vasitəsilə xüsusi hədəfi əldə edir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal found"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf tapıldı"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı")
     })
     public ResponseEntity<ApiResponse<GoalItemResponse>> getGoalByCode(
-            @Parameter(description = "Unique code of the goal (e.g., LOSE_WEIGHT)") @PathVariable String code) {
+            @Parameter(description = "Hədəfin unikal kodu (məsələn, LOSE_WEIGHT)") @PathVariable String code) {
         return ResponseEntity.ok(ApiResponse.success(goalReferenceService.getGoalByCode(code)));
     }
 
     @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    @Operation(summary = "Stream goal image", description = "Streams the image file associated with a goal from storage.")
+    @Operation(summary = "Hədəf şəklini yayımlayın", description = "Hədəf ilə əlaqəli şəkil faylını yaddaşdan yayımlayır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Image stream started"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Image not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Şəkil yayımı başladı"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Şəkil tapılmadı")
     })
     public ResponseEntity<StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
         return ResponseEntity.ok()

@@ -19,14 +19,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/translations")
 @RequiredArgsConstructor
-@Tag(name = "Translation Management", description = "Endpoints for managing translations")
+@Tag(name = "Translation Management", description = "Tərcümələri idarə etmək üçün ucluqlar")
 public class TranslationController {
 
     private final TranslationRepository translationRepository;
 
-    @Operation(summary = "Create or update a translation", description = "Creates a new translation or updates an existing one for the given entity, language, and field.")
+    @Operation(summary = "Tərcümə yaradın və ya yeniləyin", description = "Verilmiş obyekt, dil və sahə üçün yeni tərcümə yaradır və ya mövcud olanı yeniləyir.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Translation created/updated successfully",
+            @ApiResponse(responseCode = "200", description = "Tərcümə uğurla yaradıldı/yeniləndi",
                     content = @Content(schema = @Schema(implementation = Translation.class)))
     })
     @PostMapping
@@ -53,9 +53,9 @@ public class TranslationController {
         }
     }
 
-    @Operation(summary = "Get translations for an entity", description = "Retrieves all translations for a specific entity type and ID.")
+    @Operation(summary = "Obyekt üçün tərcümələri əldə edin", description = "Xüsusi obyekt növü və ID-si üçün bütün tərcümələri əldə edir.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Translations retrieved successfully",
+            @ApiResponse(responseCode = "200", description = "Tərcümələr uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = List.class)))
     })
     @GetMapping("/{entityType}/{entityId}")
@@ -85,9 +85,9 @@ public class TranslationController {
         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(translations));
     }
 
-    @Operation(summary = "Delete a translation", description = "Deletes a specific translation by ID.")
+    @Operation(summary = "Tərcüməni silin", description = "Xüsusi tərcüməni ID vasitəsilə silir.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Translation deleted successfully")
+            @ApiResponse(responseCode = "204", description = "Tərcümə uğurla silindi")
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

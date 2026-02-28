@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/admin/goals")
 @RequiredArgsConstructor
-@Tag(name = "Goal Management Admin", description = "Administrative endpoints for managing wellness and fitness goal categories")
+@Tag(name = "Goal Management Admin", description = "Sağlamlıq və fitnes hədəf kateqoriyalarını idarə etmək üçün administrativ ucluqlar")
 @SecurityRequirement(name = "bearerAuth")
 @PreAuthorize("hasRole('ADMIN')")
 public class GoalReferenceAdminController {
@@ -31,10 +31,10 @@ public class GoalReferenceAdminController {
     private final GoalReferenceService goalReferenceService;
 
     @PostMapping
-    @Operation(summary = "Create goal (Admin)", description = "Creates a new goal reference and initializes translations. Requires ADMIN role.")
+    @Operation(summary = "Hədəf yaradın (Admin)", description = "Yeni hədəf arayışı yaradır və tərcümələri hazırlayır. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Goal created successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Goal with this code already exists")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Hədəf uğurla yaradıldı"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Bu kodlu hədəf artıq mövcuddur")
     })
     public ResponseEntity<ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
         GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
@@ -42,10 +42,10 @@ public class GoalReferenceAdminController {
     }
 
     @PutMapping("/{code}")
-    @Operation(summary = "Update goal (Admin)", description = "Updates the title and subtitle of a goal reference. Requires ADMIN role.")
+    @Operation(summary = "Hədəfi yeniləyin (Admin)", description = "Hədəf arayışının başlığını və yarımbaşlığını yeniləyir. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla yeniləndi"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı")
     })
     public ResponseEntity<ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
@@ -55,10 +55,10 @@ public class GoalReferenceAdminController {
     }
 
     @DeleteMapping("/{code}")
-    @Operation(summary = "Delete goal (Admin)", description = "Permanently deletes a goal reference and its image. Requires ADMIN role.")
+    @Operation(summary = "Hədəfi silin (Admin)", description = "Hədəf arayışını və onun şəklini həmişəlik silir. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal deleted successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Goal not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla silindi"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı")
     })
     public ResponseEntity<ApiResponse<String>> deleteGoal(@PathVariable String code) {
         goalReferenceService.deleteGoal(code);
@@ -66,13 +66,13 @@ public class GoalReferenceAdminController {
     }
 
     @PutMapping(path = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload goal image (Admin)", description = "Uploads or replaces the image for a goal. Requires ADMIN role.")
+    @Operation(summary = "Hədəf şəkli yükləyin (Admin)", description = "Hədəf üçün şəkli yükləyir və ya əvəzləyir. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Image uploaded successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Şəkil uğurla yükləndi")
     })
     public ResponseEntity<Void> uploadGoalImage(
             @PathVariable String code,
-            @Parameter(description = "Image file to upload (Max 5MB)") @RequestParam("file") MultipartFile file) {
+            @Parameter(description = "Yüklənəcək şəkil faylı (Maks 5MB)") @RequestParam("file") MultipartFile file) {
         goalReferenceService.uploadGoalImage(code, file);
         return ResponseEntity.ok().build();
     }

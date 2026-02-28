@@ -31,7 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @RestController
 @RequestMapping("/api/v1/me")
 @RequiredArgsConstructor
-@Tag(name = "User Profile", description = "Endpoints for managing user profile, settings, and account")
+@Tag(name = "User Profile", description = "İstifadəçi profili, parametrləri və hesabını idarə etmək üçün ucluqlar")
 public class UserProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
@@ -41,9 +41,9 @@ public class UserProfileController {
     private final TranslationRepository translationRepository;
     private final StorageGrpcClient storageGrpcClient;
 
-    @Operation(summary = "Get user summary", description = "Returns a brief summary of the user's profile and progress.")
+    @Operation(summary = "İstifadəçi xülasəsini əldə edin", description = "İstifadəçinin profili və tərəqqisi haqqında qısa xülasə qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Summary retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Xülasə uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = SummaryResponse.class), examples = @ExampleObject(value = "{\"totalWorkouts\": 25, \"totalCalories\": 1500}")))
     })
     @GetMapping("/summary")
@@ -51,9 +51,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getUserSummary()));
     }
 
-    @Operation(summary = "Get current user profile", description = "Returns the full profile details of the authenticated user.")
+    @Operation(summary = "Cari istifadəçi profilini əldə edin", description = "Autentifikasiya olunmuş istifadəçinin tam profil təfərrüatlarını qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\"}")))
     })
     @GetMapping
@@ -61,9 +61,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getUserMe()));
     }
 
-    @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile information such as name, email, and other personal details. Only provided fields will be updated, leaving others unchanged. Validation is performed on the input data.")
+    @Operation(summary = "İstifadəçi profilini yeniləyin", description = "Autentifikasiya olunmuş istifadəçinin ad, e-poçt və digər şəxsi məlumatları kimi profil məlumatlarını yeniləyir. Yalnız təqdim olunan sahələr yenilənəcək, digərləri dəyişməz qalacaq. Giriş məlumatları üzərində doğrulama aparılır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil uğurla yeniləndi",
                     content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"id\": 1, \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\"}")))
     })
     @PutMapping
@@ -71,9 +71,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.updateUserMe(request)));
     }
 
-    @Operation(summary = "Update user location", description = "Updates the user's current city and country.")
+    @Operation(summary = "İstifadəçi məkanını yeniləyin", description = "İstifadəçinin cari şəhər və ölkəsini yeniləyir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Location updated successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Məkan uğurla yeniləndi",
                     content = @Content(schema = @Schema(implementation = LocationResponse.class)))
     })
     @PutMapping("/location")
@@ -81,9 +81,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.updateMyLocation(request)));
     }
 
-    @Operation(summary = "Update body metrics", description = "Updates user's physical metrics like height, weight, etc.")
+    @Operation(summary = "Bədən göstəricilərini yeniləyin", description = "İstifadəçinin boy, çəki və s. kimi fiziki göstəricilərini yeniləyir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Bədən göstəriciləri uğurla yeniləndi", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/body")
     public ResponseEntity<ApiResponse<Void>> updateBody(@Valid @RequestBody UpdateBodyRequest request) {
@@ -91,9 +91,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @Operation(summary = "Get body metrics", description = "Returns user's physical metrics.")
+    @Operation(summary = "Bədən göstəricilərini əldə edin", description = "İstifadəçinin fiziki göstəricilərini qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Body metrics retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Bədən göstəriciləri uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = BodyInfoResponse.class)))
     })
     @GetMapping("/body")
@@ -102,12 +102,12 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getBodyInfo(userLanguage)));
     }
 
-    @Operation(summary = "Update profile image", description = "Uploads and sets a new profile image for the user.")
+    @Operation(summary = "Profil şəklini yeniləyin", description = "İstifadəçi üçün yeni profil şəkli yükləyir və təyin edir.")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
             mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
             schema = @Schema(implementation = ProfileImageUploadRequest.class)))
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile image updated successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil şəkli uğurla yeniləndi")
     })
     @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateProfileImage(@RequestPart("image") MultipartFile file) {
@@ -115,9 +115,9 @@ public class UserProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Get goal reference assigned to user", description = "Returns the health and fitness goal assigned to the user.")
+    @Operation(summary = "İstifadəçiyə təyin edilmiş hədəf arayışını əldə edin", description = "İstifadəçiyə təyin edilmiş sağlamlıq və fitnes hədəfini qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal reference retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf arayışı uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = GoalResponse.class)))
     })
     @GetMapping("/reference/goals")
@@ -126,9 +126,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal(userLanguage)));
     }
 
-    @Operation(summary = "Update user goal", description = "Updates the primary fitness or health goal of the user.")
+    @Operation(summary = "İstifadəçi hədəfini yeniləyin", description = "İstifadəçinin əsas fitnes və ya sağlamlıq hədəfini yeniləyir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla yeniləndi", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/goal")
     public ResponseEntity<ApiResponse<Void>> updateGoal(@Valid @RequestBody UpdateGoalsRequest request) {
@@ -136,9 +136,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @Operation(summary = "Get user goal", description = "Returns the user's current goal.")
+    @Operation(summary = "İstifadəçi hədəfini əldə edin", description = "İstifadəçinin cari hədəfini qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Goal retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = GoalResponse.class)))
     })
     @GetMapping("/goal")
@@ -147,9 +147,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal(userLanguage)));
     }
 
-    @Operation(summary = "Update user preferences", description = "Updates application settings like language and theme.")
+    @Operation(summary = "İstifadəçi seçimlərini yeniləyin", description = "Dil və mövzu kimi tətbiq parametrlərini yeniləyir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Preferences updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Seçimlər uğurla yeniləndi", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/preferences")
     public ResponseEntity<ApiResponse<Void>> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request) {
@@ -157,9 +157,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @Operation(summary = "Update user language", description = "Updates the user's preferred language.")
+    @Operation(summary = "İstifadəçi dilini yeniləyin", description = "İstifadəçinin üstünlük verdiyi dili yeniləyir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Language updated successfully", content = @Content(examples = @ExampleObject(value = "null")))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dil uğurla yeniləndi", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @PutMapping("/language")
     public ResponseEntity<ApiResponse<Void>> updateLanguage(@Valid @RequestBody UpdateLanguageRequest request) {
@@ -167,9 +167,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @Operation(summary = "Get setup status", description = "Returns the current progress of the user profile setup.")
+    @Operation(summary = "Quraşdırma statusunu əldə edin", description = "İstifadəçi profilinin quraşdırılmasının cari tərəqqisini qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup status retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Quraşdırma statusu uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = SetupResponse.class)))
     })
     @GetMapping("/setup")
@@ -177,9 +177,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getSetupStatus()));
     }
 
-    @Operation(summary = "Initial profile setup", description = "Sets up the user's profile with required initial details.")
+    @Operation(summary = "İlkin profil quraşdırması", description = "İstifadəçi profilini tələb olunan ilkin detallarla quraşdırır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile setup step completed successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil quraşdırma mərhələsi uğurla tamamlandı",
                     content = @Content(schema = @Schema(implementation = SetupResponse.class)))
     })
     @PostMapping("/setup")
@@ -187,9 +187,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.setupProfile(request)));
     }
 
-    @Operation(summary = "Complete profile setup", description = "Finalizes the user profile setup process.")
+    @Operation(summary = "Profil quraşdırmasını tamamlayın", description = "İstifadəçi profilinin quraşdırılması prosesini yekunlaşdırır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup completed successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Quraşdırma uğurla tamamlandı",
                     content = @Content(schema = @Schema(implementation = CompleteSetupResponse.class)))
     })
     @PostMapping("/setup/complete")
@@ -197,9 +197,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.completeSetup()));
     }
 
-    @Operation(summary = "Skip profile setup", description = "Allows the user to skip the profile setup process.")
+    @Operation(summary = "Profil quraşdırmasını keçin", description = "İstifadəçiyə profil quraşdırma prosesini keçməyə imkan verir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Setup skipped successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Quraşdırma uğurla keçildi",
                     content = @Content(schema = @Schema(implementation = CompleteSetupResponse.class)))
     })
     @PostMapping("/setup/skip")
@@ -207,9 +207,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.skipSetup()));
     }
 
-    @Operation(summary = "Get fitness level", description = "Returns the user's current fitness level.")
+    @Operation(summary = "Fitnes səviyyəsini əldə edin", description = "İstifadəçinin cari fitnes səviyyəsini qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Fitness level retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Fitnes səviyyəsi uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = FitnessLevelResponse.class)))
     })
     @GetMapping("/fitness-level")
@@ -218,9 +218,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel(userLanguage)));
     }
 
-    @Operation(summary = "Get active subscription", description = "Returns the user's active subscription details.")
+    @Operation(summary = "Aktiv abunəliyi əldə edin", description = "İstifadəçinin aktiv abunəlik təfərrüatlarını qaytarır.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Subscription details retrieved successfully",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Abunəlik təfərrüatları uğurla əldə edildi",
                     content = @Content(schema = @Schema(implementation = ActiveSubscriptionResponse.class)))
     })
     @GetMapping("/subscription")
@@ -228,9 +228,9 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getActiveSubscription()));
     }
 
-    @Operation(summary = "Delete account", description = "Deletes the user's account and associated data.")
+    @Operation(summary = "Hesabı silin", description = "İstifadəçinin hesabını və əlaqəli məlumatları silir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account deleted successfully", content = @Content(examples = @ExampleObject(value = "null")))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hesab uğurla silindi", content = @Content(examples = @ExampleObject(value = "null")))
     })
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
