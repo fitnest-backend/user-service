@@ -30,7 +30,7 @@ public class UserProfileControllerTest {
         // Mock the UserResponse if needed
         org.mockito.Mockito.when(cachedIdentityGrpcClient.getUserById(org.mockito.ArgumentMatchers.anyLong()))
             .thenReturn(az.fitnest.user.dto.response.IdentityUserResponse.builder()
-                .userId("1").profileImageUrl("some_url").build());
+                .userId(1L).profileImageUrl("some_url").build());
 
         MockMultipartFile file = new MockMultipartFile(
                 "image", "test.png", "image/png", "test data".getBytes());

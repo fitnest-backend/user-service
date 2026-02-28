@@ -1,3 +1,6 @@
+import az.fitnest.user.model.entity.Language;
+import az.fitnest.user.model.entity.GoalReference;
+import az.fitnest.user.model.entity.Translation;
 import az.fitnest.user.model.entity.UserLocation;
 import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.model.enums.Gender;
