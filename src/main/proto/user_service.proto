@@ -38,6 +38,7 @@ message UpdateUserProfileRequest {
   string first_name = 2;
   string last_name = 3;
   string email = 4;
+  string mobile = 5;
 }
 
 message UpdateProfileImageRequest {

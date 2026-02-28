@@ -209,7 +209,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
-                userId, request.getFirstName(), request.getLastName(), request.getEmail()
+                userId, request.getFirstName(), request.getLastName(), request.getEmail(), request.getMobile()
         );
         String profileImageUrl = updated.getProfileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {

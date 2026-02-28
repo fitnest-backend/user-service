@@ -28,12 +28,13 @@ public class IdentityGrpcClient {
         return withDeadline().getUserById(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
+    public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email, String mobile) {
         az.fitnest.user.grpc.UpdateUserProfileRequest request = az.fitnest.user.grpc.UpdateUserProfileRequest.newBuilder()
                 .setUserId(userId)
                 .setFirstName(firstName != null ? firstName : "")
                 .setLastName(lastName != null ? lastName : "")
                 .setEmail(email != null ? email : "")
+                .setMobile(mobile != null ? mobile : "")
                 .build();
 
         return withDeadline().updateUserProfile(request);

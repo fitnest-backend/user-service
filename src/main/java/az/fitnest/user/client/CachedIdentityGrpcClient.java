@@ -23,8 +23,8 @@ public class CachedIdentityGrpcClient {
         return toDto(raw);
     }
 
-    public IdentityUserResponse updateUserProfile(Long userId, String firstName, String lastName, String email) {
-        UserResponse raw = identityGrpcClient.updateUserProfile(userId, firstName, lastName, email);
+    public IdentityUserResponse updateUserProfile(Long userId, String firstName, String lastName, String email, String mobile) {
+        UserResponse raw = identityGrpcClient.updateUserProfile(userId, firstName, lastName, email, mobile);
         return toDto(raw);
     }
 

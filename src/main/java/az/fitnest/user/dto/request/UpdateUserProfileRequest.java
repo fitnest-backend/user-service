@@ -19,4 +19,7 @@ public class UpdateUserProfileRequest {
 
     @Email
     private String email;
+
+    @NotBlank
+    private String mobile;
 }
