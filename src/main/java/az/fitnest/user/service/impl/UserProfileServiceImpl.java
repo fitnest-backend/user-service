@@ -4,6 +4,7 @@ import az.fitnest.user.client.CachedIdentityGrpcClient;
 
 import az.fitnest.user.dto.request.*;
 import az.fitnest.user.dto.response.*;
+import az.fitnest.user.mapper.UserProfileMapper;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
@@ -63,7 +64,13 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
-        UserProfileResponse user = mapToUserProfileResponse(identityUser);
+        String profileImageUrl = identityUser.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
+        } else {
+            profileImageUrl = null;
+        }
+        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl);
  
         CountersResponse counters = new CountersResponse();
         counters.setFavorite_gyms(0L);
@@ -81,7 +88,22 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
-        return mapToUserProfileResponse(cachedIdentityClient.getUserById(userId));
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        String profileImageUrl = identityUser.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
+        } else {
+            profileImageUrl = null;
+        }
+        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl);
+    }
+
+    private UserProfile getOrCreateProfile(Long userId) {
+        return userProfileRepository.findById(userId).orElseGet(() -> {
+            UserProfile newProfile = new UserProfile();
+            newProfile.setUserId(userId);
+            return userProfileRepository.save(newProfile);
+        });
     }
 
     @Transactional
@@ -165,7 +187,13 @@ public class UserProfileServiceImpl implements UserProfileService {
         IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
                 userId, request.getFirstName(), request.getLastName(), request.getEmail()
         );
-        return mapToUserProfileResponse(updated);
+        String profileImageUrl = updated.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
+        } else {
+            profileImageUrl = null;
+        }
+        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl);
     }
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
@@ -272,7 +300,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         var reference = goalReferenceRepository.findById(goalCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
 
-        return mapToGoalResponse(reference, goalCode, language);
+        String title = translationService.getTranslatedValue("GoalReference", goalCode, "title", language);
+        String subtitle = translationService.getTranslatedValue("GoalReference", goalCode, "subtitle", language);
+        return UserProfileMapper.toGoalResponse(reference, goalCode, title, subtitle);
     }
 
     @Transactional(readOnly = true)
@@ -453,92 +483,4 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
     }
 
-    private LocalDateTime parseCreatedAt(String value) {
-        if (value == null || value.isBlank()) return null;
-
-        // 1) epoch millis
-        try {
-            if (value.chars().allMatch(Character::isDigit)) {
-                long epochMillis = Long.parseLong(value);
-                return Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            }
-        } catch (Exception ignored) { }
-
-        // 2) ISO local datetime
-        try {
-            return LocalDateTime.parse(value);
-        } catch (DateTimeParseException ignored) { }
-
-        // 3) RFC3339/ISO with offset -> preserve instant meaning
-        try {
-            return OffsetDateTime.parse(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        } catch (DateTimeParseException ignored) { }
-
-        // 4) ISO instant (e.g., 2024-01-01T00:00:00Z)
-        try {
-            return Instant.parse(value).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        } catch (DateTimeParseException e) {
-            logger.warn("Failed to parse createdAt: {}", value, e);
-            return null;
-        }
-    }
-
-
-
-
-    private UserProfile getOrCreateProfile(Long userId) {
-        Optional<UserProfile> existing = userProfileRepository.findById(userId);
-        if (existing.isPresent()) return existing.get();
-
-        UserProfile newProfile = new UserProfile();
-        newProfile.setUserId(userId);
-
-        try {
-            return userProfileRepository.save(newProfile);
-        } catch (DataIntegrityViolationException e) {
-            // race: someone inserted
-            return userProfileRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Yarışdan (race) sonra profil tapılmadı"));
-        }
-    }
-
-    private UserProfileResponse mapToUserProfileResponse(IdentityUserResponse userResponse) {
-        String profileImageUrl = userResponse.getProfileImageUrl();
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
-        } else {
-            profileImageUrl = null;
-        }
-        return UserProfileResponse.builder()
-                .userId(userResponse.getUserId())
-                .firstName(userResponse.getFirstName())
-                .lastName(userResponse.getLastName())
-                .mobile(userResponse.getMobile())
-                .email(userResponse.getEmail())
-                .profileImageUrl(profileImageUrl)
-                .createdAt(parseCreatedAt(userResponse.getCreatedAt()))
-                .build();
-    }
-
-    // Note: GoalReference type assumed from your repo. Ensure correct import in your project.
-    private GoalItemResponse mapToGoalItemResponse(GoalReference goal) {
-        return GoalItemResponse.builder()
-                .code(goal.getGoalCode())
-                .title("") // Placeholder, as titles are in translations
-                .subtitle("") // Placeholder, as subtitles are in translations
-                .imageUrl(goal.getImageUrl())
-                .build();
-    }
-
-    private GoalResponse mapToGoalResponse(GoalReference reference, String goalCode, String language) {
-        String title = translationService.getTranslatedValue("GoalReference", goalCode, "title", language);
-        String subtitle = translationService.getTranslatedValue("GoalReference", goalCode, "subtitle", language);
-
-        return GoalResponse.builder()
-                .goalCode(goalCode)
-                .title(title)
-                .subtitle(subtitle)
-                .imageUrl(reference.getImageUrl())
-                .build();
-    }
 }
