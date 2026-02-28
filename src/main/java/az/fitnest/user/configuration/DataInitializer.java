@@ -63,10 +63,10 @@ public class DataInitializer {
     }
 
     private void createGoalIfNotFound(String goalCode) {
-        if (!goalReferenceRepository.existsById(goalCode)) {
-            GoalReference goal = new GoalReference();
+        if (!goalReferenceRepository.existsById(goalCode) || goalReferenceRepository.findById(goalCode).get().getImageUrl() == null) {
+            GoalReference goal = goalReferenceRepository.findById(goalCode).orElse(new GoalReference());
             goal.setGoalCode(goalCode);
-            // imageUrl can be set later
+            goal.setImageUrl("https://picsum.photos/seed/" + goalCode.toLowerCase() + "/400/300");
             goalReferenceRepository.save(goal);
         }
     }
