@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateGoalsRequest {
     
-    @NotBlank(message = "Goal code is required")
+    @NotBlank(message = "Məqsəd kodu tələb olunur")
     private String goalCode;
 }

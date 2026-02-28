@@ -45,13 +45,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", "Validation failed", status, request.getRequestURI(), details)));
+                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", "Doğrulama xətası", status, request.getRequestURI(), details)));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        String message = "Invalid request format";
-        String detailText = "Invalid request body";
+        String message = "Yanlış sorğu formatı";
+        String detailText = "Yanlış sorğu gövdəsi";
 
         Throwable cause = ex.getCause();
         if (cause instanceof JsonMappingException jme) {
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
                 String field = jme.getPath().stream()
                         .map(JsonMappingException.Reference::getFieldName)
                         .collect(Collectors.joining("."));
-                detailText = "Invalid value for field: " + field;
+                detailText = "Sahə üçün yanlış dəyər: " + field;
             } else {
                 detailText = jme.getOriginalMessage();
             }
@@ -80,32 +80,32 @@ public class GlobalExceptionHandler {
         String errorCode = "SERVICE_UNAVAILABLE";
         String statusDescription = ex.getStatus().getDescription();
         String errorMessage = (statusDescription != null && !statusDescription.isEmpty()) 
-                ? "Identity service error: " + statusDescription 
-                : "External service error";
+                ? "Identity xidməti xətası: " + statusDescription 
+                : "Xarici xidmət xətası";
         HttpStatus httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 
         switch (ex.getStatus().getCode()) {
-            case UNAVAILABLE -> errorMessage = "Identity service is currently unavailable";
-            case DEADLINE_EXCEEDED -> errorMessage = "Request to identity service timed out";
+            case UNAVAILABLE -> errorMessage = "Identity xidməti hazırda əlçatmazdır";
+            case DEADLINE_EXCEEDED -> errorMessage = "Identity xidmətinə sorğu vaxtı keçdi";
             case INVALID_ARGUMENT -> {
                 errorCode = "INVALID_REQUEST";
                 httpStatus = HttpStatus.BAD_REQUEST;
-                errorMessage = "Invalid request to identity service: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = "Identity xidmətinə yanlış sorğu: " + (statusDescription != null ? statusDescription : "");
             }
             case NOT_FOUND -> {
                 errorCode = "RESOURCE_NOT_FOUND";
                 httpStatus = HttpStatus.NOT_FOUND;
-                errorMessage = "Resource not found in identity service: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = "Identity xidmətində resurs tapılmadı: " + (statusDescription != null ? statusDescription : "");
             }
             case INTERNAL -> {
-                errorMessage = "Identity service internal error: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = "Identity xidmətinin daxili xətası: " + (statusDescription != null ? statusDescription : "");
             }
             case UNKNOWN -> {
-                errorMessage = "Identity service encountered an unknown error: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = "Identity xidməti naməlum xəta ilə qarşılaşdı: " + (statusDescription != null ? statusDescription : "");
             }
             default -> {
                 if (statusDescription == null || statusDescription.isEmpty()) {
-                    errorMessage = "Identity service encountered an error. Please try again later.";
+                    errorMessage = "Identity xidməti xəta ilə qarşılaşdı. Lütfən, bir az sonra yenidən cəhd edin.";
                 }
             }
         }
@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildApiError("INTERNAL_SERVER_ERROR", "An unexpected error occurred.", status, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError("INTERNAL_SERVER_ERROR", "Gözlənilməz xəta baş verdi.", status, request.getRequestURI(), null)));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -129,7 +129,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.FORBIDDEN;
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(buildApiError("ACCESS_DENIED", "You do not have permission to access this resource", status, request.getRequestURI(), null)));
+                .body(ApiResponse.error(buildApiError("ACCESS_DENIED", "Sizin bu resursa giriş icazəniz yoxdur", status, request.getRequestURI(), null)));
     }
 
     private ApiResponse<Void> wrap(

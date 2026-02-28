@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LanguageCreateRequest {
-    @NotBlank(message = "Language code is required")
-    @Size(max = 10, message = "Language code must be at most 10 characters")
+    @NotBlank(message = "Dil kodu tələb olunur")
+    @Size(max = 10, message = "Dil kodu ən çox 10 simvoldan ibarət olmalıdır")
     private String code;
 }

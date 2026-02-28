@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class LanguageRequest {
 
-    @NotBlank(message = "Language is required")
-    @Pattern(regexp = "^(english|russian|azerbaijan)$", message = "Language must be one of: english, russian, azerbaijan")
+    @NotBlank(message = "Dil tələb olunur")
+    @Pattern(regexp = "^(english|russian|azerbaijan)$", message = "Dil bunlardan biri olmalıdır: ingilis, rus, azərbaycan")
     private String language;
 }

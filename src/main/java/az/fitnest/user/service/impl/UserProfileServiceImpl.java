@@ -208,7 +208,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void deleteAccount(DeleteAccountRequest request) {
         if (!Boolean.TRUE.equals(request.getConfirm())) {
-            throw new BadRequestException("Confirmation must be true");
+            throw new BadRequestException("Təsdiqləmə 'true' olmalıdır");
         }
         Long userId = UserContext.getCurrentUserId();
         cachedIdentityClient.deleteUser(userId, request.getReason());
@@ -221,7 +221,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
 
         goalReferenceRepository.findById(request.getGoalCode())
-                .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
 
         UserProfile profile = getOrCreateProfile(userId);
 
@@ -266,7 +266,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String goalCode = profile.getGoalCode();
         if (goalCode == null || goalCode.isBlank()) {
-            throw new ResourceNotFoundException("Goal not set for user");
+            throw new ResourceNotFoundException("İstifadəçi üçün hədəf təyin edilməyib");
         }
 
         var reference = goalReferenceRepository.findById(goalCode)
@@ -303,7 +303,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
         languageRepository.findByCode(request.getLanguage())
-                .orElseThrow(() -> new BadRequestException("Invalid language code: " + request.getLanguage()));
+                .orElseThrow(() -> new BadRequestException("Yanlış dil kodu: " + request.getLanguage()));
 
         Long userId = UserContext.getCurrentUserId();
         cachedIdentityClient.updateLanguage(userId, request.getLanguage());
@@ -358,14 +358,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
 
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Profil tapılmadı"));
 
         if (profile.getHeightCm() == null ||
                 profile.getWeightKg() == null ||
                 profile.getGoalCode() == null ||
                 profile.getGender() == null ||
                 profile.getBirthDate() == null) {
-            throw new ConflictException("Setup incomplete");
+            throw new ConflictException("Quraşdırma tamamlanmayıb");
         }
 
         cachedIdentityClient.updateSetupRequired(userId, false);
@@ -396,7 +396,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 try {
                     profile.setGender(Gender.valueOf(info.getGender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    throw new BadRequestException("Invalid gender value");
+                    throw new BadRequestException("Yanlış cins dəyəri");
                 }
             }
 
@@ -404,7 +404,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             if (info.getGoal() != null) {
                 goalReferenceRepository.findById(info.getGoal())
-                        .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
                 profile.setGoalCode(info.getGoal());
             }
         }
@@ -441,15 +441,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new BadRequestException("File is required");
+            throw new BadRequestException("Fayl tələb olunur");
         }
         long maxSize = 5 * 1024 * 1024; // 5MB
         if (file.getSize() > maxSize) {
-            throw new BadRequestException("File size exceeds 5MB");
+            throw new BadRequestException("Faylın ölçüsü 5MB-dan çoxdur");
         }
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
-            throw new BadRequestException("Only image files are allowed");
+            throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
         }
     }
 
@@ -498,7 +498,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         } catch (DataIntegrityViolationException e) {
             // race: someone inserted
             return userProfileRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Profile not found after create race"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Yarışdan (race) sonra profil tapılmadı"));
         }
     }
 
