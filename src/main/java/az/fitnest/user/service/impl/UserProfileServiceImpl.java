@@ -5,6 +5,7 @@ import az.fitnest.user.client.CachedIdentityGrpcClient;
 import az.fitnest.user.dto.request.*;
 import az.fitnest.user.dto.response.*;
 import az.fitnest.user.mapper.UserProfileMapper;
+import az.fitnest.user.client.OrderGrpcClient;
 import az.fitnest.user.exception.BadRequestException;
 import az.fitnest.user.exception.ConflictException;
 import az.fitnest.user.exception.ResourceNotFoundException;
@@ -51,6 +52,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final TranslationService translationService;
     private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
     private final CatalogGrpcClient catalogGrpcClient;
+    private final OrderGrpcClient orderGrpcClient;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -70,7 +72,17 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
-        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl);
+        String currentSubscription = null;
+        try {
+            az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+                currentSubscription = r.getPackageName();
+            }
+        } catch (Exception e) {
+            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
+        }
+
+        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
  
         CountersResponse counters = new CountersResponse();
         counters.setFavorite_gyms(0L);
@@ -95,7 +107,18 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
-        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl);
+
+        String currentSubscription = null;
+        try {
+            az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+                currentSubscription = r.getPackageName();
+            }
+        } catch (Exception e) {
+            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
+        }
+
+        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
     }
 
     private UserProfile getOrCreateProfile(Long userId) {
@@ -193,7 +216,18 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
-        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl);
+
+        String currentSubscription = null;
+        try {
+            az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+            if (r.getSubscriptionId() > 0 && r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+                currentSubscription = r.getPackageName();
+            }
+        } catch (Exception e) {
+            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
+        }
+
+        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription);
     }
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)

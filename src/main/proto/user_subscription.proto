@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package az.fitnest.order;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.order.grpc";
+option java_outer_classname = "UserSubscriptionProto";
+
+service UserSubscriptionService {
+  rpc GetActiveSubscription(GetActiveSubscriptionRequest) returns (ActiveSubscriptionResponse);
+}
+
+message GetActiveSubscriptionRequest {
+  int64 user_id = 1;
+}
+
+message ActiveSubscriptionResponse {
+  string status = 1;
+  int64 subscription_id = 2;
+  string package_name = 3;
+  string start_at = 4;
+  string end_at = 5;
+  int32 total_limit = 6;
+  int32 remaining_limit = 7;
+}

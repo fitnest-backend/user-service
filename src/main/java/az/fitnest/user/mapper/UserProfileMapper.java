@@ -8,7 +8,7 @@ public final class UserProfileMapper {
 
     private UserProfileMapper() {}
 
-    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl) {
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription) {
         if (userResponse == null) return null;
         return UserProfileResponse.builder()
                 .userId(userResponse.getUserId())
@@ -18,6 +18,7 @@ public final class UserProfileMapper {
                 .email(userResponse.getEmail())
                 .profileImageUrl(profileImageUrl)
                 .createdAt(parseCreatedAt(userResponse.getCreatedAt()))
+                .currentSubscription(currentSubscription)
                 .build();
     }
 
