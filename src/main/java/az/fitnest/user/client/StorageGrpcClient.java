@@ -69,7 +69,6 @@ public class StorageGrpcClient {
         StreamObserver<UploadFileRequest> requestObserver = asyncStub.uploadFile(responseObserver);
 
         try {
-            // Send metadata
             FileMetadata.Builder metadataBuilder = FileMetadata.newBuilder()
                     .setFilename(file.getOriginalFilename())
                     .setDirectory(directory != null ? directory : "/uploads")
@@ -81,8 +80,7 @@ public class StorageGrpcClient {
 
             requestObserver.onNext(UploadFileRequest.newBuilder().setMetadata(metadataBuilder.build()).build());
 
-            // Send file content in chunks
-            byte[] buffer = new byte[1024 * 64]; // 64KB chunks
+            byte[] buffer = new byte[1024 * 64];
             try (InputStream inputStream = file.getInputStream()) {
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -94,7 +92,6 @@ public class StorageGrpcClient {
 
             requestObserver.onCompleted();
 
-            // Wait for completion (max 5 minutes for upload)
             if (!finishLatch.await(5, TimeUnit.MINUTES)) {
                 throw new RuntimeException("Upload timed out");
             }
