@@ -7,5 +7,6 @@ public class IdentityServiceIntegrationTest {
 
     @Test
     @Disabled("Removed Feign identity client; gRPC tested separately")
-    void noop() {}
+    void noop() {
+    }
 }

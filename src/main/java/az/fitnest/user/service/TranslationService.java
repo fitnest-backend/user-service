@@ -15,10 +15,10 @@ public class TranslationService {
         return translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(entityType, entityId, userLanguage, fieldName)
                 .map(translation -> translation.getFieldValue())
                 .orElseGet(() ->
-                    // Fallback to Azerbaijan
-                    translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(entityType, entityId, "AZ", fieldName)
-                            .map(translation -> translation.getFieldValue())
-                            .orElse("")
+                        // Fallback to Azerbaijan
+                        translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(entityType, entityId, "AZ", fieldName)
+                                .map(translation -> translation.getFieldValue())
+                                .orElse("")
                 );
     }
 }

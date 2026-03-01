@@ -79,8 +79,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleStatusRuntimeException(StatusRuntimeException ex, HttpServletRequest request) {
         String errorCode = "SERVICE_UNAVAILABLE";
         String statusDescription = ex.getStatus().getDescription();
-        String errorMessage = (statusDescription != null && !statusDescription.isEmpty()) 
-                ? "Identity xidməti xətası: " + statusDescription 
+        String errorMessage = (statusDescription != null && !statusDescription.isEmpty())
+                ? "Identity xidməti xətası: " + statusDescription
                 : "Xarici xidmət xətası";
         HttpStatus httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 

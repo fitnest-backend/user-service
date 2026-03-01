@@ -1,4 +1,5 @@
 package az.fitnest.user.dto.event;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

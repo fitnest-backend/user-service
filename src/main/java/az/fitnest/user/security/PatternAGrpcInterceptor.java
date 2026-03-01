@@ -41,7 +41,7 @@ public class PatternAGrpcInterceptor implements ServerInterceptor, ClientInterce
             try {
                 Long userId = Long.parseLong(userIdStr);
                 String scopes = headers.get(X_SCOPES);
-                
+
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 if (scopes != null && !scopes.isBlank()) {
                     authorities = Arrays.stream(scopes.split(" "))

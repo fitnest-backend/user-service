@@ -12,12 +12,12 @@ public class UserContext {
         if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
             return null;
         }
-        
+
         Object principal = authentication.getPrincipal();
         if (principal instanceof Long) {
             return (Long) principal;
         }
-        
+
         // Handle cases where principal might be stored differently (e.g. String ID)
         if (principal instanceof String) {
             try {
@@ -26,7 +26,7 @@ public class UserContext {
                 return null;
             }
         }
-        
+
         return null;
     }
 

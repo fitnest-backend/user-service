@@ -80,11 +80,11 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         GoalReference goal = new GoalReference();
         goal.setGoalCode(code);
         goalReferenceRepository.save(goal);
-        
+
         createTranslationIfNotFound(code, "EN", title, subtitle);
         createTranslationIfNotFound(code, "AZ", title, subtitle);
         createTranslationIfNotFound(code, "RU", title, subtitle);
-        
+
         return goal;
     }
 
@@ -96,7 +96,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
         updateOrSaveTranslation(code, "EN", "title", title);
         updateOrSaveTranslation(code, "EN", "subtitle", subtitle);
-        
+
         return goal;
     }
 
@@ -161,7 +161,8 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         if (file == null || file.isEmpty()) throw new BadRequestException("Fayl tələb olunur");
         if (file.getSize() > 5 * 1024 * 1024) throw new BadRequestException("Faylın ölçüsü 5MB-dan çoxdur");
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
+        if (contentType == null || !contentType.startsWith("image/"))
+            throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
     }
 
     private void createTranslationIfNotFound(String goalCode, String languageCode, String title, String subtitle) {

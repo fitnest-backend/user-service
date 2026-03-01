@@ -1,4 +1,5 @@
 package az.fitnest.user.profile.adapter.events;
+
 import az.fitnest.user.dto.event.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.model.entity.UserProfile;
@@ -6,7 +7,9 @@ import az.fitnest.user.service.EventIdempotencyService;
 import az.fitnest.user.service.impl.UserSetupCompletedListener;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
 import static org.mockito.Mockito.*;
+
 public class UserSetupCompletedListenerTest {
     @Test
     void shouldCreateProfileIfMissingOnSetupCompleted() {
@@ -27,6 +30,7 @@ public class UserSetupCompletedListenerTest {
         UserProfile saved = captor.getValue();
         assert saved.getUserId().equals(1L);
     }
+
     @Test
     void shouldIgnoreNullEvent() {
         UserProfileRepository repo = mock(UserProfileRepository.class);

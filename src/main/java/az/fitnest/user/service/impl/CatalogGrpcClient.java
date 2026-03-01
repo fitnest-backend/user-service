@@ -13,7 +13,7 @@ public class CatalogGrpcClient {
     private final az.fitnest.catalog.grpc.GymServiceGrpc.GymServiceBlockingStub gymServiceStub;
 
     public CatalogGrpcClient(@Value("${catalog.grpc.host:catalog-service}") String host,
-                                 @Value("${catalog.grpc.port:9090}") int port) {
+                             @Value("${catalog.grpc.port:9090}") int port) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();

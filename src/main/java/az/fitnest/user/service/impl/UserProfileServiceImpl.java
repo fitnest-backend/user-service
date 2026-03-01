@@ -84,7 +84,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
- 
+
         CountersResponse counters = new CountersResponse();
         counters.setFavorite_gyms(0L);
         counters.setFavorite_stores(0L);

@@ -1,9 +1,9 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.1'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.google.protobuf' version '0.9.4'
-	id 'io.freefair.lombok' version '8.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.protobuf' version '0.9.4'
+    id 'io.freefair.lombok' version '8.4'
 }
 
 group = 'az.fitnest'
@@ -16,13 +16,13 @@ java {
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
 }
 
 bootJar {
@@ -30,69 +30,69 @@ bootJar {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'
-	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
-	runtimeOnly "io.jsonwebtoken:jjwt-impl:0.11.2"
-	runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.11.2"
-	runtimeOnly 'org.postgresql:postgresql'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-	implementation 'io.github.openfeign:feign-hc5'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation "io.jsonwebtoken:jjwt-api:0.11.2"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:0.11.2"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.11.2"
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'io.github.openfeign:feign-hc5'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.apache.commons:commons-text:1.10.0'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.springframework.retry:spring-retry'
-	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
-	implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.2.0'
-	implementation 'io.github.resilience4j:resilience4j-timelimiter:2.2.0'
-	implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
-	implementation 'com.google.api-client:google-api-client:2.8.1'
-	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
-	implementation 'net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE'
-	implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE'
-	implementation 'com.google.protobuf:protobuf-java:3.25.5'
-	implementation 'io.grpc:grpc-netty-shaded:1.66.0'
-	implementation 'io.grpc:grpc-protobuf:1.66.0'
-	implementation 'io.grpc:grpc-stub:1.66.0'
-	compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
-	implementation 'jakarta.annotation:jakarta.annotation-api'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.2.0'
+    implementation 'io.github.resilience4j:resilience4j-timelimiter:2.2.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
+    implementation 'com.google.api-client:google-api-client:2.8.1'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
+    implementation 'net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE'
+    implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE'
+    implementation 'com.google.protobuf:protobuf-java:3.25.5'
+    implementation 'io.grpc:grpc-netty-shaded:1.66.0'
+    implementation 'io.grpc:grpc-protobuf:1.66.0'
+    implementation 'io.grpc:grpc-stub:1.66.0'
+    compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation 'jakarta.annotation:jakarta.annotation-api'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 configurations {
-	all {
-		exclude group: 'commons-logging', module: 'commons-logging'
-	}
+    all {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-	enabled = false
+    useJUnitPlatform()
+    enabled = false
 }
 
 protobuf {
-	protoc {
-		artifact = 'com.google.protobuf:protoc:3.25.5'
-	}
-	plugins {
-		grpc {
-			artifact = 'io.grpc:protoc-gen-grpc-java:1.66.0'
-		}
-	}
-	generateProtoTasks {
-		all()*.plugins {
-			grpc {}
-		}
-	}
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.25.5'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.66.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
 }
 
 sourceSets {

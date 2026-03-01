@@ -1,4 +1,5 @@
 package az.fitnest.user.configuration;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.util.backoff.FixedBackOff;
+
 import java.util.HashMap;
 import java.util.Map;
+
 @Configuration
 public class KafkaConfig {
     @org.springframework.beans.factory.annotation.Value("${spring.kafka.bootstrap-servers}")
@@ -32,6 +35,7 @@ public class KafkaConfig {
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(props);
     }
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, UserSetupCompletedEvent> userSetupCompletedKafkaListenerContainerFactory(KafkaTemplate<String, Object> kafkaTemplate) {
         ConcurrentKafkaListenerContainerFactory<String, UserSetupCompletedEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();

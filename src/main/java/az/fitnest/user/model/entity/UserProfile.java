@@ -4,6 +4,7 @@ import az.fitnest.user.model.enums.Gender;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

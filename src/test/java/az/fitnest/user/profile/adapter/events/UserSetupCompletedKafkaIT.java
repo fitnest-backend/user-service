@@ -1,4 +1,5 @@
 package az.fitnest.user.profile.adapter.events;
+
 import az.fitnest.user.dto.event.UserSetupCompletedEvent;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.repository.UserLocationRepository;
@@ -11,9 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+
 import java.time.Duration;
 import java.util.UUID;
+
 import static org.mockito.Mockito.*;
+
 @SpringBootTest(properties = {
         "spring.autoconfigure.exclude=" +
                 "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," +
@@ -42,6 +46,7 @@ class UserSetupCompletedKafkaIT {
     private org.springframework.data.redis.connection.RedisConnectionFactory redisConnectionFactory;
     @MockBean
     private javax.sql.DataSource dataSource;
+
     @Test
     void consumesEventAndSavesProfile() {
         when(idempotencyService.markProcessedIfNew(anyString())).thenReturn(true);

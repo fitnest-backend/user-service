@@ -63,8 +63,8 @@ public class FitnestSecurityFilter extends OncePerRequestFilter {
 
     private void authenticate(Object principal, List<String> roles, HttpServletRequest request) {
         List<String> finalRoles = new ArrayList<>(roles);
-        if (request.getRequestURI().startsWith("/api/v1/internal") && 
-            !finalRoles.contains("ROLE_INTERNAL")) {
+        if (request.getRequestURI().startsWith("/api/v1/internal") &&
+                !finalRoles.contains("ROLE_INTERNAL")) {
             finalRoles.add("ROLE_INTERNAL");
         }
 

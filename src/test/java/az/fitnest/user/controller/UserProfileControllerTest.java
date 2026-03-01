@@ -11,14 +11,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(properties = {
-    "spring.cloud.config.enabled=false"
+        "spring.cloud.config.enabled=false"
 })
 @AutoConfigureMockMvc
 public class UserProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    
+
     @MockBean
     private az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
 
@@ -29,17 +29,20 @@ public class UserProfileControllerTest {
     public void testUploadImage() throws Exception {
         // Mock the UserResponse if needed
         org.mockito.Mockito.when(cachedIdentityGrpcClient.getUserById(org.mockito.ArgumentMatchers.anyLong()))
-            .thenReturn(az.fitnest.user.dto.response.IdentityUserResponse.builder()
-                .userId(1L).profileImageUrl("some_url").build());
+                .thenReturn(az.fitnest.user.dto.response.IdentityUserResponse.builder()
+                        .userId(1L).profileImageUrl("some_url").build());
 
         MockMultipartFile file = new MockMultipartFile(
                 "image", "test.png", "image/png", "test data".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/me/profile-image")
-                .file(file)
-                .with(request -> { request.setMethod("PUT"); return request; })
-                .header("X-User-Id", "1")
-                .header("X-Scopes", "ROLE_USER"))
+                        .file(file)
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
+                        .header("X-User-Id", "1")
+                        .header("X-Scopes", "ROLE_USER"))
                 .andDo(org.springframework.test.web.servlet.result.MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }

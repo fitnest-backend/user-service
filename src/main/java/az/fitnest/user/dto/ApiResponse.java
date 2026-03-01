@@ -21,14 +21,6 @@ public class ApiResponse<T> {
     @Schema(description = "Error details if the request failed")
     private ApiError error;
 
-    @JsonValue
-    public Object asJson() {
-        if (error != null) {
-            return Map.of("error", error);
-        }
-        return data;
-    }
-
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
                 .data(data)
@@ -39,5 +31,13 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .error(apiError)
                 .build();
+    }
+
+    @JsonValue
+    public Object asJson() {
+        if (error != null) {
+            return Map.of("error", error);
+        }
+        return data;
     }
 }

@@ -79,8 +79,10 @@ public class GoalReferenceAdminController {
 
     @Data
     public static class CreateGoalRequest {
-        @NotBlank private String code;
-        @NotBlank private String title;
+        @NotBlank
+        private String code;
+        @NotBlank
+        private String title;
         private String subtitle;
     }
 }

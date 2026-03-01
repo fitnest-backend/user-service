@@ -93,12 +93,12 @@ public class StorageGrpcClient {
             }
 
             requestObserver.onCompleted();
-            
+
             // Wait for completion (max 5 minutes for upload)
             if (!finishLatch.await(5, TimeUnit.MINUTES)) {
                 throw new RuntimeException("Upload timed out");
             }
-            
+
             if (error.get() != null) {
                 throw new RuntimeException("Upload failed: " + error.get().getMessage(), error.get());
             }

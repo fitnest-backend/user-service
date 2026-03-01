@@ -2,11 +2,13 @@ package az.fitnest.user.mapper;
 
 import az.fitnest.user.dto.response.*;
 import az.fitnest.user.model.entity.*;
+
 import java.time.*;
 
 public final class UserProfileMapper {
 
-    private UserProfileMapper() {}
+    private UserProfileMapper() {
+    }
 
     public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription) {
         if (userResponse == null) return null;
@@ -50,17 +52,20 @@ public final class UserProfileMapper {
                 long epochMillis = Long.parseLong(value);
                 return Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDateTime();
             }
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
 
         // 2) ISO local datetime
         try {
             return LocalDateTime.parse(value);
-        } catch (java.time.format.DateTimeParseException ignored) { }
+        } catch (java.time.format.DateTimeParseException ignored) {
+        }
 
         // 3) RFC3339/ISO with offset -> preserve instant meaning
         try {
             return OffsetDateTime.parse(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        } catch (java.time.format.DateTimeParseException ignored) { }
+        } catch (java.time.format.DateTimeParseException ignored) {
+        }
 
         // 4) ISO instant (e.g., 2024-01-01T00:00:00Z)
         try {

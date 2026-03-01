@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateGoalsRequest {
-    
+
     @NotBlank(message = "Məqsəd kodu tələb olunur")
     private String goalCode;
 }
