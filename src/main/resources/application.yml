@@ -69,9 +69,9 @@ spring:
   # Redis
   data:
     redis:
-      host: ${SPRING_REDIS_HOST:redis.fitnest-dev.svc.cluster.local}
-      port: ${SPRING_REDIS_PORT:6379}
-      password: ${SPRING_REDIS_PASSWORD:}
+      host: ${SPRING_DATA_REDIS_HOST:redis.fitnest-dev.svc.cluster.local}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
       timeout: 2000ms
 
   # Kafka
