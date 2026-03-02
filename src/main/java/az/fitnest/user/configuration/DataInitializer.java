@@ -170,6 +170,46 @@ public class DataInitializer {
                     .birthDate(LocalDate.of(1985, 5, 15))
                     .goalCode("WEIGHT_LOSS")
                     .build());
+
+            // Regular user
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(3L)
+                    .heightCm(165.0)
+                    .weightKg(60.0)
+                    .gender(Gender.FEMALE)
+                    .birthDate(LocalDate.of(1992, 3, 10))
+                    .goalCode("ENDURANCE")
+                    .build());
+
+            // Regular user 2
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(4L)
+                    .heightCm(185.0)
+                    .weightKg(90.0)
+                    .gender(Gender.MALE)
+                    .birthDate(LocalDate.of(1988, 7, 22))
+                    .goalCode("MUSCLE_GAIN")
+                    .build());
+
+            // Partner user
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(5L)
+                    .heightCm(178.0)
+                    .weightKg(80.0)
+                    .gender(Gender.MALE)
+                    .birthDate(LocalDate.of(1980, 11, 5))
+                    .goalCode("WEIGHT_LOSS")
+                    .build());
+
+            // Partner user 2
+            userProfileRepository.save(UserProfile.builder()
+                    .userId(6L)
+                    .heightCm(160.0)
+                    .weightKg(55.0)
+                    .gender(Gender.FEMALE)
+                    .birthDate(LocalDate.of(1995, 9, 12))
+                    .goalCode("ENDURANCE")
+                    .build());
         }
     }
 
@@ -188,6 +228,38 @@ public class DataInitializer {
                     .userId(2L)
                     .lat(40.4095)
                     .lng(49.8675)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+
+            // Regular user
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(3L)
+                    .lat(40.4000)
+                    .lng(49.8600)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+
+            // Regular user 2
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(4L)
+                    .lat(40.3900)
+                    .lng(49.8500)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+
+            // Partner user
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(5L)
+                    .lat(40.3800)
+                    .lng(49.8400)
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+
+            // Partner user 2
+            userLocationRepository.save(UserLocation.builder()
+                    .userId(6L)
+                    .lat(40.3700)
+                    .lng(49.8300)
                     .updatedAt(LocalDateTime.now())
                     .build());
         }
