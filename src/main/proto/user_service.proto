@@ -15,6 +15,11 @@ service UserService {
   rpc UpdateSetupRequired(UpdateSetupRequiredRequest) returns (UserResponse);
   rpc UpdateLanguage(UpdateLanguageRequest) returns (UserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+  rpc UpdateSessionStatus(UpdateSessionStatusRequest) returns (UserResponse);
+  rpc RequestEmailChange(RequestEmailChangeRequest) returns (google.protobuf.Empty);
+  rpc ConfirmEmailChange(ConfirmEmailChangeRequest) returns (UserResponse);
+  rpc RequestMobileChange(RequestMobileChangeRequest) returns (google.protobuf.Empty);
+  rpc ConfirmMobileChange(ConfirmMobileChangeRequest) returns (UserResponse);
 }
 
 message GetUserByIdRequest {
@@ -31,6 +36,9 @@ message UserResponse {
   bool setup_required = 7;
   string language = 8;
   string created_at = 9;
+  string status = 10;
+  bool account_locked = 11;
+  string session_status = 12;
 }
 
 message UpdateUserProfileRequest {
@@ -59,4 +67,31 @@ message UpdateLanguageRequest {
 message DeleteUserRequest {
   int64 user_id = 1;
   string reason = 2;
+}
+
+message UpdateSessionStatusRequest {
+  int64 user_id = 1;
+  string session_status = 2;
+}
+
+message RequestEmailChangeRequest {
+  int64 user_id = 1;
+  string new_email = 2;
+}
+
+message ConfirmEmailChangeRequest {
+  int64 user_id = 1;
+  string new_email = 2;
+  string otp_code = 3;
+}
+
+message RequestMobileChangeRequest {
+  int64 user_id = 1;
+  string new_mobile = 2;
+}
+
+message ConfirmMobileChangeRequest {
+  int64 user_id = 1;
+  string new_mobile = 2;
+  string otp_code = 3;
 }
