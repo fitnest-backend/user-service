@@ -49,4 +49,12 @@ public interface UserProfileService {
     List<LanguageDto> getAllLanguages();
 
     LanguageDto getCurrentLanguage();
+
+    void requestEmailChange(String newEmail);
+
+    UserProfileResponse confirmEmailChange(String newEmail, String otpCode);
+
+    void requestMobileChange(String newMobile);
+
+    UserProfileResponse confirmMobileChange(String newMobile, String otpCode);
 }

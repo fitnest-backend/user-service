@@ -68,6 +68,32 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.updateUserMe(request)));
     }
 
+    @Operation(summary = "E-poçt dəyişmə sorğusu", description = "Yeni e-poçt ünvanına OTP kodu göndərir.")
+    @PostMapping("/change-email/request")
+    public ResponseEntity<ApiResponse<Void>> requestEmailChange(@RequestParam String newEmail) {
+        userProfileService.requestEmailChange(newEmail);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @Operation(summary = "E-poçt dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni e-poçt ünvanını təsdiqləyir.")
+    @PostMapping("/change-email/confirm")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmEmailChange(@RequestParam String newEmail, @RequestParam String otpCode) {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmEmailChange(newEmail, otpCode)));
+    }
+
+    @Operation(summary = "Mobil nömrə dəyişmə sorğusu", description = "Yeni mobil nömrəyə OTP kodu göndərir.")
+    @PostMapping("/change-mobile/request")
+    public ResponseEntity<ApiResponse<Void>> requestMobileChange(@RequestParam String newMobile) {
+        userProfileService.requestMobileChange(newMobile);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @Operation(summary = "Mobil nömrə dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni mobil nömrəni təsdiqləyir.")
+    @PostMapping("/change-mobile/confirm")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmMobileChange(@RequestParam String newMobile, @RequestParam String otpCode) {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmMobileChange(newMobile, otpCode)));
+    }
+
     @Operation(summary = "İstifadəçi məkanını yeniləyin", description = "İstifadəçinin cari şəhər və ölkəsini yeniləyir.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Məkan uğurla yeniləndi",

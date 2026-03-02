@@ -4,6 +4,7 @@ import az.fitnest.user.dto.response.IdentityUserResponse;
 import az.fitnest.user.grpc.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,8 +24,29 @@ public class CachedIdentityGrpcClient {
         return toDto(raw);
     }
 
-    public IdentityUserResponse updateUserProfile(Long userId, String firstName, String lastName, String email, String mobile) {
-        UserResponse raw = identityGrpcClient.updateUserProfile(userId, firstName, lastName, email, mobile);
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
+    public IdentityUserResponse updateUserProfile(Long userId, String firstName, String lastName) {
+        UserResponse raw = identityGrpcClient.updateUserProfile(userId, firstName, lastName);
+        return toDto(raw);
+    }
+
+    public void requestEmailChange(Long userId, String newEmail) {
+        identityGrpcClient.requestEmailChange(userId, newEmail);
+    }
+
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
+    public IdentityUserResponse confirmEmailChange(Long userId, String newEmail, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmEmailChange(userId, newEmail, otpCode);
+        return toDto(raw);
+    }
+
+    public void requestMobileChange(Long userId, String newMobile) {
+        identityGrpcClient.requestMobileChange(userId, newMobile);
+    }
+
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
+    public IdentityUserResponse confirmMobileChange(Long userId, String newMobile, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmMobileChange(userId, newMobile, otpCode);
         return toDto(raw);
     }
 

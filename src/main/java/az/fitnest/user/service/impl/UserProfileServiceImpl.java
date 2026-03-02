@@ -205,7 +205,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
-                userId, request.firstName(), request.lastName(), request.email(), request.mobile()
+                userId, request.firstName(), request.lastName()
         );
         String profileImageUrl = updated.profileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
@@ -509,6 +509,50 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     public List<GymMainPage> getMainPageGymsFromCatalog() {
         return catalogGrpcClient.getMainPageGyms().getItemsList();
+    }
+
+    @Override
+    public void requestEmailChange(String newEmail) {
+        cachedIdentityClient.requestEmailChange(currentUserId(), newEmail);
+    }
+
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @Override
+    public UserProfileResponse confirmEmailChange(String newEmail, String otpCode) {
+        IdentityUserResponse updated = cachedIdentityClient.confirmEmailChange(currentUserId(), newEmail, otpCode);
+        return mapToUserProfileResponse(updated);
+    }
+
+    @Override
+    public void requestMobileChange(String newMobile) {
+        cachedIdentityClient.requestMobileChange(currentUserId(), newMobile);
+    }
+
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @Override
+    public UserProfileResponse confirmMobileChange(String newMobile, String otpCode) {
+        IdentityUserResponse updated = cachedIdentityClient.confirmMobileChange(currentUserId(), newMobile, otpCode);
+        return mapToUserProfileResponse(updated);
+    }
+
+    private UserProfileResponse mapToUserProfileResponse(IdentityUserResponse updated) {
+        String profileImageUrl = updated.profileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
+        } else {
+            profileImageUrl = null;
+        }
+
+        String currentSubscription = null;
+        try {
+            az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(currentUserId());
+            if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
+                currentSubscription = r.getPackageName();
+            }
+        } catch (Exception e) {
+        }
+
+        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription);
     }
 
     // ----------------- Helpers -----------------

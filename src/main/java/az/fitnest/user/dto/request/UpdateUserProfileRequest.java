@@ -10,9 +10,5 @@ public record UpdateUserProfileRequest(
     String firstName,
     @NotBlank
     @JsonProperty("last_name")
-    String lastName,
-    @Email
-    String email,
-    @NotBlank
-    String mobile
+    String lastName
 ) {}

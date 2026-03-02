@@ -28,16 +28,52 @@ public class IdentityGrpcClient {
         return withDeadline().getUserById(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName, String email, String mobile) {
+    public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName) {
         az.fitnest.user.grpc.UpdateUserProfileRequest request = az.fitnest.user.grpc.UpdateUserProfileRequest.newBuilder()
                 .setUserId(userId)
                 .setFirstName(firstName != null ? firstName : "")
                 .setLastName(lastName != null ? lastName : "")
-                .setEmail(email != null ? email : "")
-                .setMobile(mobile != null ? mobile : "")
                 .build();
 
         return withDeadline().updateUserProfile(request);
+    }
+
+    public void requestEmailChange(Long userId, String newEmail) {
+        RequestEmailChangeRequest request = RequestEmailChangeRequest.newBuilder()
+                .setUserId(userId)
+                .setNewEmail(newEmail)
+                .build();
+
+        withDeadline().requestEmailChange(request);
+    }
+
+    public az.fitnest.user.grpc.UserResponse confirmEmailChange(Long userId, String newEmail, String otpCode) {
+        ConfirmEmailChangeRequest request = ConfirmEmailChangeRequest.newBuilder()
+                .setUserId(userId)
+                .setNewEmail(newEmail)
+                .setOtpCode(otpCode)
+                .build();
+
+        return withDeadline().confirmEmailChange(request);
+    }
+
+    public void requestMobileChange(Long userId, String newMobile) {
+        RequestMobileChangeRequest request = RequestMobileChangeRequest.newBuilder()
+                .setUserId(userId)
+                .setNewMobile(newMobile)
+                .build();
+
+        withDeadline().requestMobileChange(request);
+    }
+
+    public az.fitnest.user.grpc.UserResponse confirmMobileChange(Long userId, String newMobile, String otpCode) {
+        ConfirmMobileChangeRequest request = ConfirmMobileChangeRequest.newBuilder()
+                .setUserId(userId)
+                .setNewMobile(newMobile)
+                .setOtpCode(otpCode)
+                .build();
+
+        return withDeadline().confirmMobileChange(request);
     }
 
     public az.fitnest.user.grpc.UserResponse updateProfileImage(Long userId, String imageUrl) {
