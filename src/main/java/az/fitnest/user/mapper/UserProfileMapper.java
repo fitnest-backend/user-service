@@ -13,11 +13,11 @@ public final class UserProfileMapper {
     public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription) {
         if (userResponse == null) return null;
         return UserProfileResponse.builder()
-                .userId(userResponse.getUserId())
-                .firstName(userResponse.getFirstName())
-                .lastName(userResponse.getLastName())
-                .mobile(userResponse.getMobile())
-                .email(userResponse.getEmail())
+                .userId(userResponse.userId())
+                .firstName(userResponse.firstName())
+                .lastName(userResponse.lastName())
+                .mobile(userResponse.mobile())
+                .email(userResponse.email())
                 .profileImageUrl(profileImageUrl)
                 .currentSubscription(currentSubscription)
                 .build();

@@ -1,11 +1,12 @@
 package az.fitnest.user.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder
@@ -13,4 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class GoalsResponse {
     private List<GoalItemResponse> items;
+
 }

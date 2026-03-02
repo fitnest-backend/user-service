@@ -1,7 +1,7 @@
 # -----------------------------
 # Stage 1: Build JAR
 # -----------------------------
-FROM gradle:8.5.0-jdk17 AS builder
+FROM gradle:9.3-jdk25 AS builder
 WORKDIR /app
 
 # Cache dependencies
@@ -18,7 +18,7 @@ RUN ./gradlew clean bootJar --no-build-cache --no-daemon
 # -----------------------------
 # Stage 2: Runtime image
 # -----------------------------
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
@@ -26,12 +26,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # ENTRYPOINT must start at column 0, JSON array items too
-ENTRYPOINT ["java", \
-"-XX:+UseContainerSupport", \
-"-XX:MaxRAMPercentage=75.0", \
-"-XX:InitialRAMPercentage=50.0", \
-"-XX:+UseG1GC", \
-"-XX:+AlwaysPreTouch", \
-"-XX:+ExitOnOutOfMemoryError", \
-"-jar", \
-"app.jar"]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-'-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:+UseZGC -XX:+ZGenerational -XX:+AlwaysPreTouch -XX:+ExitOnOutOfMemoryError'} -jar app.jar"]

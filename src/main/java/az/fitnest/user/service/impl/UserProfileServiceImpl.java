@@ -19,8 +19,6 @@ import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.service.*;
 import az.fitnest.user.util.UserContext;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,7 +39,6 @@ import az.fitnest.catalog.grpc.GymMainPage;
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
 
     private final CachedIdentityGrpcClient cachedIdentityClient;
     private final UserProfileRepository userProfileRepository;
@@ -67,7 +64,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
-        String profileImageUrl = identityUser.getProfileImageUrl();
+        String profileImageUrl = identityUser.profileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
             profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
         } else {
@@ -80,20 +77,20 @@ public class UserProfileServiceImpl implements UserProfileService {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
-            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
         }
 
         UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
 
-        CountersResponse counters = new CountersResponse();
-        counters.setFavorite_gyms(0L);
-        counters.setFavorite_stores(0L);
+        CountersResponse counters = CountersResponse.builder()
+                .favorite_gyms(0L)
+                .favorite_stores(0L)
+                .build();
 
-        SummaryResponse summary = new SummaryResponse();
-        summary.setUser(user);
-        summary.setCounters(counters);
-        summary.setUnreadNotifications(0); // placeholder
-        return summary;
+        return SummaryResponse.builder()
+                .user(user)
+                .counters(counters)
+                .unreadNotifications(0)
+                .build();
     }
 
     @Cacheable(cacheNames = "user_me", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
@@ -102,7 +99,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
-        String profileImageUrl = identityUser.getProfileImageUrl();
+        String profileImageUrl = identityUser.profileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
             profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
         } else {
@@ -116,7 +113,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
-            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
         }
 
         return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
@@ -137,16 +133,16 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         var existingOpt = userLocationRepository.findById(userId);
         UserLocation location = existingOpt.orElseGet(() ->
-                new UserLocation(userId, request.getLat(), request.getLng(), LocalDateTime.now())
+                new UserLocation(userId, request.lat(), request.lng(), LocalDateTime.now())
         );
 
         boolean isNew = existingOpt.isEmpty();
-        boolean latChanged = !Objects.equals(location.getLat(), request.getLat());
-        boolean lngChanged = !Objects.equals(location.getLng(), request.getLng());
+        boolean latChanged = !Objects.equals(location.getLat(), request.lat());
+        boolean lngChanged = !Objects.equals(location.getLng(), request.lng());
 
         if (isNew || latChanged || lngChanged) {
-            location.setLat(request.getLat());
-            location.setLng(request.getLng());
+            location.setLat(request.lat());
+            location.setLng(request.lng());
             location.setUpdatedAt(LocalDateTime.now());
 
             UserLocation saved = userLocationRepository.save(location);
@@ -173,28 +169,28 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         boolean dirty = false;
 
-        if (request.getHeightCm() != null) {
-            Double newHeight = request.getHeightCm().doubleValue();
+        if (request.heightCm() != null) {
+            Double newHeight = request.heightCm().doubleValue();
             if (!Objects.equals(profile.getHeightCm(), newHeight)) {
                 profile.setHeightCm(newHeight);
                 dirty = true;
             }
         }
-        if (request.getWeightKg() != null) {
-            if (!Objects.equals(profile.getWeightKg(), request.getWeightKg())) {
-                profile.setWeightKg(request.getWeightKg());
+        if (request.weightKg() != null) {
+            if (!Objects.equals(profile.getWeightKg(), request.weightKg())) {
+                profile.setWeightKg(request.weightKg());
                 dirty = true;
             }
         }
-        if (request.getGender() != null) {
-            if (!Objects.equals(profile.getGender(), request.getGender())) {
-                profile.setGender(request.getGender());
+        if (request.gender() != null) {
+            if (!Objects.equals(profile.getGender(), request.gender())) {
+                profile.setGender(request.gender());
                 dirty = true;
             }
         }
-        if (request.getBirthDate() != null) {
-            if (!Objects.equals(profile.getBirthDate(), request.getBirthDate())) {
-                profile.setBirthDate(request.getBirthDate());
+        if (request.birthDate() != null) {
+            if (!Objects.equals(profile.getBirthDate(), request.birthDate())) {
+                profile.setBirthDate(request.birthDate());
                 dirty = true;
             }
         }
@@ -209,9 +205,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
-                userId, request.getFirstName(), request.getLastName(), request.getEmail(), request.getMobile()
+                userId, request.firstName(), request.lastName(), request.email(), request.mobile()
         );
-        String profileImageUrl = updated.getProfileImageUrl();
+        String profileImageUrl = updated.profileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
             profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
         } else {
@@ -225,7 +221,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                 currentSubscription = r.getPackageName();
             }
         } catch (Exception e) {
-            logger.warn("Could not retrieve active subscription for user {}: {}", userId, e.getMessage());
         }
 
         return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription);
@@ -238,7 +233,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse currentUser = cachedIdentityClient.getUserById(userId);
-        String oldImageUrl = currentUser.getProfileImageUrl();
+        String oldImageUrl = currentUser.profileImageUrl();
 
         String newImageUrl = null;
         try {
@@ -252,12 +247,10 @@ public class UserProfileServiceImpl implements UserProfileService {
                 try {
                     fileStorageService.deleteFile(newImageUrl);
                 } catch (Exception deleteEx) {
-                    logger.warn("Failed to delete orphan file after identity update failure: {}", newImageUrl, deleteEx);
                 }
                 throw e;
             }
         } catch (Exception e) {
-            logger.error("Failed to update profile image for user {}", userId, e);
             throw e;
         }
     }
@@ -283,13 +276,13 @@ public class UserProfileServiceImpl implements UserProfileService {
     public void updateGoal(UpdateGoalsRequest request) {
         Long userId = UserContext.getCurrentUserId();
 
-        goalReferenceRepository.findById(request.getGoalCode())
+        goalReferenceRepository.findById(request.goalCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
 
         UserProfile profile = getOrCreateProfile(userId);
 
-        if (!Objects.equals(profile.getGoalCode(), request.getGoalCode())) {
-            profile.setGoalCode(request.getGoalCode());
+        if (!Objects.equals(profile.getGoalCode(), request.goalCode())) {
+            profile.setGoalCode(request.goalCode());
             userProfileRepository.save(profile);
         }
     }
@@ -367,11 +360,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
-        languageRepository.findByCode(request.getLanguage())
-                .orElseThrow(() -> new BadRequestException("Yanlış dil kodu: " + request.getLanguage()));
+        languageRepository.findByCode(request.language())
+                .orElseThrow(() -> new BadRequestException("Yanlış dil kodu: " + request.language()));
 
         Long userId = UserContext.getCurrentUserId();
-        cachedIdentityClient.updateLanguage(userId, request.getLanguage());
+        cachedIdentityClient.updateLanguage(userId, request.language());
     }
 
     @Transactional(readOnly = true)
@@ -381,7 +374,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
 
         return SetupResponse.builder()
-                .setupRequired(identityUser.getSetupRequired())
+                .setupRequired(identityUser.setupRequired())
                 .build();
     }
 
@@ -451,26 +444,26 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = getOrCreateProfile(userId);
 
-        if (request.getProfile() != null) {
-            SetupRequest.ProfileInfo info = request.getProfile();
+        if (request.profile() != null) {
+            ProfileInfo info = request.profile();
 
-            if (info.getHeightCm() != null) profile.setHeightCm(info.getHeightCm().doubleValue());
-            if (info.getWeightKg() != null) profile.setWeightKg(info.getWeightKg());
+            if (info.heightCm() != null) profile.setHeightCm(info.heightCm().doubleValue());
+            if (info.weightKg() != null) profile.setWeightKg(info.weightKg());
 
-            if (info.getGender() != null) {
+            if (info.gender() != null) {
                 try {
-                    profile.setGender(Gender.valueOf(info.getGender().toUpperCase()));
+                    profile.setGender(Gender.valueOf(info.gender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
                     throw new BadRequestException("Yanlış cins dəyəri");
                 }
             }
 
-            if (info.getBirthDate() != null) profile.setBirthDate(info.getBirthDate());
+            if (info.birthDate() != null) profile.setBirthDate(info.birthDate());
 
-            if (info.getGoal() != null) {
-                goalReferenceRepository.findById(info.getGoal())
+            if (info.goal() != null) {
+                goalReferenceRepository.findById(info.goal())
                         .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
-                profile.setGoalCode(info.getGoal());
+                profile.setGoalCode(info.goal());
             }
         }
 
@@ -507,7 +500,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public LanguageDto getCurrentLanguage() {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
-        String langCode = identityUser.getLanguage();
+        String langCode = identityUser.language();
         if (langCode == null || langCode.isBlank()) {
             langCode = "AZ"; // Default
         }

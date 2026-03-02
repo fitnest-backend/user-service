@@ -1,17 +1,11 @@
 package az.fitnest.user.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class GoalItemResponse {
-    private String code;
-    private String title;
-    private String subtitle;
-    private String imageUrl;
-}
+public record GoalItemResponse(
+    String code,
+    String title,
+    String subtitle,
+    String imageUrl
+) {}

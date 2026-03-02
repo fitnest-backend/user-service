@@ -1,9 +1,10 @@
 package az.fitnest.user.dto.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder
@@ -14,4 +15,5 @@ public class UserSetupCompletedEvent {
     private Long userId;
     private Long timestamp;
     private String source;
+
 }

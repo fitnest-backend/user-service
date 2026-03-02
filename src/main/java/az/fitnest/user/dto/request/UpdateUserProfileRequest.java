@@ -3,23 +3,16 @@ package az.fitnest.user.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Data;
 
-@Data
-@Builder
-public class UpdateUserProfileRequest {
+public record UpdateUserProfileRequest(
     @JsonProperty("first_name")
     @NotBlank
-    private String firstName;
-
+    String firstName,
+    @NotBlank
     @JsonProperty("last_name")
-    @NotBlank
-    private String lastName;
-
+    String lastName,
     @Email
-    private String email;
-
+    String email,
     @NotBlank
-    private String mobile;
-}
+    String mobile
+) {}

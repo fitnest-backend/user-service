@@ -22,8 +22,6 @@ import az.fitnest.user.util.UserContext;
 import az.fitnest.user.repository.TranslationRepository;
 import az.fitnest.user.model.entity.Translation;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import az.fitnest.user.client.StorageGrpcClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -34,7 +32,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @Tag(name = "User Profile", description = "İstifadəçi profili, parametrləri və hesabını idarə etmək üçün ucluqlar")
 public class UserProfileController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
@@ -286,7 +283,7 @@ public class UserProfileController {
         if (userId != null) {
             try {
                 az.fitnest.user.dto.response.IdentityUserResponse user = cachedIdentityGrpcClient.getUserById(userId);
-                String language = user.getLanguage();
+                String language = user.language();
                 if (language != null && !language.isEmpty()) {
                     return language.toUpperCase();
                 }

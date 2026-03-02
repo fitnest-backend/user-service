@@ -33,20 +33,20 @@ public class TranslationController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<az.fitnest.user.dto.ApiResponse<Translation>> createOrUpdateTranslation(@RequestBody CreateTranslationRequest request) {
         Translation existing = translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
-                request.getEntityType(), request.getEntityId(), request.getLanguageCode().toUpperCase(), request.getFieldName()
+                request.entityType(), request.entityId(), request.languageCode().toUpperCase(), request.fieldName()
         ).orElse(null);
 
         if (existing != null) {
-            existing.setFieldValue(request.getFieldValue());
+            existing.setFieldValue(request.fieldValue());
             Translation saved = translationRepository.save(existing);
             return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(saved));
         } else {
             Translation translation = Translation.builder()
-                    .entityType(request.getEntityType())
-                    .entityId(request.getEntityId())
-                    .languageCode(request.getLanguageCode().toUpperCase())
-                    .fieldName(request.getFieldName())
-                    .fieldValue(request.getFieldValue())
+                    .entityType(request.entityType())
+                    .entityId(request.entityId())
+                    .languageCode(request.languageCode().toUpperCase())
+                    .fieldName(request.fieldName())
+                    .fieldValue(request.fieldValue())
                     .build();
             Translation saved = translationRepository.save(translation);
             return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(saved));

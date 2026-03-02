@@ -15,7 +15,6 @@ import az.fitnest.user.service.GoalReferenceService;
 import az.fitnest.user.service.TranslationService;
 import az.fitnest.user.util.UserContext;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class GoalReferenceServiceImpl implements GoalReferenceService {
 
@@ -59,14 +57,12 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
                     try {
                         outputStream.write(response.getFileData().toByteArray());
                     } catch (IOException e) {
-                        log.error("Failed to stream goal image: {}", fsId, e);
                     }
                 }
             });
             try {
                 outputStream.flush();
             } catch (IOException e) {
-                log.warn("Failed to flush output stream for goal image: {}", fsId);
             }
         };
     }
@@ -110,7 +106,6 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
             try {
                 fileStorageService.deleteFile(goal.getImageUrl());
             } catch (Exception e) {
-                log.warn("Failed to delete image: {} for goal: {}", goal.getImageUrl(), code);
             }
         }
 
@@ -178,9 +173,8 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         Long userId = UserContext.getCurrentUserId();
         if (userId != null) {
             try {
-                return cachedIdentityGrpcClient.getUserById(userId).getLanguage().toUpperCase();
+                return cachedIdentityGrpcClient.getUserById(userId).language().toUpperCase();
             } catch (Exception e) {
-                log.warn("Failed to fetch user language via gRPC for userId: {}. Defaulting to AZ.", userId);
             }
         }
         return "AZ";

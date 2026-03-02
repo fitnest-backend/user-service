@@ -17,10 +17,10 @@ public class PageCriteria {
     @Builder.Default
     private Integer size = 20;
 
-    private String sortBy;
-
     @Builder.Default
     private SortDirection direction = SortDirection.ASC;
+
+    private String sortBy;
 
     public Integer getPage() {
         return page != null && page > 0 ? page - 1 : 0;

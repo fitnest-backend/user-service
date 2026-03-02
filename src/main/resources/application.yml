@@ -15,6 +15,9 @@ server:
     accept-count: 100
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   main:
     lazy-initialization: ${SPRING_MAIN_LAZY_INITIALIZATION:false}
   application:
@@ -52,7 +55,13 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
   jackson:
     serialization:
       write-dates-as-timestamps: false

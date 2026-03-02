@@ -37,7 +37,7 @@ public class GoalReferenceAdminController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Bu kodlu hədəf artıq mövcuddur")
     })
     public ResponseEntity<ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
-        GoalReference goal = goalReferenceService.createGoal(request.getCode(), request.getTitle(), request.getSubtitle());
+        GoalReference goal = goalReferenceService.createGoal(request.code(), request.title(), request.subtitle());
         return ResponseEntity.status(201).body(ApiResponse.success(goal));
     }
 
@@ -50,7 +50,7 @@ public class GoalReferenceAdminController {
     public ResponseEntity<ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
             @Valid @RequestBody az.fitnest.user.dto.request.UpdateGoalRequest request) {
-        GoalReference goal = goalReferenceService.updateGoal(code, request.getTitle(), request.getSubtitle());
+        GoalReference goal = goalReferenceService.updateGoal(code, request.title(), request.subtitle());
         return ResponseEntity.ok(ApiResponse.success(goal));
     }
 
@@ -77,12 +77,9 @@ public class GoalReferenceAdminController {
         return ResponseEntity.ok().build();
     }
 
-    @Data
-    public static class CreateGoalRequest {
-        @NotBlank
-        private String code;
-        @NotBlank
-        private String title;
-        private String subtitle;
-    }
+    public record CreateGoalRequest(
+        @NotBlank String code,
+        @NotBlank String title,
+        String subtitle
+    ) {}
 }

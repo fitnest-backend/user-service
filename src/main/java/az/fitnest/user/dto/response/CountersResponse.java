@@ -1,11 +1,9 @@
 package az.fitnest.user.dto.response;
 
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class CountersResponse {
-
-    private Long favorite_gyms;
-
-    private Long favorite_stores;
-}
+@Builder
+public record CountersResponse(
+    Long favorite_gyms,
+    Long favorite_stores
+) {}

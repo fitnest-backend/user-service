@@ -1,12 +1,10 @@
 package az.fitnest.user.dto.request;
 
 import az.fitnest.user.dto.PushNotification;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class UpdatePreferencesRequest {
-
-    private String theme;
-
-    private PushNotification notifications;
-}
+@Builder
+public record UpdatePreferencesRequest(
+    String theme,
+    PushNotification notifications
+) {}
