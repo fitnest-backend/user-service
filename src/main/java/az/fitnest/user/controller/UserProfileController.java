@@ -1,5 +1,7 @@
 package az.fitnest.user.controller;
 
+import java.util.Map;
+
 import az.fitnest.user.service.UserProfileService;
 import az.fitnest.user.dto.*;
 import az.fitnest.user.dto.request.*;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -70,9 +73,16 @@ public class UserProfileController {
 
     @Operation(summary = "E-poçt dəyişmə sorğusu", description = "Yeni e-poçt ünvanına OTP kodu göndərir.")
     @PostMapping("/change-email/request")
-    public ResponseEntity<ApiResponse<Void>> requestEmailChange(@RequestParam String newEmail) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> requestEmailChange(
+            @RequestParam String newEmail,
+            HttpServletRequest request) {
         userProfileService.requestEmailChange(newEmail);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success(Map.of(
+                "message", "OTP kodu yeni e-poçt ünvanınıza göndərildi",
+                "status", 200,
+                "path", request.getRequestURI(),
+                "timestamp", java.time.OffsetDateTime.now()
+        )));
     }
 
     @Operation(summary = "E-poçt dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni e-poçt ünvanını təsdiqləyir.")
@@ -83,9 +93,16 @@ public class UserProfileController {
 
     @Operation(summary = "Mobil nömrə dəyişmə sorğusu", description = "Yeni mobil nömrəyə OTP kodu göndərir.")
     @PostMapping("/change-mobile/request")
-    public ResponseEntity<ApiResponse<Void>> requestMobileChange(@RequestParam String newMobile) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> requestMobileChange(
+            @RequestParam String newMobile,
+            HttpServletRequest request) {
         userProfileService.requestMobileChange(newMobile);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success(Map.of(
+                "message", "OTP kodu yeni mobil nömrənizə göndərildi",
+                "status", 200,
+                "path", request.getRequestURI(),
+                "timestamp", java.time.OffsetDateTime.now()
+        )));
     }
 
     @Operation(summary = "Mobil nömrə dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni mobil nömrəni təsdiqləyir.")
