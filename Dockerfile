@@ -26,4 +26,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # ENTRYPOINT must start at column 0, JSON array items too
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-'-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:+UseZGC -XX:+ZGenerational -XX:+AlwaysPreTouch -XX:+ExitOnOutOfMemoryError'} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-'-XX:+UseContainerSupport' '-XX:MaxRAMPercentage=75.0' '-XX:InitialRAMPercentage=50.0' '-XX:+UseZGC' '-XX:+AlwaysPreTouch' '-XX:+ExitOnOutOfMemoryError'} -jar app.jar"]
