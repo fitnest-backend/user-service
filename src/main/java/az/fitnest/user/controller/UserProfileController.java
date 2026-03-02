@@ -87,8 +87,8 @@ public class UserProfileController {
 
     @Operation(summary = "E-poçt dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni e-poçt ünvanını təsdiqləyir.")
     @PostMapping("/change-email/confirm")
-    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmEmailChange(@RequestParam String newEmail, @RequestParam String otpCode) {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmEmailChange(newEmail, otpCode)));
+    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmEmailChange(@RequestParam String otpCode) {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmEmailChange(otpCode)));
     }
 
     @Operation(summary = "Mobil nömrə dəyişmə sorğusu", description = "Yeni mobil nömrəyə OTP kodu göndərir.")
@@ -107,8 +107,8 @@ public class UserProfileController {
 
     @Operation(summary = "Mobil nömrə dəyişməsini təsdiqləyin", description = "OTP kodu vasitəsilə yeni mobil nömrəni təsdiqləyir.")
     @PostMapping("/change-mobile/confirm")
-    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmMobileChange(@RequestParam String newMobile, @RequestParam String otpCode) {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmMobileChange(newMobile, otpCode)));
+    public ResponseEntity<ApiResponse<UserProfileResponse>> confirmMobileChange(@RequestParam String otpCode) {
+        return ResponseEntity.ok(ApiResponse.success(userProfileService.confirmMobileChange(otpCode)));
     }
 
     @Operation(summary = "İstifadəçi məkanını yeniləyin", description = "İstifadəçinin cari şəhər və ölkəsini yeniləyir.")

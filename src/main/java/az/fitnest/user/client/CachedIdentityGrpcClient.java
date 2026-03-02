@@ -35,8 +35,8 @@ public class CachedIdentityGrpcClient {
     }
 
     @CacheEvict(cacheNames = "identity_users", key = "#userId")
-    public IdentityUserResponse confirmEmailChange(Long userId, String newEmail, String otpCode) {
-        UserResponse raw = identityGrpcClient.confirmEmailChange(userId, newEmail, otpCode);
+    public IdentityUserResponse confirmEmailChange(Long userId, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmEmailChange(userId, otpCode);
         return toDto(raw);
     }
 
@@ -45,8 +45,8 @@ public class CachedIdentityGrpcClient {
     }
 
     @CacheEvict(cacheNames = "identity_users", key = "#userId")
-    public IdentityUserResponse confirmMobileChange(Long userId, String newMobile, String otpCode) {
-        UserResponse raw = identityGrpcClient.confirmMobileChange(userId, newMobile, otpCode);
+    public IdentityUserResponse confirmMobileChange(Long userId, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmMobileChange(userId, otpCode);
         return toDto(raw);
     }
 

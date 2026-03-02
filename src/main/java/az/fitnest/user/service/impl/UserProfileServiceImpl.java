@@ -518,8 +518,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
-    public UserProfileResponse confirmEmailChange(String newEmail, String otpCode) {
-        IdentityUserResponse updated = cachedIdentityClient.confirmEmailChange(currentUserId(), newEmail, otpCode);
+    public UserProfileResponse confirmEmailChange(String otpCode) {
+        IdentityUserResponse updated = cachedIdentityClient.confirmEmailChange(currentUserId(), otpCode);
         return mapToUserProfileResponse(updated);
     }
 
@@ -530,8 +530,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
-    public UserProfileResponse confirmMobileChange(String newMobile, String otpCode) {
-        IdentityUserResponse updated = cachedIdentityClient.confirmMobileChange(currentUserId(), newMobile, otpCode);
+    public UserProfileResponse confirmMobileChange(String otpCode) {
+        IdentityUserResponse updated = cachedIdentityClient.confirmMobileChange(currentUserId(), otpCode);
         return mapToUserProfileResponse(updated);
     }
 

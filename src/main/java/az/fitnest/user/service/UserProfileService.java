@@ -52,9 +52,9 @@ public interface UserProfileService {
 
     void requestEmailChange(String newEmail);
 
-    UserProfileResponse confirmEmailChange(String newEmail, String otpCode);
+    UserProfileResponse confirmEmailChange(String otpCode);
 
     void requestMobileChange(String newMobile);
 
-    UserProfileResponse confirmMobileChange(String newMobile, String otpCode);
+    UserProfileResponse confirmMobileChange(String otpCode);
 }

@@ -47,10 +47,9 @@ public class IdentityGrpcClient {
         withDeadline().requestEmailChange(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse confirmEmailChange(Long userId, String newEmail, String otpCode) {
+    public az.fitnest.user.grpc.UserResponse confirmEmailChange(Long userId, String otpCode) {
         ConfirmEmailChangeRequest request = ConfirmEmailChangeRequest.newBuilder()
                 .setUserId(userId)
-                .setNewEmail(newEmail)
                 .setOtpCode(otpCode)
                 .build();
 
@@ -66,10 +65,9 @@ public class IdentityGrpcClient {
         withDeadline().requestMobileChange(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse confirmMobileChange(Long userId, String newMobile, String otpCode) {
+    public az.fitnest.user.grpc.UserResponse confirmMobileChange(Long userId, String otpCode) {
         ConfirmMobileChangeRequest request = ConfirmMobileChangeRequest.newBuilder()
                 .setUserId(userId)
-                .setNewMobile(newMobile)
                 .setOtpCode(otpCode)
                 .build();
 
