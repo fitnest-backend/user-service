@@ -27,11 +27,6 @@ EXPOSE 8080
 
 ENTRYPOINT [ \
   "java", \
-  "-XX:MaxRAMPercentage=70", \
-  "-XX:InitialRAMPercentage=50", \
-  "-XX:+UseZGC", \
-  "-Xss256k", \
   "-XX:+ExitOnOutOfMemoryError", \
-  "-XX:HeapDumpPath=/tmp/heapdump.hprof", \
   "-jar", "app.jar" \
 ]
