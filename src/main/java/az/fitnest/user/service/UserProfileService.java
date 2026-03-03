@@ -50,11 +50,4 @@ public interface UserProfileService {
 
     LanguageDto getCurrentLanguage();
 
-    void requestEmailChange(String newEmail);
-
-    UserProfileResponse confirmEmailChange(String otpCode);
-
-    void requestMobileChange(String newMobile);
-
-    UserProfileResponse confirmMobileChange(String otpCode);
 }
