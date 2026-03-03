@@ -88,9 +88,15 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Map<String, Object> details = Map.of("message", detailText);
 
-        return ResponseEntity
-                .status(status)
-                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", message, status, request.getRequestURI(), details)));
+        ApiError apiError = ApiError.builder()
+                .code("VALIDATION_ERROR")
+                .message(message)
+                .status(status.value())
+                .path(request.getRequestURI())
+                .timestamp(OffsetDateTime.now())
+                .details(details)
+                .build();
+        return ResponseEntity.status(status).body(ApiResponse.error(apiError));
     }
 
     @ExceptionHandler(StatusRuntimeException.class)
@@ -128,9 +134,14 @@ public class GlobalExceptionHandler {
             }
         }
 
-        return ResponseEntity
-                .status(httpStatus)
-                .body(ApiResponse.error(buildApiError(errorCode, errorMessage, httpStatus, request.getRequestURI(), null)));
+        ApiError apiError = ApiError.builder()
+                .code(errorCode)
+                .message(errorMessage)
+                .status(httpStatus.value())
+                .path(request.getRequestURI())
+                .timestamp(OffsetDateTime.now())
+                .build();
+        return ResponseEntity.status(httpStatus).body(ApiResponse.error(apiError));
     }
 
     @ExceptionHandler(Exception.class)
