@@ -13,6 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +24,25 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final MessageSource messageSource;
+
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException ex, HttpServletRequest request) {
         HttpStatus status = ex.getHttpStatus();
-        return ResponseEntity
-                .status(status)
-                .body(ApiResponse.error(buildApiError(ex.getErrorCode(), ex.getMessage(), status, request.getRequestURI(), null)));
+        ApiError apiError = ApiError.builder()
+                .code(ex.getErrorCode())
+                .message(getLocalizedMessage(ex.getErrorCode(), ex.getMessage()))
+                .status(status.value())
+                .path(request.getRequestURI())
+                .timestamp(OffsetDateTime.now())
+                .build();
+        return ResponseEntity.status(status).body(ApiResponse.error(apiError));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -36,22 +50,26 @@ public class GlobalExceptionHandler {
         List<Map<String, String>> fieldIssues = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> Map.of(
                         "field", error.getField(),
-                        "issue", error.getDefaultMessage()
+                        "issue", safeMessage(error.getDefaultMessage())
                 ))
                 .toList();
 
-        Map<String, Object> details = Map.of("fieldIssues", fieldIssues);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ApiError apiError = ApiError.builder()
+                .code("VALIDATION_ERROR")
+                .message(getMessage("error.validation"))
+                .status(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .timestamp(OffsetDateTime.now())
+                .details(Map.of("fieldIssues", fieldIssues))
+                .build();
 
-        return ResponseEntity
-                .status(status)
-                .body(ApiResponse.error(buildApiError("VALIDATION_ERROR", "Doğrulama xətası", status, request.getRequestURI(), details)));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(apiError));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        String message = "Yanlış sorğu formatı";
-        String detailText = "Yanlış sorğu gövdəsi";
+        String message = getMessage("error.invalid_json_format");
+        String detailText = getMessage("error.invalid_request_body");
 
         Throwable cause = ex.getCause();
         if (cause instanceof JsonMappingException jme) {
@@ -59,7 +77,7 @@ public class GlobalExceptionHandler {
                 String field = jme.getPath().stream()
                         .map(JsonMappingException.Reference::getFieldName)
                         .collect(Collectors.joining("."));
-                detailText = "Sahə üçün yanlış dəyər: " + field;
+                detailText = getMessage("error.invalid_value_field", field);
             } else {
                 detailText = jme.getOriginalMessage();
             }
@@ -80,32 +98,32 @@ public class GlobalExceptionHandler {
         String errorCode = "SERVICE_UNAVAILABLE";
         String statusDescription = ex.getStatus().getDescription();
         String errorMessage = (statusDescription != null && !statusDescription.isEmpty())
-                ? "Identity xidməti xətası: " + statusDescription
-                : "Xarici xidmət xətası";
+                ? getMessage("error.identity_service_error", statusDescription)
+                : getMessage("error.external_service_error");
         HttpStatus httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 
         switch (ex.getStatus().getCode()) {
-            case UNAVAILABLE -> errorMessage = "Identity xidməti hazırda əlçatmazdır";
-            case DEADLINE_EXCEEDED -> errorMessage = "Identity xidmətinə sorğu vaxtı keçdi";
+            case UNAVAILABLE -> errorMessage = getMessage("error.service_unavailable");
+            case DEADLINE_EXCEEDED -> errorMessage = getMessage("error.service_timeout");
             case INVALID_ARGUMENT -> {
                 errorCode = "INVALID_REQUEST";
                 httpStatus = HttpStatus.BAD_REQUEST;
-                errorMessage = "Identity xidmətinə yanlış sorğu: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = getMessage("error.service_invalid_request", (statusDescription != null ? statusDescription : ""));
             }
             case NOT_FOUND -> {
                 errorCode = "RESOURCE_NOT_FOUND";
                 httpStatus = HttpStatus.NOT_FOUND;
-                errorMessage = "Identity xidmətində resurs tapılmadı: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = getMessage("error.service_not_found", (statusDescription != null ? statusDescription : ""));
             }
             case INTERNAL -> {
-                errorMessage = "Identity xidmətinin daxili xətası: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = getMessage("error.service_internal_error", (statusDescription != null ? statusDescription : ""));
             }
             case UNKNOWN -> {
-                errorMessage = "Identity xidməti naməlum xəta ilə qarşılaşdı: " + (statusDescription != null ? statusDescription : "");
+                errorMessage = getMessage("error.service_unknown", (statusDescription != null ? statusDescription : ""));
             }
             default -> {
                 if (statusDescription == null || statusDescription.isEmpty()) {
-                    errorMessage = "Identity xidməti xəta ilə qarşılaşdı. Lütfən, bir az sonra yenidən cəhd edin.";
+                    errorMessage = getMessage("error.service_generic_error");
                 }
             }
         }
@@ -117,47 +135,65 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity
-                .status(status)
-                .body(ApiResponse.error(buildApiError("INTERNAL_SERVER_ERROR", "Gözlənilməz xəta baş verdi.", status, request.getRequestURI(), null)));
+        ApiError apiError = ApiError.builder()
+                .code("INTERNAL_SERVER_ERROR")
+                .message(getMessage("error.unexpected"))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .path(request.getRequestURI())
+                .timestamp(OffsetDateTime.now())
+                .details(Map.of("exception", ex.getClass().getSimpleName()))
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(apiError));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.FORBIDDEN;
-        return ResponseEntity
-                .status(status)
-                .body(ApiResponse.error(buildApiError("ACCESS_DENIED", "Sizin bu resursa giriş icazəniz yoxdur", status, request.getRequestURI(), null)));
-    }
-
-    private ApiResponse<Void> wrap(
-            String code,
-            String message,
-            HttpStatus status,
-            String path,
-            Map<String, Object> details
-    ) {
-        return ApiResponse.<Void>builder()
-                .error(ApiError.builder()
-                        .code(code)
-                        .message(message)
-                        .status(status.value())
-                        .path(path)
-                        .timestamp(OffsetDateTime.now())
-                        .details(details)
-                        .build())
-                .build();
-    }
-
-    private ApiError buildApiError(String code, String message, HttpStatus status, String path, Object details) {
-        return ApiError.builder()
-                .code(code)
-                .message(message)
-                .status(status != null ? status.value() : null)
-                .path(path)
+        ApiError apiError = ApiError.builder()
+                .code("ACCESS_DENIED")
+                .message(getMessage("error.access_denied"))
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(request.getRequestURI())
                 .timestamp(OffsetDateTime.now())
-                .details(details)
                 .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error(apiError));
+    }
+
+    private String getLocalizedMessage(String errorCode, String defaultMessage) {
+        String key = "error." + errorCode.toLowerCase();
+        String message = getMessage(key);
+        if (message.equals(key)) {
+            // Try resolving by original errorCode
+            message = getMessage(errorCode);
+            if (message.equals(errorCode)) {
+                return safeMessage(defaultMessage);
+            }
+        }
+        return message;
+    }
+
+    private String safeMessage(String msg) {
+        if (msg == null || msg.isBlank()) {
+            return getMessage("error.unexpected");
+        }
+        // If the message looks like a key, try to resolve it
+        if (msg.startsWith("error.")) {
+            String resolved = getMessage(msg);
+            if (!resolved.equals(msg)) {
+                return resolved;
+            }
+        }
+        return msg;
+    }
+
+    private String getMessage(String code) {
+        return getMessage(code, null);
+    }
+
+    private String getMessage(String code, String arg) {
+        try {
+            return messageSource.getMessage(code, arg != null ? new Object[]{arg} : null, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return code; // Fallback to code if message not found
+        }
     }
 }
