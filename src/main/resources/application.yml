@@ -132,6 +132,8 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+      probes:
+        enabled: true
 
 app:
   warmup:
@@ -144,6 +146,7 @@ springdoc:
     path: /v3/api-docs
     cache:
       enabled: true
+    pre-loading-enabled: true
   paths-to-exclude: /api/v1/internal/**
   swagger-ui:
     enabled: true
@@ -175,7 +178,10 @@ grpc:
       keep-alive-without-calls: true
       keep-alive-time: 30s
       keep-alive-timeout: 5s
-      deadline-after: ${GRPC_DEADLINE:10s}
+      deadline-after: 10s
+      enable-keep-alive: true
+      keep-alive-without-calls: true
+      keep-alive-time: 30s
     storage-service:
       address: 'static://storage-service:9090'
       negotiation-type: plaintext
