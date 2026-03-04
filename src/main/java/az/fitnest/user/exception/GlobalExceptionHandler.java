@@ -68,33 +68,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        String message = getMessage("error.invalid_json_format");
-        String detailText = getMessage("error.invalid_request_body");
-
-        Throwable cause = ex.getCause();
-        if (cause instanceof JsonMappingException jme) {
-            if (!jme.getPath().isEmpty()) {
-                String field = jme.getPath().stream()
-                        .map(JsonMappingException.Reference::getFieldName)
-                        .collect(Collectors.joining("."));
-                detailText = getMessage("error.invalid_value_field", field);
-            } else {
-                detailText = jme.getOriginalMessage();
-            }
-        } else if (cause != null) {
-            detailText = cause.getMessage();
-        }
-
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        Map<String, Object> details = Map.of("message", detailText);
-
         ApiError apiError = ApiError.builder()
-                .code("VALIDATION_ERROR")
-                .message(message)
+                .code("BAD_REQUEST")
+                .message(getMessage("error.invalid_json_format"))
                 .status(status.value())
                 .path(request.getRequestURI())
                 .timestamp(OffsetDateTime.now())
-                .details(details)
                 .build();
         return ResponseEntity.status(status).body(ApiResponse.error(apiError));
     }
@@ -152,7 +132,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .path(request.getRequestURI())
                 .timestamp(OffsetDateTime.now())
-                .details(Map.of("exception", ex.getClass().getSimpleName()))
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(apiError));
     }

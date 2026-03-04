@@ -2,7 +2,6 @@ package az.fitnest.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
-
 import java.time.OffsetDateTime;
 
 @Builder
