@@ -13,6 +13,7 @@ public record IdentityUserResponse(
     String email,
     String language,
     @JsonProperty("profile_image_url") String profileImageUrl,
+    @JsonProperty("profileImage") String profileImage,
     @JsonProperty("setup_required") Boolean setupRequired,
     @JsonProperty("created_at") String createdAt
 ) implements Serializable {}

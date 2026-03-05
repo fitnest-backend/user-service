@@ -74,6 +74,7 @@ public class CachedIdentityGrpcClient {
                 .mobile(r.getMobile())
                 .email(r.getEmail())
                 .profileImageUrl(r.getProfileImageUrl())
+                .profileImage(r.getProfileImageUrl())
                 .language(r.getLanguage())
                 .setupRequired(r.getSetupRequired())
                 .createdAt(r.getCreatedAt())

@@ -19,6 +19,7 @@ public final class UserProfileMapper {
                 .mobile(userResponse.mobile())
                 .email(userResponse.email())
                 .profileImageUrl(profileImageUrl)
+                .profileImage(profileImageUrl)
                 .currentSubscription(currentSubscription)
                 .build();
     }
