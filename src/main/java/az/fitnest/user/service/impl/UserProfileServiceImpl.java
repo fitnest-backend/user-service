@@ -51,6 +51,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final CatalogGrpcClient catalogGrpcClient;
     private final OrderGrpcClient orderGrpcClient;
     private final LanguageService languageService;
+    private final org.springframework.context.MessageSource messageSource;
 
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
@@ -263,7 +264,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void deleteAccount(DeleteAccountRequest request) {
         if (!Boolean.TRUE.equals(request.getConfirm())) {
-            throw new BadRequestException("Təsdiqləmə 'true' olmalıdır");
+            throw new BadRequestException("error.confirmation_required");
         }
         Long userId = UserContext.getCurrentUserId();
         cachedIdentityClient.deleteUser(userId, request.getReason());
@@ -277,7 +278,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
 
         goalReferenceRepository.findById(request.goalCode())
-                .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         UserProfile profile = getOrCreateProfile(userId);
 
@@ -322,11 +323,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String goalCode = profile.getGoalCode();
         if (goalCode == null || goalCode.isBlank()) {
-            throw new ResourceNotFoundException("İstifadəçi üçün hədəf təyin edilməyib");
+            throw new ResourceNotFoundException("error.user_goal_not_set");
         }
 
         var reference = goalReferenceRepository.findById(goalCode)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal reference not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         String title = translationService.getTranslatedValue("GoalReference", goalCode, "title", language);
         String subtitle = translationService.getTranslatedValue("GoalReference", goalCode, "subtitle", language);
@@ -360,7 +361,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
         languageRepository.findByCode(request.language())
-                .orElseThrow(() -> new BadRequestException("Yanlış dil kodu: " + request.language()));
+                .orElseThrow(() -> new BadRequestException("error.invalid_language_code", request.language()));
 
         Long userId = UserContext.getCurrentUserId();
         cachedIdentityClient.updateLanguage(userId, request.language());
@@ -414,14 +415,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         Long userId = UserContext.getCurrentUserId();
 
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profil tapılmadı"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.profile_not_found"));
 
         if (profile.getHeightCm() == null ||
                 profile.getWeightKg() == null ||
                 profile.getGoalCode() == null ||
                 profile.getGender() == null ||
                 profile.getBirthDate() == null) {
-            throw new ConflictException("Quraşdırma tamamlanmayıb");
+            throw new ConflictException("error.setup_not_finished");
         }
 
         cachedIdentityClient.updateSetupRequired(userId, false);
@@ -452,7 +453,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 try {
                     profile.setGender(Gender.valueOf(info.gender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    throw new BadRequestException("Yanlış cins dəyəri");
+                    throw new BadRequestException("error.invalid_gender");
                 }
             }
 
@@ -460,7 +461,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             if (info.goal() != null) {
                 goalReferenceRepository.findById(info.goal())
-                        .orElseThrow(() -> new ResourceNotFoundException("Hədəf istinadı tapılmadı"));
+                        .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
                 profile.setGoalCode(info.goal());
             }
         }
@@ -511,15 +512,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new BadRequestException("Fayl tələb olunur");
+            throw new BadRequestException("error.file_required");
         }
         long maxSize = 5 * 1024 * 1024; // 5MB
         if (file.getSize() > maxSize) {
-            throw new BadRequestException("Faylın ölçüsü 5MB-dan çoxdur");
+            throw new BadRequestException("error.file_size_limit");
         }
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
-            throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
+            throw new BadRequestException("error.only_images_allowed");
         }
     }
 

@@ -30,7 +30,7 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public LanguageDto getLanguageByCode(String code) {
         Language language = languageRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Dil tapılmadı"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.resource_not_found"));
         return toDto(language);
     }
 
@@ -48,9 +48,9 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public LanguageDto updateLanguage(String code, LanguageCreateRequest request) {
         Language language = languageRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Language not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.resource_not_found"));
         if (!language.getCode().equals(request.code()) && languageRepository.existsByCode(request.code())) {
-            throw new BadRequestException("Language code already exists");
+            throw new BadRequestException("error.resource_already_exists");
         }
         language.setCode(request.code());
         language = languageRepository.save(language);
@@ -61,7 +61,7 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public void deleteLanguage(String code) {
         if (!languageRepository.existsById(code)) {
-            throw new ResourceNotFoundException("Dil tapılmadı");
+            throw new ResourceNotFoundException("error.resource_not_found");
         }
         languageRepository.deleteById(code);
     }

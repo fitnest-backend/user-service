@@ -45,7 +45,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     @Override
     public GoalItemResponse getGoalByCode(String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Hədəf tapılmadı: " + code));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
         return mapToResponse(goal, getUserLanguage());
     }
 
@@ -71,7 +71,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     @Override
     public GoalReference createGoal(String code, String title, String subtitle) {
         if (goalReferenceRepository.existsById(code)) {
-            throw new ConflictException("Hədəf artıq mövcuddur: " + code);
+            throw new ConflictException("error.resource_already_exists");
         }
         GoalReference goal = new GoalReference();
         goal.setGoalCode(code);
@@ -88,7 +88,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     @Override
     public GoalReference updateGoal(String code, String title, String subtitle) {
         GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Hədəf tapılmadı: " + code));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         updateOrSaveTranslation(code, "EN", "title", title);
         updateOrSaveTranslation(code, "EN", "subtitle", subtitle);
@@ -100,7 +100,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     @Override
     public void deleteGoal(String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Hədəf tapılmadı: " + code));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         if (goal.getImageUrl() != null && !goal.getImageUrl().isBlank()) {
             try {
@@ -116,7 +116,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     @Override
     public void uploadGoalImage(String code, MultipartFile file) {
         GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + code));
+                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         validateImage(file);
         String imageUrl = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
@@ -153,11 +153,11 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     }
 
     private void validateImage(MultipartFile file) {
-        if (file == null || file.isEmpty()) throw new BadRequestException("Fayl tələb olunur");
-        if (file.getSize() > 5 * 1024 * 1024) throw new BadRequestException("Faylın ölçüsü 5MB-dan çoxdur");
+        if (file == null || file.isEmpty()) throw new BadRequestException("error.file_required");
+        if (file.getSize() > 5 * 1024 * 1024) throw new BadRequestException("error.file_size_limit");
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/"))
-            throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
+            throw new BadRequestException("error.only_images_allowed");
     }
 
     private void createTranslationIfNotFound(String goalCode, String languageCode, String title, String subtitle) {
