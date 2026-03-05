@@ -361,7 +361,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
         languageRepository.findByCode(request.language())
-                .orElseThrow(() -> new BadRequestException("error.invalid_language_code", request.language()));
+                .orElseThrow(() -> new BadRequestException("error.invalid_language_code"));
 
         Long userId = UserContext.getCurrentUserId();
         cachedIdentityClient.updateLanguage(userId, request.language());
