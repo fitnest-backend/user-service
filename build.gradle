@@ -78,10 +78,13 @@ dependencies {
     // Pin Lombok for reproducible builds
     compileOnly "org.projectlombok:lombok:1.18.42"
     annotationProcessor "org.projectlombok:lombok:1.18.42"
+ 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
-    enabled = false
+    useJUnitPlatform()
 }
 
 protobuf {
