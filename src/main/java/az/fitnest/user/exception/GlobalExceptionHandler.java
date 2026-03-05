@@ -126,6 +126,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex, HttpServletRequest request) {
+        logger.error("Unhandled exception occurred at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
         ApiError apiError = ApiError.builder()
                 .code("INTERNAL_SERVER_ERROR")
                 .message(getMessage("error.unexpected"))

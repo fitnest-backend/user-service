@@ -162,6 +162,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     @Override
     public void updateBody(UpdateBodyRequest request) {
+        checkSetupNotRequired();
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = getOrCreateProfile(userId);
 
@@ -272,6 +273,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     @Override
     public void updateGoal(UpdateGoalsRequest request) {
+        checkSetupNotRequired();
         Long userId = UserContext.getCurrentUserId();
 
         goalReferenceRepository.findById(request.goalCode())
@@ -518,6 +520,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new BadRequestException("Yalnız şəkil fayllarına icazə verilir");
+        }
+    }
+
+    private void checkSetupNotRequired() {
+        Long userId = UserContext.getCurrentUserId();
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        if (Boolean.TRUE.equals(identityUser.setupRequired())) {
+            throw new BadRequestException("error.setup_not_finished");
         }
     }
 
