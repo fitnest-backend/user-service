@@ -81,8 +81,7 @@ message RequestEmailChangeRequest {
 
 message ConfirmEmailChangeRequest {
   int64 user_id = 1;
-  string new_email = 2;
-  string otp_code = 3;
+  string otp_code = 2;
 }
 
 message RequestMobileChangeRequest {
@@ -92,6 +91,5 @@ message RequestMobileChangeRequest {
 
 message ConfirmMobileChangeRequest {
   int64 user_id = 1;
-  string new_mobile = 2;
-  string otp_code = 3;
+  string otp_code = 2;
 }
