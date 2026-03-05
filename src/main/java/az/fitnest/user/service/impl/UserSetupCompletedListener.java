@@ -24,8 +24,6 @@ public class UserSetupCompletedListener {
             p.setUserId(userId);
             return p;
         });
-        // No change in profile fields; this event may drive workflows. For now, we ensure profile exists.
         userProfileRepository.save(profile);
-        // TODO: trigger workflows (plans ready) or mark local state if needed.
     }
 }

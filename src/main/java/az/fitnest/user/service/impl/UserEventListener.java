@@ -15,7 +15,6 @@ public class UserEventListener {
         Long userId = (Long) event.get("userId");
 
         if ("USER_UPDATED".equals(eventType)) {
-            // TODO: Implement cache eviction for domain-level DTOs when caching is added at service layer
         }
     }
 }

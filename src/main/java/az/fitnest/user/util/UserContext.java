@@ -18,7 +18,6 @@ public class UserContext {
             return (Long) principal;
         }
 
-        // Handle cases where principal might be stored differently (e.g. String ID)
         if (principal instanceof String) {
             try {
                 return Long.parseLong((String) principal);

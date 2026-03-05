@@ -57,7 +57,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Cacheable(cacheNames = "user_summaries", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", sync = true)
-    // Dedicated cache for SummaryResponse to prevent type collisions with identity_users
     @Transactional(readOnly = true)
     @Override
     public SummaryResponse getUserSummary() {
@@ -94,7 +93,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Cacheable(cacheNames = "user_me", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
-    // Dedicated cache for UserProfileResponse to prevent type collisions with identity_users
     @Override
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
@@ -354,7 +352,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void updatePreferences(UpdatePreferencesRequest request) {
-        // placeholder
     }
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
@@ -388,7 +385,6 @@ public class UserProfileServiceImpl implements UserProfileService {
             return p;
         });
 
-        // Only compute BMI when height, weight, gender and birthDate are present
         Double bmiValue = null;
         if (profile.getHeightCm() != null && profile.getWeightKg() != null
                 && profile.getGender() != null && profile.getBirthDate() != null) {
