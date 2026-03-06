@@ -10,7 +10,7 @@ public final class UserProfileMapper {
     private UserProfileMapper() {
     }
 
-    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription) {
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus) {
         if (userResponse == null) return null;
         return UserProfileResponse.builder()
                 .userId(userResponse.userId())
@@ -21,6 +21,7 @@ public final class UserProfileMapper {
                 .profileImageUrl(profileImageUrl)
                 .profileImage(profileImageUrl)
                 .currentSubscription(currentSubscription)
+                .subscriptionStatus(subscriptionStatus)
                 .build();
     }
 

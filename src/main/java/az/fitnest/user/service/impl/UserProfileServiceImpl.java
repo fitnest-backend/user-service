@@ -70,16 +70,28 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
+
         String currentSubscription = null;
+        String subscriptionStatus = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+
+            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
+
+            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
+            if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
+                    && !r.getSubscriptionStatus().equals("none")) {
+                subscriptionStatus = r.getSubscriptionStatus();
+            }
         } catch (Exception e) {
+            // If order-service is unavailable, set default "No Plan"
+            currentSubscription = "No Plan";
         }
 
-        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
+        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
 
         CountersResponse counters = CountersResponse.builder()
                 .favorite_gyms(0L)
@@ -106,15 +118,26 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         String currentSubscription = null;
+        String subscriptionStatus = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+
+            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
+
+            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
+            if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
+                    && !r.getSubscriptionStatus().equals("none")) {
+                subscriptionStatus = r.getSubscriptionStatus();
+            }
         } catch (Exception e) {
+            // If order-service is unavailable, set default "No Plan"
+            currentSubscription = "No Plan";
         }
 
-        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription);
+        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
     private UserProfile getOrCreateProfile(Long userId) {
@@ -215,15 +238,26 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         String currentSubscription = null;
+        String subscriptionStatus = null;
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
+
+            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
+
+            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
+            if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
+                    && !r.getSubscriptionStatus().equals("none")) {
+                subscriptionStatus = r.getSubscriptionStatus();
+            }
         } catch (Exception e) {
+            // If order-service is unavailable, set default "No Plan"
+            currentSubscription = "No Plan";
         }
 
-        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription);
+        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
