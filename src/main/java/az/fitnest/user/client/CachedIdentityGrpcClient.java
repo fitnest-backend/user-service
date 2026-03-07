@@ -30,23 +30,23 @@ public class CachedIdentityGrpcClient {
         return toDto(raw);
     }
 
-    public void requestEmailChange(Long userId, String newEmail) {
-        identityGrpcClient.requestEmailChange(userId, newEmail);
+    public az.fitnest.user.grpc.OtpSendResponseProto requestEmailChange(Long userId, String newEmail) {
+        return identityGrpcClient.requestEmailChange(userId, newEmail);
     }
 
     @CacheEvict(cacheNames = "identity_users", key = "#userId")
-    public IdentityUserResponse confirmEmailChange(Long userId, String otpCode) {
-        UserResponse raw = identityGrpcClient.confirmEmailChange(userId, otpCode);
+    public IdentityUserResponse confirmEmailChange(Long userId, String otpSessionId, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmEmailChange(userId, otpSessionId, otpCode);
         return toDto(raw);
     }
 
-    public void requestMobileChange(Long userId, String newMobile) {
-        identityGrpcClient.requestMobileChange(userId, newMobile);
+    public az.fitnest.user.grpc.OtpSendResponseProto requestMobileChange(Long userId, String newMobile) {
+        return identityGrpcClient.requestMobileChange(userId, newMobile);
     }
 
     @CacheEvict(cacheNames = "identity_users", key = "#userId")
-    public IdentityUserResponse confirmMobileChange(Long userId, String otpCode) {
-        UserResponse raw = identityGrpcClient.confirmMobileChange(userId, otpCode);
+    public IdentityUserResponse confirmMobileChange(Long userId, String otpSessionId, String otpCode) {
+        UserResponse raw = identityGrpcClient.confirmMobileChange(userId, otpSessionId, otpCode);
         return toDto(raw);
     }
 

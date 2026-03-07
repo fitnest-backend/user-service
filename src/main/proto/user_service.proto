@@ -16,9 +16,9 @@ service UserService {
   rpc UpdateLanguage(UpdateLanguageRequest) returns (UserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
   rpc UpdateSessionStatus(UpdateSessionStatusRequest) returns (UserResponse);
-  rpc RequestEmailChange(RequestEmailChangeRequest) returns (google.protobuf.Empty);
+  rpc RequestEmailChange(RequestEmailChangeRequest) returns (OtpSendResponseProto);
   rpc ConfirmEmailChange(ConfirmEmailChangeRequest) returns (UserResponse);
-  rpc RequestMobileChange(RequestMobileChangeRequest) returns (google.protobuf.Empty);
+  rpc RequestMobileChange(RequestMobileChangeRequest) returns (OtpSendResponseProto);
   rpc ConfirmMobileChange(ConfirmMobileChangeRequest) returns (UserResponse);
 }
 
@@ -79,9 +79,17 @@ message RequestEmailChangeRequest {
   string new_email = 2;
 }
 
+message OtpSendResponseProto {
+  string otp_session_id = 1;
+  int32 expires_in_seconds = 2;
+  int32 resend_available_in_seconds = 3;
+  string message = 4;
+}
+
 message ConfirmEmailChangeRequest {
   int64 user_id = 1;
   string otp_code = 2;
+  string otp_session_id = 3;
 }
 
 message RequestMobileChangeRequest {
@@ -92,4 +100,5 @@ message RequestMobileChangeRequest {
 message ConfirmMobileChangeRequest {
   int64 user_id = 1;
   string otp_code = 2;
+  string otp_session_id = 3;
 }

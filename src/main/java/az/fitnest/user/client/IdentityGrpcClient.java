@@ -38,37 +38,39 @@ public class IdentityGrpcClient {
         return withDeadline().updateUserProfile(request);
     }
 
-    public void requestEmailChange(Long userId, String newEmail) {
+    public az.fitnest.user.grpc.OtpSendResponseProto requestEmailChange(Long userId, String newEmail) {
         RequestEmailChangeRequest request = RequestEmailChangeRequest.newBuilder()
                 .setUserId(userId)
                 .setNewEmail(newEmail)
                 .build();
 
-        withDeadline().requestEmailChange(request);
+        return withDeadline().requestEmailChange(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse confirmEmailChange(Long userId, String otpCode) {
+    public az.fitnest.user.grpc.UserResponse confirmEmailChange(Long userId, String otpSessionId, String otpCode) {
         ConfirmEmailChangeRequest request = ConfirmEmailChangeRequest.newBuilder()
                 .setUserId(userId)
                 .setOtpCode(otpCode)
+                .setOtpSessionId(otpSessionId)
                 .build();
 
         return withDeadline().confirmEmailChange(request);
     }
 
-    public void requestMobileChange(Long userId, String newMobile) {
+    public az.fitnest.user.grpc.OtpSendResponseProto requestMobileChange(Long userId, String newMobile) {
         RequestMobileChangeRequest request = RequestMobileChangeRequest.newBuilder()
                 .setUserId(userId)
                 .setNewMobile(newMobile)
                 .build();
 
-        withDeadline().requestMobileChange(request);
+        return withDeadline().requestMobileChange(request);
     }
 
-    public az.fitnest.user.grpc.UserResponse confirmMobileChange(Long userId, String otpCode) {
+    public az.fitnest.user.grpc.UserResponse confirmMobileChange(Long userId, String otpSessionId, String otpCode) {
         ConfirmMobileChangeRequest request = ConfirmMobileChangeRequest.newBuilder()
                 .setUserId(userId)
                 .setOtpCode(otpCode)
+                .setOtpSessionId(otpSessionId)
                 .build();
 
         return withDeadline().confirmMobileChange(request);
