@@ -16,6 +16,4 @@ public class BmiScaleResponse {
     private @JsonProperty("normal_max") Double normalMax;
     private @JsonProperty("overweight_max") Double overweightMax;
 
-
-
 }

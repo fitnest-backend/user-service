@@ -55,7 +55,6 @@ public class DataInitializer {
         createGoalIfNotFound("WEIGHT_LOSS");
         createGoalIfNotFound("MUSCLE_GAIN");
         createGoalIfNotFound("ENDURANCE");
-        // Add more goals as needed
     }
 
     private void createGoalIfNotFound(String goalCode) {
@@ -68,7 +67,6 @@ public class DataInitializer {
     }
 
     private void initGoalTranslations() {
-        // WEIGHT_LOSS
         createTranslationIfNotFound("GoalReference", "WEIGHT_LOSS", "AZ", "title", "Çəki İtirmək");
         createTranslationIfNotFound("GoalReference", "WEIGHT_LOSS", "AZ", "subtitle", "Yağ yandırın və ideal çəkinizə çatıb");
         createTranslationIfNotFound("GoalReference", "WEIGHT_LOSS", "EN", "title", "Lose Weight");
@@ -76,7 +74,6 @@ public class DataInitializer {
         createTranslationIfNotFound("GoalReference", "WEIGHT_LOSS", "RU", "title", "Похудеть");
         createTranslationIfNotFound("GoalReference", "WEIGHT_LOSS", "RU", "subtitle", "Сжигайте жир и достигайте идеального веса");
 
-        // MUSCLE_GAIN
         createTranslationIfNotFound("GoalReference", "MUSCLE_GAIN", "AZ", "title", "Əzələ Qazanmaq");
         createTranslationIfNotFound("GoalReference", "MUSCLE_GAIN", "AZ", "subtitle", "Güc və əzələ kütləsi qurun");
         createTranslationIfNotFound("GoalReference", "MUSCLE_GAIN", "EN", "title", "Gain Muscle");
@@ -84,7 +81,6 @@ public class DataInitializer {
         createTranslationIfNotFound("GoalReference", "MUSCLE_GAIN", "RU", "title", "Набрать Мышцы");
         createTranslationIfNotFound("GoalReference", "MUSCLE_GAIN", "RU", "subtitle", "Развивайте силу и мышечную массу");
 
-        // ENDURANCE
         createTranslationIfNotFound("GoalReference", "ENDURANCE", "AZ", "title", "Dayanıqlılığı Artırmaq");
         createTranslationIfNotFound("GoalReference", "ENDURANCE", "AZ", "subtitle", "Dözümlülüyü və ürək-damar sağlamlığını yaxşılaşdırın");
         createTranslationIfNotFound("GoalReference", "ENDURANCE", "EN", "title", "Improve Endurance");
@@ -94,56 +90,46 @@ public class DataInitializer {
     }
 
     private void initGenderTranslations() {
-        // MALE
         createTranslationIfNotFound("Gender", "MALE", "AZ", "label", "Kişi");
         createTranslationIfNotFound("Gender", "MALE", "EN", "label", "Male");
         createTranslationIfNotFound("Gender", "MALE", "RU", "label", "Мужской");
 
-        // FEMALE
         createTranslationIfNotFound("Gender", "FEMALE", "AZ", "label", "Qadın");
         createTranslationIfNotFound("Gender", "FEMALE", "EN", "label", "Female");
         createTranslationIfNotFound("Gender", "FEMALE", "RU", "label", "Женский");
     }
 
     private void initEntityTypeTranslations() {
-        // GYM
         createTranslationIfNotFound("EntityType", "GYM", "AZ", "label", "İdman zalı");
         createTranslationIfNotFound("EntityType", "GYM", "EN", "label", "Gym");
         createTranslationIfNotFound("EntityType", "GYM", "RU", "label", "Тренажерный зал");
 
-        // STORE
         createTranslationIfNotFound("EntityType", "STORE", "AZ", "label", "Mağaza");
         createTranslationIfNotFound("EntityType", "STORE", "EN", "label", "Store");
         createTranslationIfNotFound("EntityType", "STORE", "RU", "label", "Магазин");
 
-        // TRAINER
         createTranslationIfNotFound("EntityType", "TRAINER", "AZ", "label", "Məşqçi");
         createTranslationIfNotFound("EntityType", "TRAINER", "EN", "label", "Trainer");
         createTranslationIfNotFound("EntityType", "TRAINER", "RU", "label", "Тренер");
 
-        // PROGRAM
         createTranslationIfNotFound("EntityType", "PROGRAM", "AZ", "label", "Proqram");
         createTranslationIfNotFound("EntityType", "PROGRAM", "EN", "label", "Program");
         createTranslationIfNotFound("EntityType", "PROGRAM", "RU", "label", "Программа");
     }
 
     private void initBmiMessageTranslations() {
-        // UNDERWEIGHT
         createTranslationIfNotFound("Message", "BmiMessage", "AZ", "UNDERWEIGHT", "Sizin çəkiniz normadan aşağıdır. Qidalanmanıza diqqət yetirin.");
         createTranslationIfNotFound("Message", "BmiMessage", "EN", "UNDERWEIGHT", "Your weight is below normal. Pay attention to your nutrition.");
         createTranslationIfNotFound("Message", "BmiMessage", "RU", "UNDERWEIGHT", "Ваш вес ниже нормы. Обратите внимание на питание.");
 
-        // NORMAL
         createTranslationIfNotFound("Message", "BmiMessage", "AZ", "NORMAL", "Sizin çəkiniz normal diapazondadır. Belə davam edin!");
         createTranslationIfNotFound("Message", "BmiMessage", "EN", "NORMAL", "Your weight is in the normal range. Keep it up!");
         createTranslationIfNotFound("Message", "BmiMessage", "RU", "NORMAL", "Ваш вес в нормальном диапазоне. Продолжайте в том же духе!");
 
-        // OVERWEIGHT
         createTranslationIfNotFound("Message", "BmiMessage", "AZ", "OVERWEIGHT", "Sizin çəkiniz normadan artıqdır. Aktivliyinizi artırın.");
         createTranslationIfNotFound("Message", "BmiMessage", "EN", "OVERWEIGHT", "Your weight is above normal. Increase your activity.");
         createTranslationIfNotFound("Message", "BmiMessage", "RU", "OVERWEIGHT", "Ваш вес выше нормы. Увеличьте активность.");
 
-        // OBESE
         createTranslationIfNotFound("Message", "BmiMessage", "AZ", "OBESE", "Sizin çəkiniz piylənmə diapazonundadır. Mütəxəssislə məsləhətləşin.");
         createTranslationIfNotFound("Message", "BmiMessage", "EN", "OBESE", "Your weight is in the obesity range. Consult a specialist.");
         createTranslationIfNotFound("Message", "BmiMessage", "RU", "OBESE", "Ваш вес в диапазоне ожирения. Обратитесь к специалисту.");
@@ -151,7 +137,6 @@ public class DataInitializer {
 
     private void initUserProfiles() {
         if (userProfileRepository.count() == 0) {
-            // Admin user (ID 1)
             userProfileRepository.save(UserProfile.builder()
                     .userId(1L)
                     .heightCm(180.0)
@@ -161,7 +146,6 @@ public class DataInitializer {
                     .goalCode("MUSCLE_GAIN")
                     .build());
 
-            // Super Admin user (ID 2)
             userProfileRepository.save(UserProfile.builder()
                     .userId(2L)
                     .heightCm(175.0)
@@ -171,7 +155,6 @@ public class DataInitializer {
                     .goalCode("WEIGHT_LOSS")
                     .build());
 
-            // Regular user
             userProfileRepository.save(UserProfile.builder()
                     .userId(3L)
                     .heightCm(165.0)
@@ -181,7 +164,6 @@ public class DataInitializer {
                     .goalCode("ENDURANCE")
                     .build());
 
-            // Regular user 2
             userProfileRepository.save(UserProfile.builder()
                     .userId(4L)
                     .heightCm(185.0)
@@ -191,7 +173,6 @@ public class DataInitializer {
                     .goalCode("MUSCLE_GAIN")
                     .build());
 
-            // Partner user
             userProfileRepository.save(UserProfile.builder()
                     .userId(5L)
                     .heightCm(178.0)
@@ -201,7 +182,6 @@ public class DataInitializer {
                     .goalCode("WEIGHT_LOSS")
                     .build());
 
-            // Partner user 2
             userProfileRepository.save(UserProfile.builder()
                     .userId(6L)
                     .heightCm(160.0)
@@ -215,7 +195,6 @@ public class DataInitializer {
 
     private void initUserLocations() {
         if (userLocationRepository.count() == 0) {
-            // Admin user
             userLocationRepository.save(UserLocation.builder()
                     .userId(1L)
                     .lat(40.4093)
@@ -223,7 +202,6 @@ public class DataInitializer {
                     .updatedAt(LocalDateTime.now())
                     .build());
 
-            // Super Admin user
             userLocationRepository.save(UserLocation.builder()
                     .userId(2L)
                     .lat(40.4095)
@@ -231,7 +209,6 @@ public class DataInitializer {
                     .updatedAt(LocalDateTime.now())
                     .build());
 
-            // Regular user
             userLocationRepository.save(UserLocation.builder()
                     .userId(3L)
                     .lat(40.4000)
@@ -239,7 +216,6 @@ public class DataInitializer {
                     .updatedAt(LocalDateTime.now())
                     .build());
 
-            // Regular user 2
             userLocationRepository.save(UserLocation.builder()
                     .userId(4L)
                     .lat(40.3900)
@@ -247,7 +223,6 @@ public class DataInitializer {
                     .updatedAt(LocalDateTime.now())
                     .build());
 
-            // Partner user
             userLocationRepository.save(UserLocation.builder()
                     .userId(5L)
                     .lat(40.3800)
@@ -255,7 +230,6 @@ public class DataInitializer {
                     .updatedAt(LocalDateTime.now())
                     .build());
 
-            // Partner user 2
             userLocationRepository.save(UserLocation.builder()
                     .userId(6L)
                     .lat(40.3700)

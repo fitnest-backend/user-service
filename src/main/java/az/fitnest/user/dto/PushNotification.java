@@ -1,6 +1,5 @@
 package az.fitnest.user.dto;
 
-
 import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

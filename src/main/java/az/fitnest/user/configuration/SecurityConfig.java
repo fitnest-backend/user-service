@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable) // Handled by Gateway/Istio usually, but keep simple here
+                .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.cacheControl(org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.CacheControlConfig::disable))
                 .authorizeHttpRequests(auth -> auth

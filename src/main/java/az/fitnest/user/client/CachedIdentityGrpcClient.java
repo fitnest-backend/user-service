@@ -13,11 +13,6 @@ public class CachedIdentityGrpcClient {
 
     private final IdentityGrpcClient identityGrpcClient;
 
-    /**
-     * Returns a cache-safe DTO. The raw protobuf {@link UserResponse} contains
-     * circular references ({@code unknownFields → defaultInstanceForType}) that
-     * break Jackson/Redis serialization, so we convert it here.
-     */
     @Cacheable(cacheNames = "identity_users", key = "#userId", sync = true)
     public IdentityUserResponse getUserById(Long userId) {
         UserResponse raw = identityGrpcClient.getUserById(userId);
@@ -61,7 +56,6 @@ public class CachedIdentityGrpcClient {
     public void updateSetupRequired(Long userId, boolean required) {
         identityGrpcClient.updateSetupRequired(userId, required);
     }
-
 
     private IdentityUserResponse toDto(UserResponse r) {
         return IdentityUserResponse.builder()

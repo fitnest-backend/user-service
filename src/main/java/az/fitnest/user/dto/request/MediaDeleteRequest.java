@@ -1,6 +1,5 @@
 package az.fitnest.user.dto.request;
 
-
 import java.util.List;
 
 import lombok.Data;

@@ -39,7 +39,6 @@ import az.fitnest.catalog.grpc.GymMainPage;
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
-
     private final CachedIdentityGrpcClient cachedIdentityClient;
     private final UserProfileRepository userProfileRepository;
     private final FileStorageService fileStorageService;
@@ -76,18 +75,15 @@ public class UserProfileServiceImpl implements UserProfileService {
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
 
-            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
 
-            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 subscriptionStatus = r.getSubscriptionStatus();
             }
         } catch (Exception e) {
-            // If order-service is unavailable, set default "No Plan"
             currentSubscription = "No Plan";
         }
 
@@ -122,18 +118,15 @@ public class UserProfileServiceImpl implements UserProfileService {
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
 
-            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
 
-            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 subscriptionStatus = r.getSubscriptionStatus();
             }
         } catch (Exception e) {
-            // If order-service is unavailable, set default "No Plan"
             currentSubscription = "No Plan";
         }
 
@@ -242,18 +235,15 @@ public class UserProfileServiceImpl implements UserProfileService {
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
 
-            // Get package name (could be "No Plan")
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
 
-            // Only set status for active or frozen subscriptions, not for "none"/"No Plan"
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 subscriptionStatus = r.getSubscriptionStatus();
             }
         } catch (Exception e) {
-            // If order-service is unavailable, set default "No Plan"
             currentSubscription = "No Plan";
         }
 
@@ -271,13 +261,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String newImageUrl = null;
         try {
-            // Pass oldImageUrl to storage service for atomic replacement
             newImageUrl = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
 
             try {
                 cachedIdentityClient.updateProfileImage(userId, newImageUrl);
             } catch (Exception e) {
-                // avoid orphan
                 try {
                     fileStorageService.deleteFile(newImageUrl);
                 } catch (Exception deleteEx) {
@@ -288,8 +276,6 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw e;
         }
     }
-
-
 
     @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Transactional
@@ -522,7 +508,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
         String langCode = identityUser.language();
         if (langCode == null || langCode.isBlank()) {
-            langCode = "AZ"; // Default
+            langCode = "AZ";
         }
         return languageService.getLanguageByCode(langCode);
     }
@@ -535,7 +521,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("error.file_required");
         }
-        long maxSize = 5 * 1024 * 1024; // 5MB
+        long maxSize = 5 * 1024 * 1024;
         if (file.getSize() > maxSize) {
             throw new BadRequestException("error.file_size_limit");
         }

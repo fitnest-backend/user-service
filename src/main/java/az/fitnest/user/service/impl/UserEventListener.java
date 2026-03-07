@@ -8,7 +8,6 @@ import java.util.Map;
 @Service
 public class UserEventListener {
 
-
     @KafkaListener(topics = "user-events", groupId = "user-service")
     public void handleUserEvent(Map<String, Object> event) {
         String eventType = (String) event.get("eventType");

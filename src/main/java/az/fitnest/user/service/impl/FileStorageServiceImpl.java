@@ -1,6 +1,5 @@
 package az.fitnest.user.service.impl;
 
-
 import az.fitnest.user.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements az.fitnest.user.service.FileStorageService {
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png"

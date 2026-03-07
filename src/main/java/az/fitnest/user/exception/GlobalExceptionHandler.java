@@ -166,7 +166,6 @@ public class GlobalExceptionHandler {
         if (msg == null || msg.isBlank()) {
             return getMessage("error.unexpected");
         }
-        // If the message looks like a key, try to resolve it
         if (msg.startsWith("error.")) {
             String resolved = getMessage(msg);
             if (!resolved.equals(msg)) {
@@ -184,7 +183,7 @@ public class GlobalExceptionHandler {
         try {
             return messageSource.getMessage(code, arg != null ? new Object[]{arg} : null, LocaleContextHolder.getLocale());
         } catch (org.springframework.context.NoSuchMessageException e) {
-            return code; // Fallback to code if message not found
+            return code;
         }
     }
 }

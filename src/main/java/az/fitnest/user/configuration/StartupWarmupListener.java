@@ -30,6 +30,5 @@ public class StartupWarmupListener {
     }
 
     private void warmupJwks() {
-        // Template for JWKS warm-up (to be detailed based on SecurityConfig)
     }
 }

@@ -1,6 +1,5 @@
 package az.fitnest.user.dto.response;
 
-
 import java.util.List;
 
 import lombok.Data;

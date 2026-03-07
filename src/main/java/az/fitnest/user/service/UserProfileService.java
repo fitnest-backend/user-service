@@ -20,7 +20,6 @@ public interface UserProfileService {
 
     void updateProfileImage(MultipartFile file);
 
-
     void updateGoal(UpdateGoalsRequest request);
 
     BodyInfoResponse getBodyInfo(String language);

@@ -14,5 +14,4 @@ import lombok.AllArgsConstructor;
 public class SetupResponse {
     private @JsonProperty("setup_required") Boolean setupRequired;
 
-
 }

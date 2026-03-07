@@ -28,8 +28,8 @@ public final class UserProfileMapper {
         if (goal == null) return null;
         return GoalItemResponse.builder()
                 .code(goal.getGoalCode())
-                .title("") // Placeholder, as titles are in translations
-                .subtitle("") // Placeholder, as subtitles are in translations
+                .title("")
+                .subtitle("")
                 .imageUrl(goal.getImageUrl())
                 .build();
     }
@@ -47,7 +47,6 @@ public final class UserProfileMapper {
     private static LocalDateTime parseCreatedAt(String value) {
         if (value == null || value.isBlank()) return null;
 
-        // 1) epoch millis
         try {
             if (value.chars().allMatch(Character::isDigit)) {
                 long epochMillis = Long.parseLong(value);
@@ -56,19 +55,16 @@ public final class UserProfileMapper {
         } catch (Exception ignored) {
         }
 
-        // 2) ISO local datetime
         try {
             return LocalDateTime.parse(value);
         } catch (java.time.format.DateTimeParseException ignored) {
         }
 
-        // 3) RFC3339/ISO with offset -> preserve instant meaning
         try {
             return OffsetDateTime.parse(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         } catch (java.time.format.DateTimeParseException ignored) {
         }
 
-        // 4) ISO instant (e.g., 2024-01-01T00:00:00Z)
         try {
             return Instant.parse(value).atZone(ZoneId.systemDefault()).toLocalDateTime();
         } catch (java.time.format.DateTimeParseException e) {

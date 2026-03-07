@@ -35,7 +35,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @Tag(name = "User Profile", description = "İstifadəçi profili, parametrləri və hesabını idarə etmək üçün ucluqlar")
 public class UserProfileController {
 
-
     private final UserProfileService userProfileService;
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationRepository translationRepository;
@@ -238,8 +237,6 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel(userLanguage)));
     }
 
-
-
     @GetMapping("/profile/images/{fsId}")
     public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
         return ResponseEntity.ok()
@@ -258,7 +255,6 @@ public class UserProfileController {
                     try {
                         outputStream.flush();
                     } catch (java.io.IOException e) {
-                        // Ignore or log
                     }
                 });
     }
@@ -273,7 +269,6 @@ public class UserProfileController {
                     return language.toUpperCase();
                 }
             } catch (Exception e) {
-                // Log error or ignore
             }
         }
         return "AZ";
