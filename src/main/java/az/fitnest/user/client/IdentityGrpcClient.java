@@ -102,13 +102,4 @@ public class IdentityGrpcClient {
 
         return withDeadline().updateLanguage(request);
     }
-
-    public void deleteUser(Long userId, String reason) {
-        az.fitnest.user.grpc.DeleteUserRequest request = az.fitnest.user.grpc.DeleteUserRequest.newBuilder()
-                .setUserId(userId)
-                .setReason(reason != null ? reason : "")
-                .build();
-
-        withDeadline().deleteUser(request);
-    }
 }

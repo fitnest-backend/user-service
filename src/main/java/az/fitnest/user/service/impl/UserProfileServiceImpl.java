@@ -294,15 +294,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         return ActiveSubscriptionResponse.builder().status("none").build();
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
-    @Override
-    public void deleteAccount(DeleteAccountRequest request) {
-        if (!Boolean.TRUE.equals(request.getConfirm())) {
-            throw new BadRequestException("error.confirmation_required");
-        }
-        Long userId = UserContext.getCurrentUserId();
-        cachedIdentityClient.deleteUser(userId, request.getReason());
-    }
 
     @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Transactional

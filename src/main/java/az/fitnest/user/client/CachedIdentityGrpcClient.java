@@ -62,9 +62,6 @@ public class CachedIdentityGrpcClient {
         identityGrpcClient.updateSetupRequired(userId, required);
     }
 
-    public void deleteUser(Long userId, String reason) {
-        identityGrpcClient.deleteUser(userId, reason);
-    }
 
     private IdentityUserResponse toDto(UserResponse r) {
         return IdentityUserResponse.builder()

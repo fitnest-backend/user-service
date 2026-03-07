@@ -22,7 +22,6 @@ public interface UserProfileService {
 
     ActiveSubscriptionResponse getActiveSubscription();
 
-    void deleteAccount(DeleteAccountRequest request);
 
     void updateGoal(UpdateGoalsRequest request);
 

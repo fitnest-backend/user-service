@@ -14,7 +14,7 @@ service UserService {
   rpc UpdateProfileImage(UpdateProfileImageRequest) returns (UserResponse);
   rpc UpdateSetupRequired(UpdateSetupRequiredRequest) returns (UserResponse);
   rpc UpdateLanguage(UpdateLanguageRequest) returns (UserResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+  rpc DeactivateUser(DeactivateUserRequest) returns (google.protobuf.Empty);
   rpc UpdateSessionStatus(UpdateSessionStatusRequest) returns (UserResponse);
   rpc RequestEmailChange(RequestEmailChangeRequest) returns (OtpSendResponseProto);
   rpc ConfirmEmailChange(ConfirmEmailChangeRequest) returns (UserResponse);
@@ -64,7 +64,7 @@ message UpdateLanguageRequest {
   string language = 2;
 }
 
-message DeleteUserRequest {
+message DeactivateUserRequest {
   int64 user_id = 1;
   string reason = 2;
 }

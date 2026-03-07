@@ -248,15 +248,6 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getActiveSubscription()));
     }
 
-    @Operation(summary = "Hesabı silin", description = "İstifadəçinin hesabını və əlaqəli məlumatları silir.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hesab uğurla silindi", content = @Content(examples = @ExampleObject(value = "null")))
-    })
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
-        userProfileService.deleteAccount(request);
-        return ResponseEntity.ok(ApiResponse.success(null));
-    }
 
     @GetMapping("/profile/images/{fsId}")
     public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
