@@ -289,10 +289,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
     }
 
-    @Override
-    public ActiveSubscriptionResponse getActiveSubscription() {
-        return ActiveSubscriptionResponse.builder().status("none").build();
-    }
 
 
     @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)

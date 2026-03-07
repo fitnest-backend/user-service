@@ -20,8 +20,6 @@ public interface UserProfileService {
 
     void updateProfileImage(MultipartFile file);
 
-    ActiveSubscriptionResponse getActiveSubscription();
-
 
     void updateGoal(UpdateGoalsRequest request);
 

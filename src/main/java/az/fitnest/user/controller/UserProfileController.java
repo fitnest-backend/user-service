@@ -238,15 +238,6 @@ public class UserProfileController {
         return ResponseEntity.ok(ApiResponse.success(userProfileService.getFitnessLevel(userLanguage)));
     }
 
-    @Operation(summary = "Aktiv abunəliyi əldə edin", description = "İstifadəçinin aktiv abunəlik təfərrüatlarını qaytarır.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Abunəlik təfərrüatları uğurla əldə edildi",
-                    content = @Content(schema = @Schema(implementation = ActiveSubscriptionResponse.class)))
-    })
-    @GetMapping("/subscription")
-    public ResponseEntity<ApiResponse<ActiveSubscriptionResponse>> getActiveSubscription() {
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getActiveSubscription()));
-    }
 
 
     @GetMapping("/profile/images/{fsId}")
