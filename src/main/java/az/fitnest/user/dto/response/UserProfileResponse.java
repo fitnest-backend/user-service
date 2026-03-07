@@ -11,7 +11,6 @@ public record UserProfileResponse(
     String mobile,
     String email,
     @JsonProperty("profile_image_url") String profileImageUrl,
-    @JsonProperty("profileImage") String profileImage,
     @JsonProperty("current_subscription") String currentSubscription,
     @JsonProperty("subscription_status") String subscriptionStatus  // active, frozen, or null for no plan
 ) {}
