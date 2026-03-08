@@ -11,7 +11,6 @@ COPY build.gradle settings.gradle ./
 COPY src/main/proto src/main/proto
 RUN ./gradlew dependencies --no-daemon
 
-# Copy source and build
 COPY . .
 RUN ./gradlew clean bootJar --no-build-cache --no-daemon
 
