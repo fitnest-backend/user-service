@@ -9,6 +9,7 @@ public record SetupRequest(
     @Max(250) Integer heightCm,
     @DecimalMax("300.0") Double weightKg,
     String gender,
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate birthDate,
     String goal
 ) {}
