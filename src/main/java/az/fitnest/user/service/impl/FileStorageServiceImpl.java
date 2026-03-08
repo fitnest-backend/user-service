@@ -46,18 +46,21 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
         } catch (az.fitnest.user.exception.InternalServerException | az.fitnest.user.exception.BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            throw new BadRequestException("Failed to upload image: " + e.getMessage());
+            throw new BadRequestException("error.file_upload_failed");
         }
     }
 
     private void validateFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("error.file_empty");
+        }
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
-            throw new BadRequestException("Only JPEG and PNG images are allowed");
+            throw new BadRequestException("error.invalid_file_type");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new BadRequestException("File size exceeds maximum allowed size of 5MB");
+            throw new BadRequestException("error.file_too_large");
         }
     }
 
