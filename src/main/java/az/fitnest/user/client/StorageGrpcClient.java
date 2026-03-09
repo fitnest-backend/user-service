@@ -201,4 +201,22 @@ public class StorageGrpcClient {
             observer.accept(az.fitnest.storage.grpc.DownloadFileResponse.newBuilder().build());
         }
     }
+
+    /**
+     * Checks if the current user can access the file by attempting to fetch metadata.
+     * Returns true if access is granted, false otherwise.
+     */
+    public boolean canAccessFile(String fileId) {
+        az.fitnest.storage.grpc.GetDownloadUrlRequest request = az.fitnest.storage.grpc.GetDownloadUrlRequest.newBuilder()
+                .setFileId(fileId)
+                .build();
+        try {
+            az.fitnest.storage.grpc.GetDownloadUrlResponse response = getAuthenticatedBlockingStub()
+                    .withDeadlineAfter(5, TimeUnit.SECONDS)
+                    .getDownloadUrl(request);
+            return response.getSuccess();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

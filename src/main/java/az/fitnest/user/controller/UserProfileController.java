@@ -266,6 +266,12 @@ public class UserProfileController {
             logger.warn("Authorization failed: missing role for fsId: {}", fsId);
             return ResponseEntity.status(403).build();
         }
+        // Pre-check file access before streaming
+        boolean canAccess = storageGrpcClient.canAccessFile(fsId); // You need to implement this method
+        if (!canAccess) {
+            logger.warn("Storage access denied for fsId: {}", fsId);
+            return ResponseEntity.status(403).build();
+        }
         logger.info("Authorization passed for streaming profile image: {}", fsId);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return ResponseEntity.ok()
