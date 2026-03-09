@@ -12,6 +12,7 @@ import az.fitnest.user.dto.response.StorageFileData;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,12 @@ public class StorageGrpcClient {
 
     @GrpcClient("storage-service")
     private StorageServiceGrpc.StorageServiceBlockingStub blockingStub;
+
+    @Value("${grpc.storage.unary.deadline.seconds:30}")
+    private long unaryDeadlineSeconds;
+
+    @Value("${grpc.storage.stream.deadline.seconds:300}")
+    private long streamDeadlineSeconds;
 
     public StorageFileData uploadFile(MultipartFile file, String directory) {
         return uploadFile(file, directory, null);
@@ -112,11 +119,17 @@ public class StorageGrpcClient {
         GetDownloadUrlRequest request = GetDownloadUrlRequest.newBuilder()
                 .setFileId(fileId)
                 .build();
-        GetDownloadUrlResponse response = blockingStub.getDownloadUrl(request);
-        if (response.getSuccess()) {
-            return response.getDownloadUrl();
-        } else {
-            throw new RuntimeException("Download failed: " + response.getMessage());
+        try {
+            GetDownloadUrlResponse response = blockingStub
+                    .withDeadlineAfter(unaryDeadlineSeconds, TimeUnit.SECONDS)
+                    .getDownloadUrl(request);
+            if (response.getSuccess()) {
+                return response.getDownloadUrl();
+            } else {
+                throw new RuntimeException("Download failed: " + response.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Download failed", e);
         }
     }
 
@@ -124,9 +137,15 @@ public class StorageGrpcClient {
         DeleteFilesRequest request = DeleteFilesRequest.newBuilder()
                 .addAllPaths(paths)
                 .build();
-        DeleteFilesResponse response = blockingStub.deleteFiles(request);
-        if (!response.getSuccess()) {
-            throw new RuntimeException("Delete failed: " + response.getMessage());
+        try {
+            DeleteFilesResponse response = blockingStub
+                    .withDeadlineAfter(unaryDeadlineSeconds, TimeUnit.SECONDS)
+                    .deleteFiles(request);
+            if (!response.getSuccess()) {
+                throw new RuntimeException("Delete failed: " + response.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Delete failed", e);
         }
     }
 
@@ -135,6 +154,13 @@ public class StorageGrpcClient {
                 .setFileId(fileId)
                 .build();
 
-        blockingStub.downloadFile(request).forEachRemaining(observer);
+        try {
+            blockingStub
+                    .withDeadlineAfter(streamDeadlineSeconds, TimeUnit.SECONDS)
+                    .downloadFile(request)
+                    .forEachRemaining(observer);
+        } catch (Exception e) {
+            throw new RuntimeException("Download stream failed", e);
+        }
     }
 }
