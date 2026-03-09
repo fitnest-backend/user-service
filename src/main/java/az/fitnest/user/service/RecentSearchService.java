@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -125,5 +126,26 @@ public class RecentSearchService {
                 .type(search.getType())
                 .createdDate(search.getCreatedDate())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PackageOption> getUpgradableOptions(String currentPackage, String currentOption) {
+        List<PackageOption> upgradableOptions = new ArrayList<>();
+
+        // Fetch all options for the current package
+        List<PackageOption> currentPackageOptions = packageRepository.findOptionsByPackageName(currentPackage);
+        for (PackageOption option : currentPackageOptions) {
+            if (option.isBetterThan(currentOption)) {
+                upgradableOptions.add(option);
+            }
+        }
+
+        // Fetch all options for higher-tier packages
+        List<String> higherTierPackages = packageRepository.findHigherTierPackages(currentPackage);
+        for (String packageName : higherTierPackages) {
+            upgradableOptions.addAll(packageRepository.findOptionsByPackageName(packageName));
+        }
+
+        return upgradableOptions;
     }
 }

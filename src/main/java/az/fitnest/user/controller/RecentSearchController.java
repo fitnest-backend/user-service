@@ -33,12 +33,12 @@ public class RecentSearchController {
     })
     @GetMapping
     public ResponseEntity<PaginatedResponse<RecentSearchDto>> getRecentSearches(
-            @Parameter(description = "Axtarış növü (GYM, STORE və ya ALL)") @RequestParam("type") String type,
+            @Parameter(description = "Axtarış növü (GYM, STORE və ya ALL)") @RequestParam(value = "type", required = false) String type,
             @Parameter(description = "Səhifə indeksi (1-dən başlayaraq)") @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "Hər səhifədəki elementlərin sayı") @RequestParam(defaultValue = "10") int page_size,
             @Parameter(description = "Çeşidləmə qaydası (asc, desc)") @RequestParam(value = "sort_dir", defaultValue = "desc") String sortDir) {
         Long userId = getCurrentUserId();
-        return ResponseEntity.ok(recentSearchService.getRecentSearches(userId, type.toUpperCase(), page, page_size, sortDir));
+        return ResponseEntity.ok(recentSearchService.getRecentSearches(userId, type, page, page_size, sortDir));
     }
 
     @Operation(summary = "Axtarışı yadda saxlayın", description = "Yeni axtarış sorğusunu istifadəçinin son axtarış tarixçəsinə əlavə edir.")
@@ -49,14 +49,15 @@ public class RecentSearchController {
             @ApiResponse(responseCode = "401", description = "Autentifikasiya tələb olunur")
     })
     @PostMapping
-    public ResponseEntity<Void> saveSearch(
-            @Parameter(description = "Axtarış növü (GYM, STORE)") @RequestParam("type") String type,
-            @Parameter(description = "Axtarış sorğusu") @RequestParam("query") String query) {
-        Long userId = getCurrentUserId();
-        if (userId != null && query != null && !query.trim().isEmpty()) {
-            recentSearchService.saveSearch(userId, query, type.toUpperCase());
+    public ResponseEntity<Void> saveRecentSearch(
+            @RequestParam("type") String type,
+            @RequestParam("query") String query) {
+        if (type == null || type.isEmpty()) {
+            throw new IllegalArgumentException("Type is required for saving recent searches.");
         }
-        return ResponseEntity.status(201).build();
+        Long userId = getCurrentUserId();
+        recentSearchService.saveSearch(userId, query, type);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Xüsusi axtarışı silin", description = "İstifadəçinin keçmişindən xüsusi bir axtarış sorğusunu silir.")
