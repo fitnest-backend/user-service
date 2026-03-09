@@ -1,6 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.dto.ApiResponse;
+import az.fitnest.user.dto.ErrorResponse;
 import az.fitnest.user.dto.request.LanguageCreateRequest;
 import az.fitnest.user.dto.response.LanguageDto;
 import az.fitnest.user.service.LanguageService;
@@ -28,7 +29,9 @@ public class AdminLanguageController {
     @Operation(summary = "Bütün dilləri əldə edin", description = "Sistemdə dəstəklənən bütün dillərin tam siyahısını əldə edir. Bu ucluq administratorlar üçün məhdudlaşdırılıb və konfiqurasiya məqsədləri üçün dil kodlarını və adlarını təqdim edir.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dillər uğurla əldə edildi",
-                    content = @Content(schema = @Schema(implementation = LanguageDto.class)))
+                    content = @Content(schema = @Schema(implementation = LanguageDto.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -52,7 +55,8 @@ public class AdminLanguageController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Dil uğurla yaradıldı",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -65,7 +69,8 @@ public class AdminLanguageController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Dil uğurla yeniləndi",
                     content = @Content(schema = @Schema(implementation = LanguageDto.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Dil tapılmadı"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Yanlış sorğu məlumatı",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{code}")

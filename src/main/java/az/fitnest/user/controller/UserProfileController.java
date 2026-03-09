@@ -53,7 +53,9 @@ public class UserProfileController {
     @Operation(summary = "Cari istifadəçi profilini əldə edin", description = "Autentifikasiya olunmuş istifadəçinin tam profil təfərrüatlarını qaytarır.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil uğurla əldə edildi",
-                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"user_id\": 1, \"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john.doe@example.com\", \"mobile\": \"+994500000000\", \"profile_image_url\": \"null\", \"current_subscription\": \"Bronze\"}")))
+                    content = @Content(schema = @Schema(implementation = UserProfileResponse.class), examples = @ExampleObject(value = "{\"user_id\": 1, \"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john.doe@example.com\", \"mobile\": \"+994500000000\", \"profile_image_url\": \"null\", \"current_subscription\": \"Bronze\"}"))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Profil tapılmadı",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> getMe() {

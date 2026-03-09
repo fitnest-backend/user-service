@@ -47,8 +47,10 @@ public class GoalReferenceController {
     @GetMapping("/{code}")
     @Operation(summary = "Hədəfi kod vasitəsilə əldə edin", description = "Unikal kodu vasitəsilə xüsusi hədəfi əldə edir.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf tapıldı"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf tapıldı",
+                    content = @Content(schema = @Schema(implementation = GoalItemResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<ApiResponse<GoalItemResponse>> getGoalByCode(
             @Parameter(description = "Hədəfin unikal kodu (məsələn, LOSE_WEIGHT)") @PathVariable String code) {
