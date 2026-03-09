@@ -253,10 +253,17 @@ public class UserProfileController {
     @GetMapping("/profile/images/{fsId}")
     public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
         logger.info("streamProfileImage called for fsId: {}", fsId);
-        Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
-        logger.info("Authentication object: {}", authentication);
-        if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
-            logger.warn("Authorization failed for streaming profile image: {}", fsId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            logger.warn("Authorization failed: not authenticated for fsId: {}", fsId);
+            return ResponseEntity.status(403).build();
+        }
+        boolean hasRole = authentication.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch(auth -> auth.equals("ROLE_USER") || auth.equals("ROLE_ADMIN") || auth.equals("ROLE_SUPER_ADMIN") ||
+                        auth.equals("USER") || auth.equals("ADMIN") || auth.equals("SUPER_ADMIN"));
+        if (!hasRole) {
+            logger.warn("Authorization failed: missing role for fsId: {}", fsId);
             return ResponseEntity.status(403).build();
         }
         logger.info("Authorization passed for streaming profile image: {}", fsId);
@@ -269,17 +276,20 @@ public class UserProfileController {
                     SecurityContext previous = SecurityContextHolder.getContext();
                     try {
                         SecurityContextHolder.setContext(securityContext);
-                        storageGrpcClient.downloadFile(fsId, response -> {
-                            if (response.hasFileData()) {
-                                try {
-                                    outputStream.write(response.getFileData().toByteArray());
-                                } catch (Exception e) {
-                                    logger.error("Failed to stream file for fsId: {}", fsId, e);
-                                    throw new RuntimeException("Failed to stream file", e);
+                        try {
+                            storageGrpcClient.downloadFile(fsId, response -> {
+                                if (response.hasFileData()) {
+                                    try {
+                                        outputStream.write(response.getFileData().toByteArray());
+                                    } catch (Exception e) {
+                                        logger.error("Failed to stream file for fsId: {}", fsId, e);
+                                    }
                                 }
-                            }
-                        });
-                        outputStream.flush();
+                            });
+                            outputStream.flush();
+                        } catch (Exception e) {
+                            logger.error("Download stream failed for fsId: {}", fsId, e);
+                        }
                     } finally {
                         SecurityContextHolder.setContext(previous);
                     }

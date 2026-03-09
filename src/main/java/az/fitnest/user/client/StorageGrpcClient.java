@@ -63,8 +63,15 @@ public class StorageGrpcClient {
 
     private String getJwtToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getCredentials() != null) {
-            return authentication.getCredentials().toString();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object credentials = authentication.getCredentials();
+            if (credentials != null) {
+                String jwt = credentials.toString();
+                if (jwt.startsWith("Bearer ")) {
+                    jwt = jwt.substring(7);
+                }
+                return jwt;
+            }
         }
         return null;
     }
@@ -184,14 +191,14 @@ public class StorageGrpcClient {
         az.fitnest.storage.grpc.DownloadFileRequest request = az.fitnest.storage.grpc.DownloadFileRequest.newBuilder()
                 .setFileId(fileId)
                 .build();
-
         try {
             getAuthenticatedBlockingStub()
                     .withDeadlineAfter(streamDeadlineSeconds, TimeUnit.SECONDS)
                     .downloadFile(request)
                     .forEachRemaining(observer);
         } catch (Exception e) {
-            throw new RuntimeException("Download stream failed", e);
+            // Send an empty DownloadFileResponse to indicate error
+            observer.accept(az.fitnest.storage.grpc.DownloadFileResponse.newBuilder().build());
         }
     }
 }
