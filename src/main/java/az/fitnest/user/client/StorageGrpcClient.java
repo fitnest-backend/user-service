@@ -10,9 +10,13 @@ import az.fitnest.storage.grpc.UploadFileRequest;
 import az.fitnest.storage.grpc.UploadFileResponse;
 import az.fitnest.user.dto.response.StorageFileData;
 import com.google.protobuf.ByteString;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +41,33 @@ public class StorageGrpcClient {
 
     @Value("${grpc.storage.stream.deadline.seconds:300}")
     private long streamDeadlineSeconds;
+
+    private StorageServiceGrpc.StorageServiceStub getAuthenticatedAsyncStub() {
+        Metadata metadata = new Metadata();
+        String jwt = getJwtToken();
+        if (jwt != null) {
+            metadata.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer " + jwt);
+        }
+        // Use interceptor method:
+        return asyncStub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata));
+    }
+
+    private StorageServiceGrpc.StorageServiceBlockingStub getAuthenticatedBlockingStub() {
+        Metadata metadata = new Metadata();
+        String jwt = getJwtToken();
+        if (jwt != null) {
+            metadata.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer " + jwt);
+        }
+        return blockingStub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata));
+    }
+
+    private String getJwtToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getCredentials() != null) {
+            return authentication.getCredentials().toString();
+        }
+        return null;
+    }
 
     public StorageFileData uploadFile(MultipartFile file, String directory) {
         return uploadFile(file, directory, null);
@@ -73,7 +104,7 @@ public class StorageGrpcClient {
             }
         };
 
-        StreamObserver<UploadFileRequest> requestObserver = asyncStub.uploadFile(responseObserver);
+        StreamObserver<UploadFileRequest> requestObserver = getAuthenticatedAsyncStub().uploadFile(responseObserver);
 
         try {
             FileMetadata.Builder metadataBuilder = FileMetadata.newBuilder()
@@ -120,7 +151,7 @@ public class StorageGrpcClient {
                 .setFileId(fileId)
                 .build();
         try {
-            GetDownloadUrlResponse response = blockingStub
+            GetDownloadUrlResponse response = getAuthenticatedBlockingStub()
                     .withDeadlineAfter(unaryDeadlineSeconds, TimeUnit.SECONDS)
                     .getDownloadUrl(request);
             if (response.getSuccess()) {
@@ -138,7 +169,7 @@ public class StorageGrpcClient {
                 .addAllPaths(paths)
                 .build();
         try {
-            DeleteFilesResponse response = blockingStub
+            DeleteFilesResponse response = getAuthenticatedBlockingStub()
                     .withDeadlineAfter(unaryDeadlineSeconds, TimeUnit.SECONDS)
                     .deleteFiles(request);
             if (!response.getSuccess()) {
@@ -155,7 +186,7 @@ public class StorageGrpcClient {
                 .build();
 
         try {
-            blockingStub
+            getAuthenticatedBlockingStub()
                     .withDeadlineAfter(streamDeadlineSeconds, TimeUnit.SECONDS)
                     .downloadFile(request)
                     .forEachRemaining(observer);
