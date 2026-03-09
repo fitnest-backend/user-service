@@ -183,7 +183,7 @@ grpc:
       keep-alive-timeout: 5s
       deadline-after: 10s
     storage-service:
-      address: 'static://storage-service:9090'
+      address: 'dns:///storage-service.fitnest-dev.svc.cluster.local:9090'
       negotiation-type: plaintext
     identity:
       deadline-ms: ${IDENTITY_GRPC_DEADLINE_MS:30000}
