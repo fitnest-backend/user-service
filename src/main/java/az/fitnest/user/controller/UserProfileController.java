@@ -35,6 +35,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -46,6 +48,8 @@ public class UserProfileController {
     private final CachedIdentityGrpcClient cachedIdentityGrpcClient;
     private final TranslationRepository translationRepository;
     private final StorageGrpcClient storageGrpcClient;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
     @Operation(summary = "İstifadəçi xülasəsini əldə edin", description = "İstifadəçinin profili və tərəqqisi haqqında qısa xülasə qaytarır.")
     @ApiResponses(value = {
@@ -248,18 +252,20 @@ public class UserProfileController {
 
     @GetMapping("/profile/images/{fsId}")
     public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
-        // Immediate authorization check to avoid AuthorizationDeniedException after response committed
+        logger.info("streamProfileImage called for fsId: {}", fsId);
         Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
+        logger.info("Authentication object: {}", authentication);
         if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
+            logger.warn("Authorization failed for streaming profile image: {}", fsId);
             return ResponseEntity.status(403).build();
         }
-
+        logger.info("Authorization passed for streaming profile image: {}", fsId);
         SecurityContext securityContext = SecurityContextHolder.getContext();
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
+                    logger.info("Streaming profile image started for fsId: {}", fsId);
                     SecurityContext previous = SecurityContextHolder.getContext();
                     try {
                         SecurityContextHolder.setContext(securityContext);
@@ -267,15 +273,13 @@ public class UserProfileController {
                             if (response.hasFileData()) {
                                 try {
                                     outputStream.write(response.getFileData().toByteArray());
-                                } catch (java.io.IOException e) {
+                                } catch (Exception e) {
+                                    logger.error("Failed to stream file for fsId: {}", fsId, e);
                                     throw new RuntimeException("Failed to stream file", e);
                                 }
                             }
                         });
-                        try {
-                            outputStream.flush();
-                        } catch (java.io.IOException e) {
-                        }
+                        outputStream.flush();
                     } finally {
                         SecurityContextHolder.setContext(previous);
                     }

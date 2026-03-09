@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -42,6 +44,7 @@ import java.util.List;
 public class GoalReferenceController {
 
     private final GoalReferenceService goalReferenceService;
+    private static final Logger logger = LoggerFactory.getLogger(GoalReferenceController.class);
 
     @GetMapping
     @Operation(summary = "Bütün hədəf arayışlarını əldə edin", description = "Mövcud olan bütün hədəflərin siyahısını əldə edir.")
@@ -72,29 +75,24 @@ public class GoalReferenceController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Şəkil tapılmadı")
     })
     public ResponseEntity<StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
-        // Immediate authorization check to avoid AuthorizationDeniedException after response committed
+        logger.info("streamGoalImage called for fsId: {}", fsId);
         Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
+        logger.info("Authentication object: {}", authentication);
         if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
+            logger.warn("Authorization failed for streaming goal image: {}", fsId);
             return ResponseEntity.status(403).build();
         }
-
-        // Capture SecurityContext to propagate into streaming thread
+        logger.info("Authorization passed for streaming goal image: {}", fsId);
         SecurityContext securityContext = SecurityContextHolder.getContext();
-
         StreamingResponseBody underlying = goalReferenceService.streamGoalImage(fsId);
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
+                    logger.info("Streaming goal image started for fsId: {}", fsId);
                     SecurityContext previous = SecurityContextHolder.getContext();
                     try {
                         SecurityContextHolder.setContext(securityContext);
                         underlying.writeTo(outputStream);
-                        try {
-                            outputStream.flush();
-                        } catch (java.io.IOException ignored) {
-                        }
                     } finally {
                         SecurityContextHolder.setContext(previous);
                     }
