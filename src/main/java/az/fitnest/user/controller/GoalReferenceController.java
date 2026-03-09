@@ -4,6 +4,7 @@ import az.fitnest.user.service.GoalReferenceService;
 import az.fitnest.user.model.entity.GoalReference;
 import az.fitnest.user.dto.response.GoalItemResponse;
 import az.fitnest.user.dto.ApiResponse;
+import az.fitnest.user.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
