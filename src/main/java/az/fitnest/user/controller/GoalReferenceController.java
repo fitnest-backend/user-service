@@ -21,10 +21,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.List;
 
 @RestController
@@ -65,9 +72,44 @@ public class GoalReferenceController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Şəkil tapılmadı")
     })
     public ResponseEntity<StreamingResponseBody> streamGoalImage(@PathVariable String fsId) {
+        // Immediate authorization check to avoid AuthorizationDeniedException after response committed
+        Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
+        if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
+            return ResponseEntity.status(403).build();
+        }
+
+        // Capture SecurityContext to propagate into streaming thread
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+
+        StreamingResponseBody underlying = goalReferenceService.streamGoalImage(fsId);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
-                .body(goalReferenceService.streamGoalImage(fsId));
+                .body(outputStream -> {
+                    SecurityContext previous = SecurityContextHolder.getContext();
+                    try {
+                        SecurityContextHolder.setContext(securityContext);
+                        underlying.writeTo(outputStream);
+                        try {
+                            outputStream.flush();
+                        } catch (java.io.IOException ignored) {
+                        }
+                    } finally {
+                        SecurityContextHolder.setContext(previous);
+                    }
+                });
+    }
+
+    // Helper: checks if the authentication has any of the supplied logical role names. Accepts both
+    // authorities with and without the "ROLE_" prefix (to be forgiving).
+    private boolean hasAnyRole(Authentication authentication, String... roles) {
+        if (authentication == null) return false;
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        if (authorities == null || authorities.isEmpty()) return false;
+
+        return Arrays.stream(roles)
+                .filter(Objects::nonNull)
+                .anyMatch(role -> authorities.stream().map(GrantedAuthority::getAuthority).anyMatch(auth -> auth.equals(role) || auth.equals("ROLE_" + role)));
     }
 }

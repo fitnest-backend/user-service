@@ -28,6 +28,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import az.fitnest.user.client.StorageGrpcClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/v1/me")
@@ -241,24 +245,50 @@ public class UserProfileController {
 
     @GetMapping("/profile/images/{fsId}")
     public ResponseEntity<StreamingResponseBody> streamProfileImage(@PathVariable String fsId) {
+        // Immediate authorization check to avoid AuthorizationDeniedException after response committed
+        Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
+        if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
+            return ResponseEntity.status(403).build();
+        }
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
                 .body(outputStream -> {
-                    storageGrpcClient.downloadFile(fsId, response -> {
-                        if (response.hasFileData()) {
-                            try {
-                                outputStream.write(response.getFileData().toByteArray());
-                            } catch (java.io.IOException e) {
-                                throw new RuntimeException("Failed to stream file", e);
-                            }
-                        }
-                    });
+                    SecurityContext previous = SecurityContextHolder.getContext();
                     try {
-                        outputStream.flush();
-                    } catch (java.io.IOException e) {
+                        SecurityContextHolder.setContext(securityContext);
+                        storageGrpcClient.downloadFile(fsId, response -> {
+                            if (response.hasFileData()) {
+                                try {
+                                    outputStream.write(response.getFileData().toByteArray());
+                                } catch (java.io.IOException e) {
+                                    throw new RuntimeException("Failed to stream file", e);
+                                }
+                            }
+                        });
+                        try {
+                            outputStream.flush();
+                        } catch (java.io.IOException e) {
+                        }
+                    } finally {
+                        SecurityContextHolder.setContext(previous);
                     }
                 });
+    }
+
+    // Helper: checks if the authentication has any of the supplied logical role names. Accepts both
+    // authorities with and without the "ROLE_" prefix (to be forgiving).
+    private boolean hasAnyRole(Authentication authentication, String... roles) {
+        if (authentication == null) return false;
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        if (authorities == null || authorities.isEmpty()) return false;
+
+        return Arrays.stream(roles)
+                .filter(Objects::nonNull)
+                .anyMatch(role -> authorities.stream().map(GrantedAuthority::getAuthority).anyMatch(auth -> auth.equals(role) || auth.equals("ROLE_" + role)));
     }
 
     private String getUserLanguage() {
