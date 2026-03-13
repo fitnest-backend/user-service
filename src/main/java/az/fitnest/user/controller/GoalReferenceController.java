@@ -99,8 +99,6 @@ public class GoalReferenceController {
                 });
     }
 
-    // Helper: checks if the authentication has any of the supplied logical role names. Accepts both
-    // authorities with and without the "ROLE_" prefix (to be forgiving).
     private boolean hasAnyRole(Authentication authentication, String... roles) {
         if (authentication == null) return false;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

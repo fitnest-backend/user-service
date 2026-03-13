@@ -266,8 +266,7 @@ public class UserProfileController {
             logger.warn("Authorization failed: missing role for fsId: {}", fsId);
             return ResponseEntity.status(403).build();
         }
-        // Pre-check file access before streaming
-        boolean canAccess = storageGrpcClient.canAccessFile(fsId); // You need to implement this method
+        boolean canAccess = storageGrpcClient.canAccessFile(fsId);
         if (!canAccess) {
             logger.warn("Storage access denied for fsId: {}", fsId);
             return ResponseEntity.status(403).build();
@@ -302,8 +301,6 @@ public class UserProfileController {
                 });
     }
 
-    // Helper: checks if the authentication has any of the supplied logical role names. Accepts both
-    // authorities with and without the "ROLE_" prefix (to be forgiving).
     private boolean hasAnyRole(Authentication authentication, String... roles) {
         if (authentication == null) return false;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

@@ -48,7 +48,6 @@ public class StorageGrpcClient {
         if (jwt != null) {
             metadata.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer " + jwt);
         }
-        // Use interceptor method:
         return asyncStub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata));
     }
 
@@ -197,15 +196,10 @@ public class StorageGrpcClient {
                     .downloadFile(request)
                     .forEachRemaining(observer);
         } catch (Exception e) {
-            // Send an empty DownloadFileResponse to indicate error
             observer.accept(az.fitnest.storage.grpc.DownloadFileResponse.newBuilder().build());
         }
     }
 
-    /**
-     * Checks if the current user can access the file by attempting to fetch metadata.
-     * Returns true if access is granted, false otherwise.
-     */
     public boolean canAccessFile(String fileId) {
         az.fitnest.storage.grpc.GetDownloadUrlRequest request = az.fitnest.storage.grpc.GetDownloadUrlRequest.newBuilder()
                 .setFileId(fileId)
