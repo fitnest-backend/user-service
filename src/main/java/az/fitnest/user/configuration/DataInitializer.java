@@ -44,9 +44,10 @@ public class DataInitializer {
     }
 
     private void createLanguageIfNotFound(String code) {
-        if (!languageRepository.existsByCode(code)) {
+        String upperCode = code.toUpperCase();
+        if (!languageRepository.existsByCode(upperCode)) {
             Language language = new Language();
-            language.setCode(code);
+            language.setCode(upperCode);
             languageRepository.save(language);
         }
     }

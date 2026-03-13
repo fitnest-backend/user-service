@@ -367,11 +367,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
-        languageRepository.findByCode(request.language())
+        String upperLang = request.language().toUpperCase();
+        languageRepository.findByCode(upperLang)
                 .orElseThrow(() -> new BadRequestException("error.invalid_language_code"));
-
         Long userId = UserContext.getCurrentUserId();
-        cachedIdentityClient.updateLanguage(userId, request.language());
+        cachedIdentityClient.updateLanguage(userId, upperLang);
     }
 
     @Transactional(readOnly = true)

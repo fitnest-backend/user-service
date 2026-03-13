@@ -38,7 +38,7 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public LanguageDto createLanguage(LanguageCreateRequest request) {
         Language language = Language.builder()
-                .code(request.code())
+                .code(request.code().toUpperCase())
                 .build();
         language = languageRepository.save(language);
         return toDto(language);
@@ -47,12 +47,13 @@ public class LanguageServiceImpl implements LanguageService {
     @Transactional
     @Override
     public LanguageDto updateLanguage(String code, LanguageCreateRequest request) {
-        Language language = languageRepository.findById(code)
+        Language language = languageRepository.findById(code.toUpperCase())
                 .orElseThrow(() -> new ResourceNotFoundException("error.resource_not_found"));
-        if (!language.getCode().equals(request.code()) && languageRepository.existsByCode(request.code())) {
+        String newCode = request.code().toUpperCase();
+        if (!language.getCode().equals(newCode) && languageRepository.existsByCode(newCode)) {
             throw new BadRequestException("error.resource_already_exists");
         }
-        language.setCode(request.code());
+        language.setCode(newCode);
         language = languageRepository.save(language);
         return toDto(language);
     }
