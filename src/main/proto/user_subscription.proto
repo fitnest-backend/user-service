@@ -10,6 +10,7 @@ service UserSubscriptionService {
   rpc GetActiveSubscription(GetActiveSubscriptionRequest) returns (ActiveSubscriptionResponse);
   rpc GetUserIdsByPackageId(GetUserIdsByPackageIdRequest) returns (GetUserIdsByPackageIdResponse);
   rpc GetUserIdsByDurationMonths(GetUserIdsByDurationMonthsRequest) returns (GetUserIdsByPackageIdResponse);
+  rpc GetUserIdsByType(GetUserIdsByTypeRequest) returns (GetUserIdsByPackageIdResponse);
 }
 
 message GetActiveSubscriptionRequest {
@@ -31,4 +32,8 @@ message GetUserIdsByPackageIdResponse {
 
 message GetUserIdsByDurationMonthsRequest {
   int32 duration_months = 1;
+}
+
+message GetUserIdsByTypeRequest {
+  string type = 1;
 }
