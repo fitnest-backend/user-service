@@ -173,6 +173,8 @@ logging:
     feign.Logger: ${LOGGING_LEVEL_FEIGN_LOGGER:OFF}
 
 grpc:
+  server:
+    port: 9090
   client:
     identity-service:
       address: 'static://identity-service:9090'
@@ -199,4 +201,3 @@ grpc:
     notifications-service:
       address: 'static://notifications-service:9090'
       negotiation-type: plaintext
-
