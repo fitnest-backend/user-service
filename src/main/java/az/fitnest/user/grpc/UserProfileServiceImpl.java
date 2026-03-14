@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 
-@Service
+@Service("grpcUserProfileServiceImpl")
 public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileServiceImplBase {
     @Autowired
     private UserProfileRepository userProfileRepository;
