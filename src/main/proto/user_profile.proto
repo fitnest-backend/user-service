@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package az.fitnest.user;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.user.grpc";
+option java_outer_classname = "UserProfileProto";
+
+service UserProfileService {
+  rpc GetUserProfileDetails(GetUserProfileDetailsRequest) returns (UserProfileDetailsResponse);
+}
+
+message GetUserProfileDetailsRequest {
+  int64 user_id = 1;
+}
+
+message UserProfileDetailsResponse {
+  int64 user_id = 1;
+  string registration_date = 2;
+  string platform = 3;
+  string phone_number = 4;
+  string email = 5;
+  string birth_date = 6;
+  string goal = 7;
+  double height = 8;
+  double weight = 9;
+  double bmi_index = 10;
+}
+

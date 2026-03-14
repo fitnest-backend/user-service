@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package az.fitnest.notifications;
+
+option java_multiple_files = true;
+option java_package = "az.fitnest.notifications.grpc";
+option java_outer_classname = "DevicePlatformProto";
+
+service DevicePlatformService {
+  rpc GetUserPlatform(GetUserPlatformRequest) returns (GetUserPlatformResponse);
+}
+
+message GetUserPlatformRequest {
+  int64 user_id = 1;
+}
+
+message GetUserPlatformResponse {
+  string platform = 1;
+}
+
