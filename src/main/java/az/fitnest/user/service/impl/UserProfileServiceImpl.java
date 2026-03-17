@@ -118,9 +118,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         String currentSubscription = null;
         String subscriptionStatus = null;
         try {
-            logger.info("Calling orderGrpcClient.getActiveSubscription for userId={}", userId);
+            logger.debug("Calling orderGrpcClient.getActiveSubscription for userId={}", userId);
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-            logger.info("Received ActiveSubscriptionResponse: {}", r);
+            logger.debug("Received ActiveSubscriptionResponse: {}", r);
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
@@ -132,7 +132,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             logger.error("Failed to fetch subscription for userId={}: {}", userId, e.getMessage(), e);
             currentSubscription = "No Plan";
         }
-        logger.info("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}", userId, currentSubscription, subscriptionStatus);
+        logger.debug("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}", userId, currentSubscription, subscriptionStatus);
         return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
