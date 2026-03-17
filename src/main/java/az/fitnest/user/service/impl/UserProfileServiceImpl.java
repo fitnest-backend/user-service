@@ -52,6 +52,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final LanguageService languageService;
     private final org.springframework.context.MessageSource messageSource;
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserProfileServiceImpl.class);
+
     private Long currentUserId() {
         return UserContext.getCurrentUserId();
     }
@@ -116,20 +118,21 @@ public class UserProfileServiceImpl implements UserProfileService {
         String currentSubscription = null;
         String subscriptionStatus = null;
         try {
+            logger.info("Calling orderGrpcClient.getActiveSubscription for userId={}", userId);
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-
+            logger.info("Received ActiveSubscriptionResponse: {}", r);
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             }
-
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 subscriptionStatus = r.getSubscriptionStatus();
             }
         } catch (Exception e) {
+            logger.error("Failed to fetch subscription for userId={}: {}", userId, e.getMessage(), e);
             currentSubscription = "No Plan";
         }
-
+        logger.info("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}", userId, currentSubscription, subscriptionStatus);
         return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
