@@ -127,16 +127,6 @@ public class UserProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "İstifadəçiyə təyin edilmiş hədəf arayışını əldə edin", description = "İstifadəçiyə təyin edilmiş sağlamlıq və fitnes hədəfini qaytarır.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf arayışı uğurla əldə edildi",
-                    content = @Content(schema = @Schema(implementation = GoalResponse.class)))
-    })
-    @GetMapping("/reference/goals")
-    public ResponseEntity<ApiResponse<GoalResponse>> getReferenceGoal() {
-        String userLanguage = getUserLanguage();
-        return ResponseEntity.ok(ApiResponse.success(userProfileService.getGoal(userLanguage)));
-    }
 
     @Operation(summary = "İstifadəçi hədəfini yeniləyin", description = "İstifadəçinin əsas fitnes və ya sağlamlıq hədəfini yeniləyir.")
     @ApiResponses(value = {
