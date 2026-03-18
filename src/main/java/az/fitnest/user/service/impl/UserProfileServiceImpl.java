@@ -103,7 +103,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    @Cacheable(cacheNames = "user_me", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     @Override
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
