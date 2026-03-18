@@ -1,5 +1,4 @@
 package az.fitnest.user.service.impl;
-// ...existing imports...
 import java.util.Map;
 import org.springframework.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,4 +18,3 @@ public class SubscriptionEventListener {
         }
     }
 }
-// ...existing code...
