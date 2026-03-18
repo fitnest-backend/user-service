@@ -120,13 +120,17 @@ public class UserProfileServiceImpl implements UserProfileService {
         try {
             logger.debug("Calling orderGrpcClient.getActiveSubscription for userId={}", userId);
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-            logger.debug("Received ActiveSubscriptionResponse: {}", r);
+            logger.debug("Received ActiveSubscriptionResponse: package_name={}, subscription_status={}", r.getPackageName(), r.getSubscriptionStatus());
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
+            } else {
+                logger.warn("No package_name returned for userId={}, defaulting to 'No Plan'", userId);
             }
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 subscriptionStatus = r.getSubscriptionStatus();
+            } else {
+                logger.warn("No valid subscription_status returned for userId={}, defaulting to 'none'", userId);
             }
         } catch (Exception e) {
             logger.error("Failed to fetch subscription for userId={}: {}", userId, e.getMessage(), e);
