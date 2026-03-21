@@ -83,7 +83,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
-                subscriptionStatus = r.getSubscriptionStatus();
+                if (r.getSubscriptionStatus().equals("no_limits")) {
+                    subscriptionStatus = "No Entry Limits Left";
+                } else {
+                    subscriptionStatus = r.getSubscriptionStatus();
+                }
             }
         } catch (Exception e) {
             currentSubscription = "No Plan";
@@ -247,7 +251,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
-                subscriptionStatus = r.getSubscriptionStatus();
+                if (r.getSubscriptionStatus().equals("no_limits")) {
+                    subscriptionStatus = "No Entry Limits Left";
+                } else {
+                    subscriptionStatus = r.getSubscriptionStatus();
+                }
             }
         } catch (Exception e) {
             currentSubscription = "No Plan";
