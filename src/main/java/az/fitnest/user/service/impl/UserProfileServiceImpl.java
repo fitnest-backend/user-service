@@ -321,6 +321,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         String translatedGender = null;
         if (profile.getGender() != null) {
             translatedGender = translationService.getTranslatedValue("Gender", profile.getGender().name(), "label", language);
+            if (translatedGender == null || translatedGender.isBlank()) {
+                translatedGender = profile.getGender().name();
+            }
         }
 
         return BodyInfoResponse.builder()
