@@ -192,9 +192,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         checkSetupNotRequired();
         Long userId = UserContext.getCurrentUserId();
         UserProfile profile = getOrCreateProfile(userId);
-
         boolean dirty = false;
-
         if (request.heightCm() != null) {
             Double newHeight = request.heightCm().doubleValue();
             if (!Objects.equals(profile.getHeightCm(), newHeight)) {
@@ -209,6 +207,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             }
         }
         if (request.gender() != null) {
+            logger.info("[updateBody] Setting gender to: {} (was: {})", request.gender(), profile.getGender());
             if (!Objects.equals(profile.getGender(), request.gender())) {
                 profile.setGender(request.gender());
                 dirty = true;
@@ -220,8 +219,8 @@ public class UserProfileServiceImpl implements UserProfileService {
                 dirty = true;
             }
         }
-
         if (dirty) {
+            logger.info("[updateBody] Saving profile for user {} with gender: {}", userId, profile.getGender());
             userProfileRepository.save(profile);
         }
     }
@@ -469,24 +468,22 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             if (info.heightCm() != null) profile.setHeightCm(info.heightCm().doubleValue());
             if (info.weightKg() != null) profile.setWeightKg(info.weightKg());
-
             if (info.gender() != null) {
+                logger.info("[setupProfile] Setting gender to: {} (was: {})", info.gender(), profile.getGender());
                 try {
                     profile.setGender(Gender.valueOf(info.gender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
                     throw new BadRequestException("error.invalid_gender");
                 }
             }
-
             if (info.birthDate() != null) profile.setBirthDate(info.birthDate());
-
             if (info.goal() != null) {
                 goalReferenceRepository.findById(info.goal())
                         .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
                 profile.setGoalCode(info.goal());
             }
         }
-
+        logger.info("[setupProfile] Saving profile for user {} with gender: {}", userId, profile.getGender());
         userProfileRepository.save(profile);
 
         return SetupResponse.builder()
