@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
@@ -45,7 +44,7 @@ public class BmiCalculatorController {
         """
     )
     @ApiResponses(value = {
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "BMI uğurla hesablandı",
             content = @Content(
@@ -53,7 +52,7 @@ public class BmiCalculatorController {
                 schema = @Schema(implementation = BmiCalculatorResponse.class)
             )
         ),
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "400",
             description = "Daxil edilən məlumatlar yanlışdır (məsələn, mənfi və ya sıfır boy/çəki)",
             content = @Content
