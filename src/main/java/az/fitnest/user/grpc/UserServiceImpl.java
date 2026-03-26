@@ -5,11 +5,11 @@ import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.repository.UserProfileRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import az.fitnest.user.dto.response.IdentityUserResponse;
+import net.devh.boot.grpc.server.service.GrpcService;
 
-@Service
+@GrpcService
 public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
     @Autowired
     private UserProfileRepository userProfileRepository;
