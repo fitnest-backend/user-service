@@ -555,12 +555,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public BmiCalculatorResponse calculateBmi(BmiCalculatorRequest request) {
-        double height = request.height();
-        double weight = request.weight();
-        if (height <= 0 || weight <= 0) {
+        double heightCm = request.height();
+        double weightKg = request.weight();
+        if (heightCm <= 0 || weightKg <= 0) {
             throw new BadRequestException("Height and weight must be positive");
         }
-        double bmi = weight / (height * height);
+        double heightM = heightCm / 100.0;
+        double bmi = weightKg / (heightM * heightM);
         String category;
         if (bmi < 18.5) {
             category = "Underweight";
