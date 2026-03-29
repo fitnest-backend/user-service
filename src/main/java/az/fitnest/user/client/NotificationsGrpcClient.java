@@ -41,4 +41,21 @@ public class NotificationsGrpcClient {
             throw new RuntimeException("Failed to update notification preference via notifications-service", e);
         }
     }
+
+    public Boolean getUserDeviceNotificationEnabled(Long userId) {
+        try {
+            az.fitnest.notifications.grpc.GetDevicesByUserIdRequest request =
+                az.fitnest.notifications.grpc.GetDevicesByUserIdRequest.newBuilder()
+                    .setUserId(userId)
+                    .build();
+            az.fitnest.notifications.grpc.GetDevicesByUserIdResponse response =
+                notificationsStub.getDevicesByUserId(request);
+            if (response.getDevicesCount() > 0) {
+                az.fitnest.notifications.grpc.Device device = response.getDevices(0);
+                return device.getNotificationsEnabled();
+            }
+        } catch (Exception e) {
+        }
+        return true;
+    }
 }

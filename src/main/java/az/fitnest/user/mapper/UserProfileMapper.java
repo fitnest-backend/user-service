@@ -10,7 +10,7 @@ public final class UserProfileMapper {
     private UserProfileMapper() {
     }
 
-    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus) {
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus, Boolean notificationsEnabled) {
         if (userResponse == null) return null;
         return UserProfileResponse.builder()
                 .userId(userResponse.userId())
@@ -21,7 +21,12 @@ public final class UserProfileMapper {
                 .profileImageUrl(profileImageUrl)
                 .currentSubscription(currentSubscription)
                 .subscriptionStatus(subscriptionStatus)
+                .notificationsEnabled(notificationsEnabled)
                 .build();
+    }
+
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus) {
+        return toUserProfileResponse(userResponse, profileImageUrl, currentSubscription, subscriptionStatus, true);
     }
 
     public static GoalItemResponse toGoalItemResponse(GoalReference goal) {

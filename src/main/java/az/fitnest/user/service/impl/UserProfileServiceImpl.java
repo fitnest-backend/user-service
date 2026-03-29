@@ -139,8 +139,9 @@ public class UserProfileServiceImpl implements UserProfileService {
             logger.error("Failed to fetch subscription for userId={}: {}", userId, e.getMessage(), e);
             currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
-        logger.debug("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}", userId, currentSubscription, subscriptionStatus);
-        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
+        Boolean notificationsEnabled = notificationsGrpcClient.getUserDeviceNotificationEnabled(userId);
+        logger.debug("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}, notificationsEnabled={}", userId, currentSubscription, subscriptionStatus, notificationsEnabled);
+        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus, notificationsEnabled);
     }
 
     private UserProfile getOrCreateProfile(Long userId) {

@@ -13,6 +13,24 @@ service NotificationsService {
   rpc SendPushNotification (SendPushNotificationRequest) returns (SendPushNotificationResponse);
   rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse);
   rpc SetUserNotificationPreference (SetUserNotificationPreferenceRequest) returns (SetUserNotificationPreferenceResponse);
+  rpc GetDevicesByUserId (GetDevicesByUserIdRequest) returns (GetDevicesByUserIdResponse);
+}
+
+message Device {
+  int64 device_id = 1;
+  int64 user_id = 2;
+  string push_token = 3;
+  string platform = 4;
+  string created_at = 5;
+  bool notifications_enabled = 6;
+}
+
+message GetDevicesByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetDevicesByUserIdResponse {
+  repeated Device devices = 1;
 }
 
 message SendPushNotificationRequest {
