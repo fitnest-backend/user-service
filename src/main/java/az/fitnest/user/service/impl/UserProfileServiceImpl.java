@@ -51,6 +51,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final OrderGrpcClient orderGrpcClient;
     private final LanguageService languageService;
     private final org.springframework.context.MessageSource messageSource;
+    private final az.fitnest.user.client.NotificationsGrpcClient notificationsGrpcClient;
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserProfileServiceImpl.class);
 
@@ -377,6 +378,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void updatePreferences(UpdatePreferencesRequest request) {
+        Long userId = UserContext.getCurrentUserId();
+        Boolean notificationsEnabled = request.notificationsEnabled();
+        notificationsGrpcClient.setUserNotificationPreference(userId, notificationsEnabled);
     }
 
     @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
