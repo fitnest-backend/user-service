@@ -166,11 +166,17 @@ springdoc:
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
-    az.fitnest.user: DEBUG
-    az.fitnest.order: DEBUG
-    az.fitnest: DEBUG
+    az.fitnest.user: ${LOGGING_LEVEL_AZ_FITNEST_USER:DEBUG}
+    az.fitnest.order: ${LOGGING_LEVEL_AZ_FITNEST_ORDER:DEBUG}
+    az.fitnest: ${LOGGING_LEVEL_AZ_FITNEST:DEBUG}
     org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY:DEBUG}
     feign.Logger: ${LOGGING_LEVEL_FEIGN_LOGGER:OFF}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+  file:
+    name: logs/user-service.log
+    max-size: 10MB
+    max-history: 30
 
 grpc:
   server:
