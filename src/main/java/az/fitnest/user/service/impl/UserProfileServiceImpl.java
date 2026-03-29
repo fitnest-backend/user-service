@@ -64,23 +64,22 @@ public class UserProfileServiceImpl implements UserProfileService {
     public SummaryResponse getUserSummary() {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
-
         String profileImageUrl = identityUser.profileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
             profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
         } else {
             profileImageUrl = null;
         }
-
         String currentSubscription = null;
         String subscriptionStatus = null;
+        String langCode = identityUser.language() != null && !identityUser.language().isBlank() ? identityUser.language() : "AZ";
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
+            } else {
+                currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
             }
-
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 if (r.getSubscriptionStatus().equals("no_limits")) {
@@ -90,9 +89,8 @@ public class UserProfileServiceImpl implements UserProfileService {
                 }
             }
         } catch (Exception e) {
-            currentSubscription = "No Plan";
+            currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
-
         UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
 
         CountersResponse counters = CountersResponse.builder()
@@ -117,9 +115,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
-
         String currentSubscription = null;
         String subscriptionStatus = null;
+        String langCode = identityUser.language() != null && !identityUser.language().isBlank() ? identityUser.language() : "AZ";
         try {
             logger.debug("Calling orderGrpcClient.getActiveSubscription for userId={}", userId);
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
@@ -127,7 +125,8 @@ public class UserProfileServiceImpl implements UserProfileService {
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
             } else {
-                logger.warn("No package_name returned for userId={}, defaulting to 'No Plan'", userId);
+                logger.warn("No package_name returned for userId={}, defaulting to localized 'No Plan'", userId);
+                currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
             }
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
@@ -137,7 +136,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             }
         } catch (Exception e) {
             logger.error("Failed to fetch subscription for userId={}: {}", userId, e.getMessage(), e);
-            currentSubscription = "No Plan";
+            currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
         logger.debug("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}", userId, currentSubscription, subscriptionStatus);
         return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
@@ -238,16 +237,16 @@ public class UserProfileServiceImpl implements UserProfileService {
         } else {
             profileImageUrl = null;
         }
-
         String currentSubscription = null;
         String subscriptionStatus = null;
+        String langCode = updated.language() != null && !updated.language().isBlank() ? updated.language() : "AZ";
         try {
             az.fitnest.order.grpc.ActiveSubscriptionResponse r = orderGrpcClient.getActiveSubscription(userId);
-
             if (r.getPackageName() != null && !r.getPackageName().isEmpty()) {
                 currentSubscription = r.getPackageName();
+            } else {
+                currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
             }
-
             if (r.getSubscriptionStatus() != null && !r.getSubscriptionStatus().isEmpty()
                     && !r.getSubscriptionStatus().equals("none")) {
                 if (r.getSubscriptionStatus().equals("no_limits")) {
@@ -257,7 +256,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 }
             }
         } catch (Exception e) {
-            currentSubscription = "No Plan";
+            currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
 
         return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription, subscriptionStatus);
