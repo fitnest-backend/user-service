@@ -12,6 +12,7 @@ service NotificationsService {
   rpc SendSimpleEmail (SendSimpleEmailRequest) returns (SendEmailResponse);
   rpc SendPushNotification (SendPushNotificationRequest) returns (SendPushNotificationResponse);
   rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse);
+  rpc SetUserNotificationPreference (SetUserNotificationPreferenceRequest) returns (SetUserNotificationPreferenceResponse);
 }
 
 message SendPushNotificationRequest {
@@ -74,4 +75,14 @@ message GetNotificationsResponse {
   int32 total_pages = 2;
   int64 total_elements = 3;
   int32 current_page = 4;
+}
+
+message SetUserNotificationPreferenceRequest {
+  int64 user_id = 1;
+  bool notifications_enabled = 2;
+}
+
+message SetUserNotificationPreferenceResponse {
+  bool success = 1;
+  string error_message = 2;
 }
