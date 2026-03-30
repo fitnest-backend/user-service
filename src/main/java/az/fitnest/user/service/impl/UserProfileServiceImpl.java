@@ -377,6 +377,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return GoalsResponse.builder().items(items).build();
     }
 
+    @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
     public void updatePreferences(UpdatePreferencesRequest request) {
         Long userId = UserContext.getCurrentUserId();
