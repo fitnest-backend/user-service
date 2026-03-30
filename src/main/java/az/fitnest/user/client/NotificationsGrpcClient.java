@@ -35,8 +35,14 @@ public class NotificationsGrpcClient {
             az.fitnest.notifications.grpc.SetUserNotificationPreferenceResponse response =
                     notificationsStub.setUserNotificationPreference(request);
             if (!response.getSuccess()) {
-                throw new RuntimeException("Failed to update notification preference: " + response.getErrorMessage());
+                String errorMsg = response.getErrorMessage();
+                if ("No current device found for user".equals(errorMsg)) {
+                    throw new az.fitnest.user.exception.BadRequestException("error.notification.no_current_device");
+                }
+                throw new RuntimeException("Failed to update notification preference: " + errorMsg);
             }
+        } catch (az.fitnest.user.exception.BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update notification preference via notifications-service", e);
         }
