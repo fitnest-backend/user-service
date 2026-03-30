@@ -23,6 +23,7 @@ message Device {
   string platform = 4;
   string created_at = 5;
   bool notifications_enabled = 6;
+  bool is_current = 7;
 }
 
 message GetDevicesByUserIdRequest {
