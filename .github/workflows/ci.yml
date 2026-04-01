@@ -122,6 +122,6 @@ jobs:
           curl -k -X POST \
             -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
             -H "Content-Type: application/json" \
-            -H "Host: argocd.fitnest.az" \
-            https://161.97.183.7:31760/api/v1/applications/fitnest-user-service-dev/sync \
+            --resolve argocd.fitnest.az:31760:161.97.183.7 \
+            https://argocd.fitnest.az:31760/api/v1/applications/fitnest-user-service-dev/sync \
             -d '{}'
