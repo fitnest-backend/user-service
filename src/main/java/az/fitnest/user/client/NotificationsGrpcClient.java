@@ -60,12 +60,10 @@ public class NotificationsGrpcClient {
             az.fitnest.notifications.grpc.GetDevicesByUserIdResponse response =
                 notificationsStub.getDevicesByUserId(request);
             if (response.getDevicesCount() > 0) {
-                // Log all devices
                 for (int i = 0; i < response.getDevicesCount(); i++) {
                     az.fitnest.notifications.grpc.Device d = response.getDevices(i);
                     logger.info("[getUserDeviceNotificationEnabled] userId={}, deviceId={}, isCurrent={}, notificationsEnabled={}", userId, d.getDeviceId(), d.getIsCurrent(), d.getNotificationsEnabled());
                 }
-                // Find the device with isCurrent=true
                 for (int i = 0; i < response.getDevicesCount(); i++) {
                     az.fitnest.notifications.grpc.Device d = response.getDevices(i);
                     if (d.getIsCurrent()) {
@@ -73,7 +71,6 @@ public class NotificationsGrpcClient {
                         return d.getNotificationsEnabled();
                     }
                 }
-                // Fallback: use the first device if none is marked isCurrent
                 az.fitnest.notifications.grpc.Device d = response.getDevices(0);
                 logger.warn("[getUserDeviceNotificationEnabled] No device marked isCurrent, using first deviceId={} for notificationsEnabled={}", d.getDeviceId(), d.getNotificationsEnabled());
                 return d.getNotificationsEnabled();
