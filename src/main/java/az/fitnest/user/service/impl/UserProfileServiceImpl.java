@@ -338,7 +338,13 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         String title = translationService.getTranslatedValue("GoalReference", goalCode, "title", language);
+        if (title == null || title.isBlank()) {
+            title = reference.getTitle();
+        }
         String subtitle = translationService.getTranslatedValue("GoalReference", goalCode, "subtitle", language);
+        if (subtitle == null || subtitle.isBlank()) {
+            subtitle = reference.getSubtitle();
+        }
         return UserProfileMapper.toGoalResponse(reference, goalCode, title, subtitle);
     }
 
@@ -347,8 +353,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public GoalsResponse getReferenceGoals() {
         var items = goalReferenceRepository.findAllByOrderByGoalCodeAsc().stream()
                 .map(goal -> {
-                    String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", "AZ");
-                    String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", "AZ");
+                    String title = goal.getTitle();
+                    String subtitle = goal.getSubtitle();
                     return GoalItemResponse.builder()
                             .code(goal.getGoalCode())
                             .title(title)
@@ -412,6 +418,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         String goalTitle = null;
         if (profile.getGoalCode() != null && !profile.getGoalCode().isBlank()) {
             goalTitle = translationService.getTranslatedValue("GoalReference", profile.getGoalCode(), "title", language);
+            if (goalTitle == null || goalTitle.isBlank()) {
+                var refOpt = goalReferenceRepository.findById(profile.getGoalCode());
+                if (refOpt.isPresent()) {
+                    goalTitle = refOpt.get().getTitle();
+                }
+            }
         }
 
         return FitnessLevelResponse.builder()

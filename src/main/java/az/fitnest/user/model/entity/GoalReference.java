@@ -23,4 +23,13 @@ public class GoalReference {
     @Column
     @Schema(description = "URL of the goal image", example = "https://example.com/goal-image.jpg")
     private String imageUrl;
+
+    @Column
+    @Schema(description = "Azerbaijani title of the goal", example = "Çəki İdarəsi")
+    private String title;
+
+    @Column
+    @Schema(description = "Azerbaijani subtitle/description of the goal", example = "Fiziki fəaliyyət və kardio ilə artıq çəkini azaltmaq üçün məşqlər.")
+    private String subtitle;
 }
+

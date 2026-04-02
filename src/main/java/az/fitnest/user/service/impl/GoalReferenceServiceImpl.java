@@ -75,10 +75,11 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         }
         GoalReference goal = new GoalReference();
         goal.setGoalCode(code);
+        goal.setTitle(title);
+        goal.setSubtitle(subtitle);
         goalReferenceRepository.save(goal);
 
         createTranslationIfNotFound(code, "EN", title, subtitle);
-        createTranslationIfNotFound(code, "AZ", title, subtitle);
         createTranslationIfNotFound(code, "RU", title, subtitle);
 
         return goal;
@@ -90,8 +91,14 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
+        goal.setTitle(title);
+        goal.setSubtitle(subtitle);
+        goalReferenceRepository.save(goal);
+
         updateOrSaveTranslation(code, "EN", "title", title);
         updateOrSaveTranslation(code, "EN", "subtitle", subtitle);
+        updateOrSaveTranslation(code, "RU", "title", title);
+        updateOrSaveTranslation(code, "RU", "subtitle", subtitle);
 
         return goal;
     }
@@ -126,7 +133,13 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     private GoalItemResponse mapToResponse(GoalReference goal, String userLanguage) {
         String title = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "title", userLanguage);
+        if (title == null || title.isBlank()) {
+            title = goal.getTitle();
+        }
         String subtitle = translationService.getTranslatedValue("GoalReference", goal.getGoalCode(), "subtitle", userLanguage);
+        if (subtitle == null || subtitle.isBlank()) {
+            subtitle = goal.getSubtitle();
+        }
         return GoalItemResponse.builder()
                 .code(goal.getGoalCode())
                 .title(title)
