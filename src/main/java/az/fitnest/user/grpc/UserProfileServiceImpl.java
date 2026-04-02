@@ -12,7 +12,10 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.stereotype.Service;
+
 @GrpcService
+@Service("userProfileGrpcServiceImpl")
 public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileServiceImplBase {
     @Autowired
     private UserProfileRepository userProfileRepository;
