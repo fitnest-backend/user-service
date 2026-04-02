@@ -8,11 +8,11 @@ import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 
-@Service("grpcUserProfileServiceImpl")
+@GrpcService
 public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileServiceImplBase {
     @Autowired
     private UserProfileRepository userProfileRepository;
