@@ -7,11 +7,34 @@ option java_package = "az.fitnest.user.grpc";
 option java_outer_classname = "UserProfileProto";
 
 service UserProfileService {
-  rpc GetUserProfileDetails(GetUserProfileDetailsRequest) returns (UserProfileDetailsResponse);
+  rpc GetUserProfileDetails(UserProfileDetailsRequest) returns (UserProfileDetailsResponse);
+  rpc UpdateProfileImage(UpdateProfileImageDetailsRequest) returns (UserProfileDetailsStatus);
+  rpc GetUserByEmail(UserByEmailRequest) returns (UserProfileDetailsResponse);
+  rpc CreateUserProfile(CreateProfileRequest) returns (UserProfileDetailsStatus);
 }
 
-message GetUserProfileDetailsRequest {
+message UpdateProfileImageDetailsRequest {
   int64 user_id = 1;
+  string image_url = 2;
+}
+
+message UserProfileDetailsStatus {
+  bool success = 1;
+}
+
+message UserProfileDetailsRequest {
+  int64 user_id = 1;
+}
+
+message UserByEmailRequest {
+  string email = 1;
+}
+
+message CreateProfileRequest {
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
 }
 
 message UserProfileDetailsResponse {
@@ -25,5 +48,7 @@ message UserProfileDetailsResponse {
   double height = 8;
   double weight = 9;
   double bmi_index = 10;
+  string profile_image_url = 11;
+  string first_name = 12;
+  string last_name = 13;
 }
-

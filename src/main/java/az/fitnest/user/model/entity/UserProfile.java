@@ -39,4 +39,16 @@ public class UserProfile {
 
     @Column(name = "goal_code")
     private String goalCode;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "email")
+    private String email;
 }

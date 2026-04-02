@@ -10,14 +10,14 @@ public final class UserProfileMapper {
     private UserProfileMapper() {
     }
 
-    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus, Boolean notificationsEnabled) {
-        if (userResponse == null) return null;
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, UserProfile profile, String profileImageUrl, String currentSubscription, String subscriptionStatus, Boolean notificationsEnabled) {
+        if (userResponse == null || profile == null) return null;
         return UserProfileResponse.builder()
                 .userId(userResponse.userId())
-                .firstName(userResponse.firstName())
-                .lastName(userResponse.lastName())
+                .firstName(profile.getFirstName() != null ? profile.getFirstName() : "")
+                .lastName(profile.getLastName() != null ? profile.getLastName() : "")
                 .mobile(userResponse.mobile())
-                .email(userResponse.email())
+                .email(profile.getEmail() != null ? profile.getEmail() : "")
                 .profileImageUrl(profileImageUrl)
                 .currentSubscription(currentSubscription)
                 .subscriptionStatus(subscriptionStatus)
@@ -25,8 +25,8 @@ public final class UserProfileMapper {
                 .build();
     }
 
-    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, String profileImageUrl, String currentSubscription, String subscriptionStatus) {
-        return toUserProfileResponse(userResponse, profileImageUrl, currentSubscription, subscriptionStatus, true);
+    public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, UserProfile profile, String profileImageUrl, String currentSubscription, String subscriptionStatus) {
+        return toUserProfileResponse(userResponse, profile, profileImageUrl, currentSubscription, subscriptionStatus, true);
     }
 
     public static GoalItemResponse toGoalItemResponse(GoalReference goal) {

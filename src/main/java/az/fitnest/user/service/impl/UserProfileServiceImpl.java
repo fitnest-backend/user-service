@@ -65,12 +65,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public SummaryResponse getUserSummary() {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
-        String profileImageUrl = identityUser.profileImageUrl();
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
-        } else {
-            profileImageUrl = null;
-        }
+        UserProfile profile = getOrCreateProfile(userId);
+        String profileImageUrl = formatProfileImageUrl(profile.getProfileImageUrl());
         String currentSubscription = null;
         String subscriptionStatus = null;
         String langCode = identityUser.language() != null && !identityUser.language().isBlank() ? identityUser.language() : "AZ";
@@ -92,7 +88,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         } catch (Exception e) {
             currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
-        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus);
+        UserProfileResponse user = UserProfileMapper.toUserProfileResponse(identityUser, profile, profileImageUrl, currentSubscription, subscriptionStatus);
 
         CountersResponse counters = CountersResponse.builder()
                 .favorite_gyms(0L)
@@ -110,12 +106,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse getUserMe() {
         Long userId = UserContext.getCurrentUserId();
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
-        String profileImageUrl = identityUser.profileImageUrl();
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
-        } else {
-            profileImageUrl = null;
-        }
+        UserProfile profile = getOrCreateProfile(userId);
+        String profileImageUrl = formatProfileImageUrl(profile.getProfileImageUrl());
         String currentSubscription = null;
         String subscriptionStatus = null;
         String langCode = identityUser.language() != null && !identityUser.language().isBlank() ? identityUser.language() : "AZ";
@@ -141,7 +133,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
         Boolean notificationsEnabled = notificationsGrpcClient.getUserDeviceNotificationEnabled(userId);
         logger.debug("UserProfileResponse for userId={}: currentSubscription={}, subscriptionStatus={}, notificationsEnabled={}", userId, currentSubscription, subscriptionStatus, notificationsEnabled);
-        return UserProfileMapper.toUserProfileResponse(identityUser, profileImageUrl, currentSubscription, subscriptionStatus, notificationsEnabled);
+        return UserProfileMapper.toUserProfileResponse(identityUser, profile, profileImageUrl, currentSubscription, subscriptionStatus, notificationsEnabled);
     }
 
     private UserProfile getOrCreateProfile(Long userId) {
@@ -233,12 +225,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         IdentityUserResponse updated = cachedIdentityClient.updateUserProfile(
                 userId, request.firstName(), request.lastName()
         );
-        String profileImageUrl = updated.profileImageUrl();
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            profileImageUrl = "/api/v1/me/profile/images/" + profileImageUrl;
-        } else {
-            profileImageUrl = null;
-        }
+        UserProfile profile = getOrCreateProfile(userId);
+        profile.setFirstName(request.firstName());
+        profile.setLastName(request.lastName());
+        userProfileRepository.save(profile);
+
+        String profileImageUrl = formatProfileImageUrl(profile.getProfileImageUrl());
         String currentSubscription = null;
         String subscriptionStatus = null;
         String langCode = updated.language() != null && !updated.language().isBlank() ? updated.language() : "AZ";
@@ -261,34 +253,26 @@ public class UserProfileServiceImpl implements UserProfileService {
             currentSubscription = messageSource.getMessage("no_plan", null, new java.util.Locale(langCode.toLowerCase()));
         }
 
-        return UserProfileMapper.toUserProfileResponse(updated, profileImageUrl, currentSubscription, subscriptionStatus);
+        return UserProfileMapper.toUserProfileResponse(updated, profile, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
     @Override
     public void updateProfileImage(MultipartFile file) {
         validateImage(file);
-
         Long userId = UserContext.getCurrentUserId();
-        IdentityUserResponse currentUser = cachedIdentityClient.getUserById(userId);
-        String oldImageUrl = currentUser.profileImageUrl();
+        UserProfile profile = getOrCreateProfile(userId);
+        String oldImageUrl = profile.getProfileImageUrl();
 
-        String newImageUrl = null;
-        try {
-            newImageUrl = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
+        String newImageUrl = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
+        profile.setProfileImageUrl(newImageUrl);
+        userProfileRepository.save(profile);
+    }
 
-            try {
-                cachedIdentityClient.updateProfileImage(userId, newImageUrl);
-            } catch (Exception e) {
-                try {
-                    fileStorageService.deleteFile(newImageUrl);
-                } catch (Exception deleteEx) {
-                }
-                throw e;
-            }
-        } catch (Exception e) {
-            throw e;
-        }
+    @Transactional
+    public void updateProfileImageDirect(Long userId, String newImageUrl) {
+        UserProfile profile = getOrCreateProfile(userId);
+        profile.setProfileImageUrl(newImageUrl);
+        userProfileRepository.save(profile);
     }
 
     @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
@@ -578,6 +562,16 @@ public class UserProfileServiceImpl implements UserProfileService {
             category = "Obesity";
         }
         return new BmiCalculatorResponse(bmi, category);
+    }
+
+    private String formatProfileImageUrl(String profileImageUrl) {
+        if (profileImageUrl == null || profileImageUrl.isBlank()) {
+            return null;
+        }
+        if (profileImageUrl.startsWith("http")) {
+            return profileImageUrl;
+        }
+        return "/api/v1/me/profile/images/" + profileImageUrl;
     }
 
 }
