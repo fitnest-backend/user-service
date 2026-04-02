@@ -18,7 +18,7 @@ public class TranslationService {
         }
 
         return translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
-                entityType.toUpperCase(),
+                entityType,
                 entityId,
                 userLanguage.toUpperCase(),
                 fieldName
