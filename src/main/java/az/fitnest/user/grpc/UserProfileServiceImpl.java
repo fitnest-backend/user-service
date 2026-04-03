@@ -30,13 +30,7 @@ public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileSe
         IdentityUserResponse identityUser = cachedIdentityClient.getUserById(request.getUserId());
         UserProfileDetailsResponse.Builder builder = UserProfileDetailsResponse.newBuilder()
                 .setUserId(request.getUserId());
-        if (profile != null && identityUser != null) {
-            String registrationDate = identityUser.createdAt() != null ? identityUser.createdAt() : "";
-            builder.setRegistrationDate(registrationDate);
-            String platform = devicePlatformGrpcClient.getUserPlatform(request.getUserId());
-            builder.setPlatform(platform);
-            builder.setPhoneNumber(identityUser.mobile() != null ? identityUser.mobile() : "");
-            builder.setEmail(identityUser.email() != null ? identityUser.email() : "");
+        if (profile != null) {
             builder.setBirthDate(profile.getBirthDate() != null ? profile.getBirthDate().toString() : "");
             builder.setGoal(profile.getGoalCode() != null ? profile.getGoalCode() : "");
             builder.setHeight(profile.getHeightCm() != null ? profile.getHeightCm() : 0.0);
@@ -52,6 +46,20 @@ public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileSe
             builder.setLastName(profile.getLastName() != null ? profile.getLastName() : "");
             builder.setEmail(profile.getEmail() != null ? profile.getEmail() : "");
         }
+
+        if (identityUser != null) {
+            String registrationDate = identityUser.createdAt() != null ? identityUser.createdAt() : "";
+            builder.setRegistrationDate(registrationDate);
+            builder.setPhoneNumber(identityUser.mobile() != null ? identityUser.mobile() : "");
+            if (builder.getEmail().isEmpty()) {
+                builder.setEmail(identityUser.email() != null ? identityUser.email() : "");
+            }
+        }
+
+        try {
+            String platform = devicePlatformGrpcClient.getUserPlatform(request.getUserId());
+            builder.setPlatform(platform != null ? platform : "");
+        } catch (Exception ignored) {}
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }
