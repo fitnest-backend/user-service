@@ -32,4 +32,3 @@ public class GoalReference {
     @Schema(description = "Azerbaijani subtitle/description of the goal", example = "Fiziki fəaliyyət və kardio ilə artıq çəkini azaltmaq üçün məşqlər.")
     private String subtitle;
 }
-
