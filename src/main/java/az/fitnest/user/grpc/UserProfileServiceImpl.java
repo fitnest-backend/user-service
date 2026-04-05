@@ -104,9 +104,15 @@ public class UserProfileServiceImpl extends UserProfileServiceGrpc.UserProfileSe
     public void createUserProfile(CreateProfileRequest request, StreamObserver<UserProfileDetailsStatus> responseObserver) {
         UserProfile profile = userProfileRepository.findById(request.getUserId()).orElse(new UserProfile());
         profile.setUserId(request.getUserId());
-        profile.setFirstName(request.getFirstName());
-        profile.setLastName(request.getLastName());
-        profile.setEmail(request.getEmail());
+        if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
+            profile.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null && !request.getLastName().isEmpty()) {
+            profile.setLastName(request.getLastName());
+        }
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            profile.setEmail(request.getEmail());
+        }
 
         userProfileRepository.save(profile);
         responseObserver.onNext(UserProfileDetailsStatus.newBuilder().setSuccess(true).build());
