@@ -30,10 +30,10 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 public class StorageGrpcClient {
 
-    @GrpcClient("storage-service")
+    @GrpcClient("storage-backend")
     private StorageServiceGrpc.StorageServiceStub asyncStub;
 
-    @GrpcClient("storage-service")
+    @GrpcClient("storage-backend")
     private StorageServiceGrpc.StorageServiceBlockingStub blockingStub;
 
     @Value("${grpc.storage.unary.deadline.seconds:30}")

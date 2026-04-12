@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class IdentityGrpcClient {
 
-    @GrpcClient("identity-service")
+    @GrpcClient("identity-backend")
     private UserServiceGrpc.UserServiceBlockingStub userServiceStub;
 
     @Value("${grpc.identity.deadline-ms:10000}")

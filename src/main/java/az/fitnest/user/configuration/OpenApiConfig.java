@@ -23,7 +23,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
-                        .title("User Service API")
+                        .title("User Backend API")
                         .version("1.0.0")
                         .description("Fitnest User Service endpoints")
                         .contact(new Contact()

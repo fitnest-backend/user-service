@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class NotificationsGrpcClient {
     private static final Logger logger = LoggerFactory.getLogger(NotificationsGrpcClient.class);
 
-    @GrpcClient("notifications-service")
+    @GrpcClient("notifications-backend")
     private NotificationsServiceGrpc.NotificationsServiceBlockingStub notificationsStub;
 
     public GetNotificationsResponse getUserNotifications(Long userId, int page, int size) {
@@ -24,7 +24,7 @@ public class NotificationsGrpcClient {
                     .build();
             return notificationsStub.getNotifications(request);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch notifications from notifications-service", e);
+            throw new RuntimeException("Failed to fetch notifications from notifications-backend", e);
         }
     }
 
@@ -47,7 +47,7 @@ public class NotificationsGrpcClient {
         } catch (az.fitnest.user.exception.BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to update notification preference via notifications-service", e);
+            throw new RuntimeException("Failed to update notification preference via notifications-backend", e);
         }
     }
 

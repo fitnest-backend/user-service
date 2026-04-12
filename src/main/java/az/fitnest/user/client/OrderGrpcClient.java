@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class OrderGrpcClient {
 
-    @GrpcClient("order-service")
+    @GrpcClient("order-backend")
     private UserSubscriptionServiceGrpc.UserSubscriptionServiceBlockingStub subscriptionServiceStub;
 
     @Value("${grpc.order.deadline-ms:10000}")
