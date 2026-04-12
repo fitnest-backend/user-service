@@ -124,8 +124,8 @@ jwt:
 
 # ✅ Updated service URL
 identity:
-  service:
-    url: ${IDENTITY_SERVICE_URL:http://identity-backend:8080}
+  backend:
+    url: ${IDENTITY_BACKEND_URL:http://identity-backend:8080}
 
 management:
   endpoints:
