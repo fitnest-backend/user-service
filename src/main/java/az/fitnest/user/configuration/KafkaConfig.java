@@ -30,7 +30,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-service");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-backend");
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "java.util.HashMap");
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -43,7 +43,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-service");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-backend");
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "az.fitnest.user.dto.event.UserSetupCompletedEvent");
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(props);

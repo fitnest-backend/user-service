@@ -10,7 +10,7 @@ public class SubscriptionEventListener {
     @Autowired
     private CacheManager cacheManager;
 
-    @KafkaListener(topics = "subscription-events", groupId = "user-service")
+    @KafkaListener(topics = "subscription-events", groupId = "user-backend")
     public void handleSubscriptionEvent(Map<String, Object> event) {
         Long userId = (Long) event.get("userId");
         if (userId != null) {

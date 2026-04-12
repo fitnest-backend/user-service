@@ -14,7 +14,7 @@ public class UserSetupCompletedListener {
     private final UserProfileRepository userProfileRepository;
     private final EventIdempotencyService idempotencyService;
 
-    @KafkaListener(topics = "user-setup-completed", groupId = "user-service", containerFactory = "userSetupCompletedKafkaListenerContainerFactory")
+    @KafkaListener(topics = "user-setup-completed", groupId = "user-backend", containerFactory = "userSetupCompletedKafkaListenerContainerFactory")
     public void onSetupCompleted(UserSetupCompletedEvent event) {
         if (event == null || event.getUserId() == null) return;
         if (!idempotencyService.markProcessedIfNew(event.getEventId())) return;
