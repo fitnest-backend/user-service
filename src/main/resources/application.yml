@@ -1,5 +1,6 @@
 server:
   port: 8080
+  forward-headers-strategy: framework
   http2:
     enabled: true
   compression:
@@ -145,6 +146,7 @@ app:
     jwks: ${APP_WARMUP_JWKS:true}
 
 springdoc:
+  server-url: ${SPRINGDOC_SERVER_URL:}
   api-docs:
     path: /v3/api-docs
     cache:
