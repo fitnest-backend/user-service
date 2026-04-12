@@ -78,6 +78,6 @@ public class NotificationsGrpcClient {
         } catch (Exception e) {
             logger.error("[getUserDeviceNotificationEnabled] Exception for userId={}: {}", userId, e.getMessage(), e);
         }
-        return true;
+        return false;
     }
 }
