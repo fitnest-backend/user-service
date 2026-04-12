@@ -26,7 +26,7 @@ dependencyManagement {
 }
 
 bootJar {
-    archiveFileName = "user-service.jar"
+    archiveFileName = "user-backend.jar"
 }
 
 dependencies {

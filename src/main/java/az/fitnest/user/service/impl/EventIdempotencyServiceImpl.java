@@ -35,7 +35,7 @@ public class EventIdempotencyServiceImpl implements EventIdempotencyService {
         }
 
         String normalized = eventId.trim();
-        String id = DigestUtils.sha256Hex("user-service:" + normalized);
+        String id = DigestUtils.sha256Hex("user-backend:" + normalized);
         String key = KEY_PREFIX + id;
 
         try {
