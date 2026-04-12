@@ -21,6 +21,7 @@ spring:
       enabled: true
   main:
     lazy-initialization: ${SPRING_MAIN_LAZY_INITIALIZATION:false}
+    allow-bean-definition-overriding: true
   messages:
     encoding: UTF-8
   application:
