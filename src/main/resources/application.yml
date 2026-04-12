@@ -202,7 +202,7 @@ grpc:
       address: 'static://notifications-backend:9090'
       negotiation-type: plaintext
     order-backend:
-      address: ${ORDER_SERVICE_GRPC_ADDRESS:dns:///order-backend.fitnest-dev.svc.cluster.local:9090}
+      address: ${ORDER_BACKEND_GRPC_ADDRESS:dns:///order-backend.fitnest-dev.svc.cluster.local:9090}
       negotiation-type: plaintext
       deadline-after: 10s
       enable-keep-alive: true
