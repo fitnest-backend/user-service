@@ -23,7 +23,7 @@ spring:
   messages:
     encoding: UTF-8
   application:
-    name: user-service
+    name: user-backend   # ✅ Changed from user-service
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgresql-user:5432/fitnest_user}
     username: ${SPRING_DATASOURCE_USERNAME:fitnest_user}
@@ -80,7 +80,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-service.fitnest-dev.svc.cluster.local:9092}
     consumer:
-      group-id: user-service
+      group-id: user-backend   # ✅ Updated group-id
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -122,9 +122,10 @@ jwt:
   secret: ${JWT_SECRET:your-jwt-secret-change-in-production}
   issuer: ${JWT_ISSUER:fitnest}
 
+# ✅ Updated service URL
 identity:
   service:
-    url: ${IDENTITY_SERVICE_URL:http://identity-service:8080}
+    url: ${IDENTITY_SERVICE_URL:http://identity-backend:8080}
 
 management:
   endpoints:
@@ -163,6 +164,7 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
   writer-with-default-pretty-printer: false
+
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
@@ -174,7 +176,7 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
   file:
-    name: logs/user-service.log
+    name: logs/user-backend.log   # ✅ Updated log file name
     max-size: 10MB
     max-history: 30
 
@@ -182,22 +184,23 @@ grpc:
   server:
     port: 9090
   client:
-    identity-service:
-      address: 'static://identity-service:9090'
+    # ✅ Updated gRPC clients to -backend
+    identity-backend:
+      address: 'static://identity-backend:9090'
       negotiation-type: ${GRPC_CLIENT_NEGOTIATION:plaintext}
       enable-keep-alive: true
       keep-alive-without-calls: true
       keep-alive-time: 30s
       keep-alive-timeout: 5s
       deadline-after: 10s
-    storage-service:
-      address: 'dns:///storage-service.fitnest-dev.svc.cluster.local:9090'
+    storage-backend:
+      address: 'dns:///storage-backend.fitnest-dev.svc.cluster.local:9090'
       negotiation-type: plaintext
-    notifications-service:
-      address: 'static://notifications-service:9090'
+    notifications-backend:
+      address: 'static://notifications-backend:9090'
       negotiation-type: plaintext
-    order-service:
-      address: ${ORDER_SERVICE_GRPC_ADDRESS:dns:///order-service.fitnest-dev.svc.cluster.local:9090}
+    order-backend:
+      address: ${ORDER_SERVICE_GRPC_ADDRESS:dns:///order-backend.fitnest-dev.svc.cluster.local:9090}
       negotiation-type: plaintext
       deadline-after: 10s
       enable-keep-alive: true
