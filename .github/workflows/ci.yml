@@ -119,9 +119,20 @@ jobs:
 
       - name: Trigger ArgoCD Sync
         run: |
+          # Get repository name and branch, sanitize for Kubernetes naming
+          REPO_NAME="${{ github.event.repository.name }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          # Replace '/' with '-' (branches like 'feature/xyz' become 'feature-xyz')
+          SAFE_BRANCH="${BRANCH_NAME//\//-}"
+
+          # Construct ArgoCD application name
+          APP_NAME="fitnest-${REPO_NAME}-${SAFE_BRANCH}"
+
+          echo "Syncing ArgoCD app: ${APP_NAME}"
+
           curl -k -X POST \
             -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
             -H "Content-Type: application/json" \
-            --resolve argocd.fitnest.az:31760:161.97.183.7 \
-            https://argocd.fitnest.az:31760/api/v1/applications/fitnest-user-service-dev/sync \
+            "https://argocd.fitnest.az/api/v1/applications/${APP_NAME}/sync" \
             -d '{}'
