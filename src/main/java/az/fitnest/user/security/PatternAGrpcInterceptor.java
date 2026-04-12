@@ -72,7 +72,7 @@ public class PatternAGrpcInterceptor implements ServerInterceptor, ClientInterce
                     propagate(request, headers, "X-Scopes", X_SCOPES);
                     propagate(request, headers, "X-Request-Id", X_REQUEST_ID);
                     propagate(request, headers, "X-From-Gateway", X_FROM_GATEWAY);
-                    headers.put(X_SERVICE_NAME, "user-service");
+                    headers.put(X_SERVICE_NAME, "user-backend");
                 }
                 super.start(responseListener, headers);
             }
