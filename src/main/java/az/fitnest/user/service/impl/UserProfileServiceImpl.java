@@ -331,7 +331,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         String goalCode = profile.getGoalCode();
         if (goalCode == null || goalCode.isBlank()) {
-            throw new ResourceNotFoundException("error.user_goal_not_set");
+            return null;
         }
 
         var reference = goalReferenceRepository.findById(goalCode)
