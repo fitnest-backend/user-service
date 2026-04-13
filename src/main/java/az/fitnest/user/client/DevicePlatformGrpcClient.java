@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DevicePlatformGrpcClient {
     public String getUserPlatform(Long userId) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("notifications-backend", 9091)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("notifications-backend", 9090)
                 .usePlaintext()
                 .build();
         DevicePlatformServiceGrpc.DevicePlatformServiceBlockingStub stub = DevicePlatformServiceGrpc.newBlockingStub(channel);
