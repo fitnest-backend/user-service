@@ -31,6 +31,13 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
             builder.setLanguage(identity.language() != null ? identity.language() : "");
             builder.setCreatedAt(identity.createdAt() != null ? identity.createdAt() : "");
         }
+
+        userProfileRepository.findById(request.getUserId()).ifPresent(profile -> {
+            if (profile.getGender() != null) {
+                builder.setGender(profile.getGender().name());
+            }
+        });
+
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }
