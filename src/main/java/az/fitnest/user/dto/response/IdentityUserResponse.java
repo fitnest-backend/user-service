@@ -14,5 +14,6 @@ public record IdentityUserResponse(
     String language,
     @JsonProperty("profile_image_url") String profileImageUrl,
     @JsonProperty("setup_required") Boolean setupRequired,
-    @JsonProperty("created_at") String createdAt
+    @JsonProperty("created_at") String createdAt,
+    @JsonProperty("has_local_password") Boolean hasLocalPassword
 ) implements Serializable {}

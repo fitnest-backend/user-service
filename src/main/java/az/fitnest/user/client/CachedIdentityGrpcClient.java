@@ -68,6 +68,7 @@ public class CachedIdentityGrpcClient {
                 .language(r.getLanguage())
                 .setupRequired(r.getSetupRequired())
                 .createdAt(r.getCreatedAt())
+                .hasLocalPassword(r.getHasLocalPassword())
                 .build();
     }
 }

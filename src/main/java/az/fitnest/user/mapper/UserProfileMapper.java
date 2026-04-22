@@ -22,6 +22,7 @@ public final class UserProfileMapper {
                 .currentSubscription(currentSubscription)
                 .subscriptionStatus(subscriptionStatus)
                 .notificationsEnabled(notificationsEnabled)
+                .hasLocalPassword(userResponse.hasLocalPassword())
                 .build();
     }
 

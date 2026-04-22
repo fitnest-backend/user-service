@@ -13,5 +13,6 @@ public record UserProfileResponse(
     @JsonProperty("profile_image_url") String profileImageUrl,
     @JsonProperty("current_subscription") String currentSubscription,
     @JsonProperty("subscription_status") String subscriptionStatus,
-    @JsonProperty("notifications_enabled") Boolean notificationsEnabled
+    @JsonProperty("notifications_enabled") Boolean notificationsEnabled,
+    @JsonProperty("has_local_password") Boolean hasLocalPassword
 ) {}
