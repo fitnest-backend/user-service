@@ -11,6 +11,20 @@ service UserSubscriptionService {
   rpc GetUserIdsByPackageId(GetUserIdsByPackageIdRequest) returns (GetUserIdsByPackageIdResponse);
   rpc GetUserIdsByDurationMonths(GetUserIdsByDurationMonthsRequest) returns (GetUserIdsByPackageIdResponse);
   rpc GetUserIdsByType(GetUserIdsByTypeRequest) returns (GetUserIdsByPackageIdResponse);
+  rpc AssignSubscriptionToUser(AssignSubscriptionToUserRequest) returns (AssignSubscriptionToUserResponse);
+  rpc GetSubscriptionStatistics(GetSubscriptionStatisticsRequest) returns (SubscriptionStatisticsResponse);
+}
+
+message AssignSubscriptionToUserRequest {
+  int64 user_id = 1;
+  int64 plan_id = 2;
+  int64 option_id = 3;
+  bool auto_payment_enabled = 4;
+}
+
+message AssignSubscriptionToUserResponse {
+  int64 subscription_id = 1;
+  int64 user_id = 2;
 }
 
 message GetActiveSubscriptionRequest {
@@ -20,6 +34,10 @@ message GetActiveSubscriptionRequest {
 message ActiveSubscriptionResponse {
   string package_name = 1;
   string subscription_status = 2;  // ACTIVE, FROZEN, or empty for no subscription
+  int64 package_id = 3;
+  int32 total_limit = 4;
+  int32 remaining_limit = 5;
+  string expires_at = 6;
 }
 
 message GetUserIdsByPackageIdRequest {
@@ -36,4 +54,12 @@ message GetUserIdsByDurationMonthsRequest {
 
 message GetUserIdsByTypeRequest {
   string type = 1;
+}
+
+message GetSubscriptionStatisticsRequest {}
+
+message SubscriptionStatisticsResponse {
+  int64 users_last_7_days = 1;
+  int64 users_finished = 2;
+  int64 users_active_or_frozen = 3;
 }

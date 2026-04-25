@@ -28,4 +28,9 @@ public class OrderGrpcClient {
 
         return withDeadline().getActiveSubscription(request);
     }
+
+    public az.fitnest.order.grpc.SubscriptionStatisticsResponse getSubscriptionStatistics() {
+        az.fitnest.order.grpc.GetSubscriptionStatisticsRequest request = az.fitnest.order.grpc.GetSubscriptionStatisticsRequest.newBuilder().build();
+        return withDeadline().getSubscriptionStatistics(request);
+    }
 }
