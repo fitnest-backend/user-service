@@ -28,7 +28,7 @@ public class AdminUserController {
 
     @Operation(
         summary = "Get all users with details",
-        description = "Returns a paginated list of users including status and subscription info."
+        description = "Returns a paginated list of users including status and subscription info. Supports search by user ID, full name, email, or phone number."
     )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -38,8 +38,10 @@ public class AdminUserController {
             @RequestParam(required = false) Long packageId,
             @RequestParam(required = false) Integer packageDuration,
             @RequestParam(required = false) String subscriptionStatus,
-            @RequestParam(required = false) String sort) {
-        return ResponseEntity.ok(adminUserService.getAllUsers(PageRequest.of(page, size), packageId, packageDuration, subscriptionStatus, sort));
+            @RequestParam(required = false) String sort,
+            @Parameter(description = "Search by user ID, full name, email, or phone number")
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(adminUserService.getAllUsers(PageRequest.of(page, size), packageId, packageDuration, subscriptionStatus, sort, search));
     }
 
     @Operation(

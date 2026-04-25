@@ -27,8 +27,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final OrderGrpcClient orderGrpcClient;
 
     @Override
-    public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort) {
-        log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}", packageId, packageDuration, subscriptionStatus, sort);
+    public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search) {
+        log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}, search={}", packageId, packageDuration, subscriptionStatus, sort, search);
 
         List<Long> filteredUserIds = null;
         String orderSort = null;
@@ -48,12 +48,31 @@ public class AdminUserServiceImpl implements AdminUserService {
             }
         }
 
+        // Handle search query
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+
         Page<UserProfile> profiles;
         if (filteredUserIds != null) {
             if (filteredUserIds.isEmpty()) {
                 return new PaginatedResponse<>(List.of(), 0, pageable.getPageNumber() + 1, pageable.getPageSize());
             }
             
+            if (hasSearch) {
+                // Apply search within the filtered user IDs
+                Long searchUserId = parseUserId(search);
+                List<Long> mobileUserIds = searchMobileUserIds(search);
+                
+                // Intersect: keep only IDs that match both subscription filter AND search
+                List<Long> searchMatchIds = getSearchMatchedUserIds(search, searchUserId, mobileUserIds);
+                filteredUserIds = filteredUserIds.stream()
+                        .filter(searchMatchIds::contains)
+                        .collect(Collectors.toList());
+                
+                if (filteredUserIds.isEmpty()) {
+                    return new PaginatedResponse<>(List.of(), 0, pageable.getPageNumber() + 1, pageable.getPageSize());
+                }
+            }
+
             // If we have a list of IDs and no order-backend sorting, we might want to sort by fullName in user-backend
             // But if we HAVE order-backend sorting (finishDate), we need to maintain that order.
             if (orderSort != null) {
@@ -74,6 +93,16 @@ public class AdminUserServiceImpl implements AdminUserService {
             } else {
                 profiles = userProfileRepository.findAllByUserIdIn(filteredUserIds, pageable);
             }
+        } else if (hasSearch) {
+            // Search without subscription filters
+            Long searchUserId = parseUserId(search);
+            List<Long> mobileUserIds = searchMobileUserIds(search);
+            
+            if (mobileUserIds != null && !mobileUserIds.isEmpty()) {
+                profiles = userProfileRepository.searchByQueryOrUserIds(search.trim(), searchUserId, mobileUserIds, pageable);
+            } else {
+                profiles = userProfileRepository.searchByQuery(search.trim(), searchUserId, pageable);
+            }
         } else {
             profiles = userProfileRepository.findAll(pageable);
         }
@@ -86,6 +115,36 @@ public class AdminUserServiceImpl implements AdminUserService {
                 profiles.getNumber() + 1,
                 profiles.getSize()
         );
+    }
+
+    private Long parseUserId(String search) {
+        try {
+            return Long.parseLong(search.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private List<Long> searchMobileUserIds(String search) {
+        try {
+            return identityGrpcClient.searchUserIdsByMobile(search.trim());
+        } catch (Exception e) {
+            log.warn("Failed to search users by mobile via gRPC: {}", e.getMessage());
+            return List.of();
+        }
+    }
+
+    private List<Long> getSearchMatchedUserIds(String search, Long searchUserId, List<Long> mobileUserIds) {
+        // Get IDs matching local DB search (id, name, email)
+        Page<UserProfile> localMatches = userProfileRepository.searchByQuery(
+                search.trim(), searchUserId, Pageable.unpaged());
+        
+        java.util.Set<Long> matchedIds = new java.util.LinkedHashSet<>();
+        localMatches.getContent().forEach(p -> matchedIds.add(p.getUserId()));
+        if (mobileUserIds != null) {
+            matchedIds.addAll(mobileUserIds);
+        }
+        return new java.util.ArrayList<>(matchedIds);
     }
 
     private List<AdminUserResponse> mapToResponse(List<UserProfile> profiles) {

@@ -102,4 +102,13 @@ public class IdentityGrpcClient {
 
         return withDeadline().updateLanguage(request);
     }
+
+    public java.util.List<Long> searchUserIdsByMobile(String query) {
+        az.fitnest.user.grpc.SearchUserIdsByMobileRequest request = az.fitnest.user.grpc.SearchUserIdsByMobileRequest.newBuilder()
+                .setQuery(query)
+                .build();
+
+        az.fitnest.user.grpc.SearchUserIdsByMobileResponse response = withDeadline().searchUserIdsByMobile(request);
+        return response.getUserIdsList();
+    }
 }
