@@ -189,7 +189,7 @@ grpc:
   client:
     # ✅ Updated gRPC clients to -backend
     identity-backend:
-      address: 'static://identity-backend:9090'
+      address: ${IDENTITY_BACKEND_GRPC_ADDRESS:static://identity-backend:9090}
       negotiation-type: ${GRPC_CLIENT_NEGOTIATION:plaintext}
       enable-keep-alive: true
       keep-alive-without-calls: true
@@ -197,10 +197,10 @@ grpc:
       keep-alive-timeout: 5s
       deadline-after: 10s
     storage-backend:
-      address: 'dns:///storage-backend.fitnest-production.svc.cluster.local:9090'
+      address: ${STORAGE_GRPC_ADDRESS:dns:///storage-backend.fitnest-production.svc.cluster.local:9090}
       negotiation-type: plaintext
     notifications-backend:
-      address: 'static://notifications-backend:9090'
+      address: ${NOTIFICATIONS_BACKEND_GRPC_ADDRESS:static://notifications-backend:9090}
       negotiation-type: plaintext
     order-backend:
       address: ${ORDER_BACKEND_GRPC_ADDRESS:dns:///order-backend.fitnest-production.svc.cluster.local:9090}
