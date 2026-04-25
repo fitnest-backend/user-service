@@ -6,6 +6,7 @@ import az.fitnest.user.dto.response.UserStatisticsResponse;
 import az.fitnest.user.service.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,28 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<PaginatedResponse<AdminUserResponse>> getAllUsers(
+            @Parameter(description = "Page number (0-indexed)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Number of items per page", example = "10")
             @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Filter by subscription package ID")
             @RequestParam(required = false) Long packageId,
+            @Parameter(description = "Filter by package duration in months", example = "1")
             @RequestParam(required = false) Integer packageDuration,
+            @Parameter(description = "Filter by subscription status",
+                    schema = @Schema(allowableValues = {"ACTIVE", "FINISHED", "FROZEN", "LAST_7_DAYS"}))
             @RequestParam(required = false) String subscriptionStatus,
+            @Parameter(description = "Sort order for the results. Values: "
+                    + "newest - Newly added, "
+                    + "name_asc - Name : A-Z, "
+                    + "name_desc - Name : Z-A, "
+                    + "finishDate_asc - Subscription end date (soonest first), "
+                    + "finishDate_desc - Subscription end date (latest first), "
+                    + "registrationDate_desc - Registration date (new → old), "
+                    + "registrationDate_asc - Registration date (old → new)",
+                    schema = @Schema(allowableValues = {"newest", "name_asc", "name_desc",
+                            "finishDate_asc", "finishDate_desc",
+                            "registrationDate_desc", "registrationDate_asc"}))
             @RequestParam(required = false) String sort,
             @Parameter(description = "Search by user ID, full name, email, or phone number")
             @RequestParam(required = false) String search) {

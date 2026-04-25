@@ -32,10 +32,21 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         List<Long> filteredUserIds = null;
         String orderSort = null;
+        org.springframework.data.domain.Sort localSort = org.springframework.data.domain.Sort.unsorted();
 
         if (sort != null) {
             if (sort.equalsIgnoreCase("finishDate_asc")) orderSort = "FINISH_DATE_ASC";
             else if (sort.equalsIgnoreCase("finishDate_desc")) orderSort = "FINISH_DATE_DESC";
+            else if (sort.equalsIgnoreCase("newest")) localSort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "userId");
+            else if (sort.equalsIgnoreCase("name_asc")) localSort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "firstName");
+            else if (sort.equalsIgnoreCase("name_desc")) localSort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "firstName");
+            else if (sort.equalsIgnoreCase("registrationDate_desc")) localSort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "userId");
+            else if (sort.equalsIgnoreCase("registrationDate_asc")) localSort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "userId");
+        }
+
+        // Apply local sort to pageable if a local sort option was selected
+        if (localSort.isSorted()) {
+            pageable = org.springframework.data.domain.PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), localSort);
         }
 
         // Check if we need to filter/sort by subscription data in order-backend
