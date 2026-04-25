@@ -77,6 +77,8 @@ spring:
       port: ${SPRING_DATA_REDIS_PORT:6379}
       password: ${SPRING_DATA_REDIS_PASSWORD:}
       timeout: 2000ms
+      repositories:
+        enabled: false
 
   # Kafka
   kafka:
