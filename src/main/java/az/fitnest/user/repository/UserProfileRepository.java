@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
     Optional<UserProfile> findByEmail(String email);
+    org.springframework.data.domain.Page<UserProfile> findAllByUserIdIn(java.util.List<Long> userIds, org.springframework.data.domain.Pageable pageable);
 }

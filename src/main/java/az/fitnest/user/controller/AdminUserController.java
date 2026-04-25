@@ -34,8 +34,12 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<PaginatedResponse<AdminUserResponse>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(adminUserService.getAllUsers(PageRequest.of(page, size)));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long packageId,
+            @RequestParam(required = false) Integer packageDuration,
+            @RequestParam(required = false) String subscriptionStatus,
+            @RequestParam(required = false) String sort) {
+        return ResponseEntity.ok(adminUserService.getAllUsers(PageRequest.of(page, size), packageId, packageDuration, subscriptionStatus, sort));
     }
 
     @Operation(

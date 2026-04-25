@@ -6,6 +6,6 @@ import az.fitnest.user.dto.response.UserStatisticsResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface AdminUserService {
-    PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable);
+    PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort);
     UserStatisticsResponse getUserStatistics();
 }
