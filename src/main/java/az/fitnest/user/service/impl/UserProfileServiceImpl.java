@@ -178,7 +178,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     @Override
     public void updateBody(UpdateBodyRequest request) {
@@ -218,7 +218,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Override
     public UserProfileResponse updateUserMe(UpdateUserProfileRequest request) {
         Long userId = UserContext.getCurrentUserId();
@@ -256,6 +256,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return UserProfileMapper.toUserProfileResponse(updated, profile, profileImageUrl, currentSubscription, subscriptionStatus);
     }
 
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Override
     public void updateProfileImage(MultipartFile file) {
         validateImage(file);
@@ -268,6 +269,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfileRepository.save(profile);
     }
 
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     public void updateProfileImageDirect(Long userId, String newImageUrl) {
         UserProfile profile = getOrCreateProfile(userId);
@@ -275,7 +277,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfileRepository.save(profile);
     }
 
-    @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     @Override
     public void updateGoal(UpdateGoalsRequest request) {
@@ -367,7 +369,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return GoalsResponse.builder().items(items).build();
     }
 
-    @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Override
     public void updatePreferences(UpdatePreferencesRequest request) {
         Long userId = UserContext.getCurrentUserId();
@@ -375,7 +377,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         notificationsGrpcClient.setUserNotificationPreference(userId, notificationsEnabled);
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
         String upperLang = request.language().toUpperCase();
@@ -432,7 +434,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     @Override
     public CompleteSetupResponse completeSetup() {
@@ -460,7 +462,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    @CacheEvict(cacheNames = {"user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     @Override
     public SetupResponse setupProfile(SetupRequest request) {
@@ -495,7 +497,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 
-    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries"}, key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()", beforeInvocation = false)
+    @CacheEvict(cacheNames = {"identity_users", "user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
     @Transactional
     @Override
     public CompleteSetupResponse skipSetup() {

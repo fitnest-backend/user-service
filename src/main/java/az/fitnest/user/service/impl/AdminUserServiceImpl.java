@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +94,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
+    @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search}")
     public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search) {
         log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}, search={}", packageId, packageDuration, subscriptionStatus, sort, search);
 
@@ -251,6 +254,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
+    @Cacheable(value = "user-statistics", key = "'all'")
     public UserStatisticsResponse getUserStatistics() {
         long totalUsers = userProfileRepository.count();
 
