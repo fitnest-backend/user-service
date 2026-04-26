@@ -25,7 +25,7 @@ public class UserEventListener {
             Long userId = parseUserId(userIdObj);
             if (userId != null) {
                 log.info("Received USER_UPDATED event for userId: {}. Evicting caches.", userId);
-                
+
                 evictCache("identity_users", userId);
                 evictCache("user_summaries", userId);
                 evictCache("user_me", userId);

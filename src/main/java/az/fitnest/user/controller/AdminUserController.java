@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,5 +61,13 @@ public class AdminUserController {
     @GetMapping("/statistics")
     public ResponseEntity<UserStatisticsResponse> getUserStatistics() {
         return ResponseEntity.ok(adminUserService.getUserStatistics());
+    }
+
+    @Operation(summary = "İstifadəçi detallarını gətir", description = "İstifadəçinin bütün detallarını (ad, soyad, qeydiyyat tarixi, platform, telefon, email, boy, çəki, BMI və s.) qaytarır.")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<az.fitnest.user.dto.response.AdminUserDetailResponse> getUserDetail(
+            @Parameter(description = "İstifadəçi ID-si", example = "123") @PathVariable Long userId) {
+        return ResponseEntity.ok(adminUserService.getUserDetail(userId));
     }
 }

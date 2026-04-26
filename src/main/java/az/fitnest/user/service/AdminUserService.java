@@ -8,4 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface AdminUserService {
     PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search);
     UserStatisticsResponse getUserStatistics();
+    az.fitnest.user.dto.response.AdminUserDetailResponse getUserDetail(Long userId);
 }
