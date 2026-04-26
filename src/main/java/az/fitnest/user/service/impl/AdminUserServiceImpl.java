@@ -35,7 +35,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     public az.fitnest.user.dto.response.AdminUserDetailResponse getUserDetail(Long userId) {
         log.info("Fetching detailed user info for admin. User ID: {}", userId);
 
-        UserProfile profile = userProfileRepository.findByUserId(userId)
+        UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User profile not found: " + userId));
 
         String fullName = (profile.getFirstName() != null ? profile.getFirstName() : "") +
