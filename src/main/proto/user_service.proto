@@ -21,6 +21,15 @@ service UserService {
   rpc RequestMobileChange(RequestMobileChangeRequest) returns (OtpSendResponseProto);
   rpc ConfirmMobileChange(ConfirmMobileChangeRequest) returns (UserResponse);
   rpc SearchUserIdsByMobile(SearchUserIdsByMobileRequest) returns (SearchUserIdsByMobileResponse);
+  rpc GetUsersByIds(GetUsersByIdsRequest) returns (GetUsersByIdsResponse);
+}
+
+message GetUsersByIdsRequest {
+  repeated int64 user_ids = 1;
+}
+
+message GetUsersByIdsResponse {
+  repeated UserResponse users = 1;
 }
 
 message GetUserByIdRequest {

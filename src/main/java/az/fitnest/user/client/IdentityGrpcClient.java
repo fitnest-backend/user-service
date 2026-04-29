@@ -28,6 +28,13 @@ public class IdentityGrpcClient {
         return withDeadline().getUserById(request);
     }
 
+    public java.util.List<az.fitnest.user.grpc.UserResponse> getUsersByIds(java.util.List<Long> userIds) {
+        az.fitnest.user.grpc.GetUsersByIdsRequest request = az.fitnest.user.grpc.GetUsersByIdsRequest.newBuilder()
+                .addAllUserIds(userIds)
+                .build();
+        return withDeadline().getUsersByIds(request).getUsersList();
+    }
+
     public az.fitnest.user.grpc.UserResponse updateUserProfile(Long userId, String firstName, String lastName) {
         az.fitnest.user.grpc.UpdateUserProfileRequest request = az.fitnest.user.grpc.UpdateUserProfileRequest.newBuilder()
                 .setUserId(userId)

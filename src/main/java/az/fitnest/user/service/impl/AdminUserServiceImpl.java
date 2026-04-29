@@ -216,26 +216,45 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     private List<AdminUserResponse> mapToResponse(List<UserProfile> profiles) {
+        if (profiles.isEmpty()) return List.of();
+
+        List<Long> userIds = profiles.stream().map(UserProfile::getUserId).collect(Collectors.toList());
+
+        java.util.Map<Long, az.fitnest.user.grpc.UserResponse> identityUsersMap = new java.util.HashMap<>();
+        try {
+            var identityUsers = identityGrpcClient.getUsersByIds(userIds);
+            for (var u : identityUsers) {
+                identityUsersMap.put(u.getUserId(), u);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch bulk identity info: {}", e.getMessage());
+        }
+
+        java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> tempSubscriptionMap = new java.util.HashMap<>();
+        try {
+            tempSubscriptionMap = orderGrpcClient.getActiveSubscriptions(userIds);
+        } catch (Exception e) {
+            log.warn("Failed to fetch bulk subscription info: {}", e.getMessage());
+        }
+        final java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> subscriptionMap = tempSubscriptionMap;
+
         return profiles.stream()
                 .map(profile -> {
                     String userStatus = "UNKNOWN";
                     String phoneNumber = "";
                     String createdAt = "";
-                    try {
-                        var identityUser = identityGrpcClient.getUserById(profile.getUserId());
+                    
+                    var identityUser = identityUsersMap.get(profile.getUserId());
+                    if (identityUser != null) {
                         userStatus = identityUser.getStatus();
                         phoneNumber = identityUser.getMobile();
                         createdAt = identityUser.getCreatedAt();
-                    } catch (Exception e) {
-                        log.warn("Failed to fetch identity info for user {}: {}", profile.getUserId(), e.getMessage());
                     }
 
                     String subscriptionStatus = "";
-                    try {
-                        var sub = orderGrpcClient.getActiveSubscription(profile.getUserId());
+                    var sub = subscriptionMap.get(profile.getUserId());
+                    if (sub != null) {
                         subscriptionStatus = sub.getSubscriptionStatus();
-                    } catch (Exception e) {
-                        log.warn("Failed to fetch subscription info for user {}: {}", profile.getUserId(), e.getMessage());
                     }
 
                     String fullName = (profile.getFirstName() != null ? profile.getFirstName() : "") +

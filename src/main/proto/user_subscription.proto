@@ -14,6 +14,15 @@ service UserSubscriptionService {
   rpc AssignSubscriptionToUser(AssignSubscriptionToUserRequest) returns (AssignSubscriptionToUserResponse);
   rpc GetSubscriptionStatistics(GetSubscriptionStatisticsRequest) returns (SubscriptionStatisticsResponse);
   rpc GetFilteredUserIds(GetFilteredUserIdsRequest) returns (GetUserIdsByPackageIdResponse);
+  rpc GetActiveSubscriptions(GetActiveSubscriptionsRequest) returns (GetActiveSubscriptionsResponse);
+}
+
+message GetActiveSubscriptionsRequest {
+  repeated int64 user_ids = 1;
+}
+
+message GetActiveSubscriptionsResponse {
+  map<int64, ActiveSubscriptionResponse> subscriptions = 1;
 }
 
 message AssignSubscriptionToUserRequest {

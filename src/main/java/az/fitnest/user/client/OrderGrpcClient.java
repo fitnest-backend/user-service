@@ -29,6 +29,14 @@ public class OrderGrpcClient {
         return withDeadline().getActiveSubscription(request);
     }
 
+    public java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> getActiveSubscriptions(java.util.List<Long> userIds) {
+        az.fitnest.order.grpc.GetActiveSubscriptionsRequest request = az.fitnest.order.grpc.GetActiveSubscriptionsRequest.newBuilder()
+                .addAllUserIds(userIds)
+                .build();
+
+        return withDeadline().getActiveSubscriptions(request).getSubscriptionsMap();
+    }
+
     public az.fitnest.order.grpc.SubscriptionStatisticsResponse getSubscriptionStatistics() {
         az.fitnest.order.grpc.GetSubscriptionStatisticsRequest request = az.fitnest.order.grpc.GetSubscriptionStatisticsRequest.newBuilder().build();
         return withDeadline().getSubscriptionStatistics(request);
