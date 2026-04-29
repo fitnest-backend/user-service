@@ -93,6 +93,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .build();
     }
 
+    // Caching strategy note: Use a short TTL (2-5 minutes) for admin-users cache in your cache configuration (e.g., Redis, Ehcache).
+    // For statistics, prefer a scheduled refresh (every 10 minutes) and return cached value immediately.
     @Override
     @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search}")
     public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search) {
@@ -154,8 +156,10 @@ public class AdminUserServiceImpl implements AdminUserService {
                     return new PaginatedResponse<>(List.of(), filteredUserIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
                 }
 
+                // Only fetch user profiles for the current page of user IDs
                 List<Long> pageIds = filteredUserIds.subList(start, end);
-                List<UserProfile> profileList = userProfileRepository.findAllById(pageIds);
+                List<UserProfile> profileList = userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent();
+                // Maintain the order of pageIds
                 profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
 
                 List<AdminUserResponse> items = mapToResponse(profileList);
@@ -220,30 +224,37 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         List<Long> userIds = profiles.stream().map(UserProfile::getUserId).collect(Collectors.toList());
 
-        java.util.Map<Long, az.fitnest.user.grpc.UserResponse> identityUsersMap = new java.util.HashMap<>();
-        try {
-            var identityUsers = identityGrpcClient.getUsersByIds(userIds);
-            for (var u : identityUsers) {
-                identityUsersMap.put(u.getUserId(), u);
+        // Fetch identity and order data in parallel
+        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.user.grpc.UserResponse>> identityFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+            try {
+                return identityGrpcClient.getUsersByIds(userIds).stream()
+                        .collect(Collectors.toMap(u -> u.getUserId(), u -> u));
+            } catch (Exception e) {
+                log.warn("Identity gRPC failed", e);
+                return java.util.Collections.<Long, az.fitnest.user.grpc.UserResponse>emptyMap();
             }
-        } catch (Exception e) {
-            log.warn("Failed to fetch bulk identity info: {}", e.getMessage());
-        }
+        });
 
-        java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> tempSubscriptionMap = new java.util.HashMap<>();
-        try {
-            tempSubscriptionMap = orderGrpcClient.getActiveSubscriptions(userIds);
-        } catch (Exception e) {
-            log.warn("Failed to fetch bulk subscription info: {}", e.getMessage());
-        }
-        final java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> subscriptionMap = tempSubscriptionMap;
+        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>> orderFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+            try {
+                return orderGrpcClient.getActiveSubscriptions(userIds);
+            } catch (Exception e) {
+                log.warn("Order gRPC failed", e);
+                return java.util.Collections.<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>emptyMap();
+            }
+        });
+
+        // Wait for both to finish
+        java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture).join();
+        java.util.Map<Long, az.fitnest.user.grpc.UserResponse> identityUsersMap = identityFuture.join();
+        java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> subscriptionMap = orderFuture.join();
 
         return profiles.stream()
                 .map(profile -> {
                     String userStatus = "UNKNOWN";
                     String phoneNumber = "";
                     String createdAt = "";
-                    
+
                     var identityUser = identityUsersMap.get(profile.getUserId());
                     if (identityUser != null) {
                         userStatus = identityUser.getStatus();
