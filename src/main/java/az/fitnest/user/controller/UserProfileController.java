@@ -249,8 +249,8 @@ public class UserProfileController {
         }
         boolean hasRole = authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch(auth -> auth.equals("ROLE_USER") || auth.equals("ROLE_ADMIN") || auth.equals("ROLE_SUPER_ADMIN") ||
-                        auth.equals("USER") || auth.equals("ADMIN") || auth.equals("SUPER_ADMIN"));
+            .anyMatch(auth -> auth.equals("ROLE_USER") || auth.equals("ROLE_ADMIN") ||
+                        auth.equals("USER") || auth.equals("ADMIN"));
         if (!hasRole) {
             logger.warn("Authorization failed: missing role for fsId: {}", fsId);
             return ResponseEntity.status(403).build();

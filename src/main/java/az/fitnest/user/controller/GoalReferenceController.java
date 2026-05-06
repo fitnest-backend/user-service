@@ -78,7 +78,7 @@ public class GoalReferenceController {
         logger.info("streamGoalImage called for fsId: {}", fsId);
         Authentication authentication = SecurityContextHolder.getContext() != null ? SecurityContextHolder.getContext().getAuthentication() : null;
         logger.info("Authentication object: {}", authentication);
-        if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "SUPER_ADMIN", "ADMIN", "USER")) {
+        if (authentication == null || !authentication.isAuthenticated() || !hasAnyRole(authentication, "ADMIN", "USER")) {
             logger.warn("Authorization failed for streaming goal image: {}", fsId);
             return ResponseEntity.status(403).build();
         }
