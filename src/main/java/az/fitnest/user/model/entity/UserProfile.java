@@ -1,5 +1,6 @@
 package az.fitnest.user.model.entity;
 
+import az.fitnest.user.model.enums.CustomerStatus;
 import az.fitnest.user.model.enums.Gender;
 import jakarta.persistence.*;
 
@@ -51,4 +52,9 @@ public class UserProfile {
 
     @Column(name = "email")
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private CustomerStatus status = CustomerStatus.ACTIVE;
 }
