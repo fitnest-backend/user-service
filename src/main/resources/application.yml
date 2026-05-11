@@ -32,26 +32,26 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      keep-alive-time: 300000
-      minimum-idle: ${HIKARI_MIN_IDLE:2}
-      maximum-pool-size: ${HIKARI_MAX_POOL:15}
       pool-name: HikariCP-User
+      maximum-pool-size: ${HIKARI_MAX_POOL:20}
+      minimum-idle: ${HIKARI_MIN_IDLE:5}
+      connection-timeout: 20000
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      keep-alive-time: 60000
+      leak-detection-threshold: 2000
       auto-commit: true
       connection-test-query: SELECT 1
       data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
-        useLocalSessionState: true
-        rewriteBatchedStatements: true
-        cacheResultSetMetadata: true
-        cacheServerConfiguration: true
-        elideSetAutoCommits: true
-        maintainTimeStats: false
+        reWriteBatchedInserts: true
+        prepareThreshold: 5
+        preparedStatementCacheQueries: 250
+        preparedStatementCacheSizeMiB: 10
+        tcpKeepAlive: true
+        binaryTransfer: true
+        socketTimeout: 30
+        connectTimeout: 10
+        loginTimeout: 5
   jpa:
     hibernate:
       ddl-auto: update
@@ -63,9 +63,12 @@ spring:
         format_sql: false
         jdbc:
           batch_size: 50
+          batch_versioned_data: true
         order_inserts: true
         order_updates: true
         generate_statistics: false
+        connection:
+          provider_disables_autocommit: true
   jackson:
     default-property-inclusion: NON_NULL
     time-zone: UTC
