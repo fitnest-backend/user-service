@@ -40,7 +40,7 @@ spring:
       max-lifetime: 1800000
       keep-alive-time: 60000
       leak-detection-threshold: 2000
-      auto-commit: true
+      auto-commit: false
       connection-test-query: SELECT 1
       data-source-properties:
         reWriteBatchedInserts: true
