@@ -96,7 +96,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     // Caching strategy note: Use a short TTL (2-5 minutes) for admin-users cache in your cache configuration (e.g., Redis, Ehcache).
     // For statistics, prefer a scheduled refresh (every 10 minutes) and return cached value immediately.
     @Override
-    @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search}")
+    // @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search}")
     public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search) {
         log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}, search={}", packageId, packageDuration, subscriptionStatus, sort, search);
 
@@ -284,7 +284,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    @Cacheable(value = "user-statistics", key = "'all'")
+    // @Cacheable(value = "user-statistics", key = "'all'")
     public UserStatisticsResponse getUserStatistics() {
         long totalUsers = userProfileRepository.count();
 
