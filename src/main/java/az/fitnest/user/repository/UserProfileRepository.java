@@ -36,4 +36,28 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
            OR LOWER(u.email) LIKE LOWER(CONCAT(:query, '%'))
     """)
     Page<UserProfile> searchByQueryOrUserIds(@Param("query") String query, @Param("userId") Long userId, @Param("userIds") List<Long> userIds, Pageable pageable);
+
+    @Query(value = """
+        WITH current_month AS (
+            SELECT count(*) AS cnt FROM users 
+            WHERE status = 'ACTIVE' AND created_at >= date_trunc('month', CURRENT_DATE)
+        ),
+        previous_month AS (
+            SELECT count(*) AS cnt FROM users 
+            WHERE status = 'ACTIVE' 
+              AND created_at >= date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
+              AND created_at < date_trunc('month', CURRENT_DATE)
+        )
+        SELECT 
+            (SELECT cnt FROM current_month) AS currentTotal,
+            CASE WHEN (SELECT cnt FROM previous_month) = 0 THEN 0.0
+                 ELSE ((SELECT cnt FROM current_month) - (SELECT cnt FROM previous_month))::numeric / (SELECT cnt FROM previous_month) * 100.0
+            END AS percentageChange
+        """, nativeQuery = true)
+    KpiProjection getActiveCustomersKpi();
+
+    interface KpiProjection {
+        Long getCurrentTotal();
+        Double getPercentageChange();
+    }
 }

@@ -1,0 +1,16 @@
+// Copied from order-backend for cross-service gRPC
+syntax = "proto3";
+
+package catalog;
+option java_multiple_files = true;
+option java_package = "az.fitnest.catalog.grpc";
+
+// Remove GymService definition, keep only messages
+message GymSupportsPlanRequest {
+  int64 gym_id = 1;
+  int64 plan_id = 2;
+}
+
+message GymSupportsPlanResponse {
+  bool supported = 1;
+}

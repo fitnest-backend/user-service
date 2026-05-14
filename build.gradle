@@ -79,6 +79,8 @@ dependencies {
     // Pin Lombok for reproducible builds
     compileOnly "org.projectlombok:lombok:1.18.42"
     annotationProcessor "org.projectlombok:lombok:1.18.42"
+
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
  
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -118,4 +120,12 @@ sourceSets {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 25
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add('--enable-preview')
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs.add('--enable-preview')
 }
