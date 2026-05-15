@@ -264,7 +264,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = getOrCreateProfile(userId);
         String oldImageUrl = profile.getProfileImageUrl();
 
-        String newImageUrl = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
+        String fsId = fileStorageService.saveFile(file, "/profiles", oldImageUrl);
+        String newImageUrl = "/api/v1/me/profile/images/" + fsId;
         profile.setProfileImageUrl(newImageUrl);
         userProfileRepository.save(profile);
     }
@@ -582,7 +583,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (profileImageUrl == null || profileImageUrl.isBlank()) {
             return null;
         }
-        if (profileImageUrl.startsWith("http")) {
+        if (profileImageUrl.startsWith("/")) {
             return profileImageUrl;
         }
         return "/api/v1/me/profile/images/" + profileImageUrl;

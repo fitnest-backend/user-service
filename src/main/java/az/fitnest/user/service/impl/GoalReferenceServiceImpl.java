@@ -126,7 +126,8 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         validateImage(file);
-        String imageUrl = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
+        String fsId = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
+        String imageUrl = "/api/v1/goals/images/" + fsId;
         goal.setImageUrl(imageUrl);
         goalReferenceRepository.save(goal);
     }
@@ -195,6 +196,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     private String getFullImageUrl(String fsId) {
         if (fsId == null || fsId.trim().isEmpty()) return null;
+        if (fsId.startsWith("/")) return fsId;
         return "/api/v1/goals/images/" + fsId;
     }
 }
