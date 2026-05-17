@@ -79,8 +79,8 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         goal.setSubtitle(subtitle);
         goalReferenceRepository.save(goal);
 
-        createTranslationIfNotFound(code, "EN", title, subtitle);
-        createTranslationIfNotFound(code, "RU", title, subtitle);
+        translationService.autoTranslateAndSave("GoalReference", code, "title", title);
+        translationService.autoTranslateAndSave("GoalReference", code, "subtitle", subtitle);
 
         return goal;
     }
@@ -95,10 +95,8 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         goal.setSubtitle(subtitle);
         goalReferenceRepository.save(goal);
 
-        updateOrSaveTranslation(code, "EN", "title", title);
-        updateOrSaveTranslation(code, "EN", "subtitle", subtitle);
-        updateOrSaveTranslation(code, "RU", "title", title);
-        updateOrSaveTranslation(code, "RU", "subtitle", subtitle);
+        translationService.autoTranslateAndSave("GoalReference", code, "title", title);
+        translationService.autoTranslateAndSave("GoalReference", code, "subtitle", subtitle);
 
         return goal;
     }
