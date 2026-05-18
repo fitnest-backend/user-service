@@ -64,6 +64,51 @@ public class TranslationService {
     }
 
     private String translateText(String text, String targetLanguage) {
+        // Try Google Translate first (Ultra-accurate, extremely reliable, free, no keys needed)
+        try {
+            String googleTranslated = translateWithGoogle(text, targetLanguage);
+            if (googleTranslated != null && !googleTranslated.trim().isEmpty()) {
+                log.info("Translation successful using Google Translate [AZ -> {}]: '{}' -> '{}'", 
+                    targetLanguage.toUpperCase(), text, googleTranslated);
+                return googleTranslated;
+            }
+        } catch (Exception e) {
+            log.warn("Google Translate failed, falling back to LibreTranslate. Error: {}", e.getMessage());
+        }
+
+        // Fallback to LibreTranslate
+        return translateWithLibreTranslate(text, targetLanguage);
+    }
+
+    private String translateWithGoogle(String text, String targetLanguage) {
+        try {
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            String url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=az&tl=" 
+                + targetLanguage.toLowerCase() + "&dt=t&q=" 
+                + java.net.URLEncoder.encode(text, java.nio.charset.StandardCharsets.UTF_8);
+
+            log.info("Google Translate Request [AZ -> {}]: '{}'", targetLanguage.toUpperCase(), text);
+            String response = restTemplate.getForObject(url, String.class);
+            if (response != null) {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(response);
+                if (rootNode.isArray() && rootNode.size() > 0) {
+                    com.fasterxml.jackson.databind.JsonNode firstArray = rootNode.get(0);
+                    if (firstArray.isArray() && firstArray.size() > 0) {
+                        com.fasterxml.jackson.databind.JsonNode translationPair = firstArray.get(0);
+                        if (translationPair.isArray() && translationPair.size() > 0) {
+                            return translationPair.get(0).asText();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Google Translation API failed for text '{}' to '{}': {}", text, targetLanguage, e.getMessage());
+        }
+        return null;
+    }
+
+    private String translateWithLibreTranslate(String text, String targetLanguage) {
         log.info("LibreTranslate API Request: url='{}/translate', text='{}', source='az', target='{}'", 
             libreTranslateUrl, text, targetLanguage);
         try {
