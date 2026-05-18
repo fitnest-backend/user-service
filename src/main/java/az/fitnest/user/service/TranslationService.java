@@ -29,9 +29,6 @@ public class TranslationService {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TranslationService.class);
 
-    @org.springframework.beans.factory.annotation.Value("${LIBRETRANSLATE_URL:http://10.0.0.4:5000}")
-    private String libreTranslateUrl;
-
     public void autoTranslateAndSave(String entityType, String entityId, String fieldName, String originalValueAz) {
         if (originalValueAz == null || originalValueAz.trim().isEmpty()) {
             log.warn("Auto-translation skipped: originalValueAz is null or empty for entityType={}, entityId={}, fieldName={}", 
@@ -64,7 +61,7 @@ public class TranslationService {
     }
 
     private String translateText(String text, String targetLanguage) {
-        // Try Google Translate first (Ultra-accurate, extremely reliable, free, no keys needed)
+        // Try Google Translate (Ultra-accurate, extremely reliable, free, no keys needed)
         try {
             String googleTranslated = translateWithGoogle(text, targetLanguage);
             if (googleTranslated != null && !googleTranslated.trim().isEmpty()) {
@@ -73,22 +70,26 @@ public class TranslationService {
                 return googleTranslated;
             }
         } catch (Exception e) {
-            log.warn("Google Translate failed, falling back to LibreTranslate. Error: {}", e.getMessage());
+            log.error("Google Translate failed. Error: {}", e.getMessage());
         }
-
-        // Fallback to LibreTranslate
-        return translateWithLibreTranslate(text, targetLanguage);
+        return null;
     }
 
     private String translateWithGoogle(String text, String targetLanguage) {
         try {
             org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
-            String url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=az&tl=" 
-                + targetLanguage.toLowerCase() + "&dt=t&q=" 
-                + java.net.URLEncoder.encode(text, java.nio.charset.StandardCharsets.UTF_8);
+            java.net.URI uri = org.springframework.web.util.UriComponentsBuilder
+                .fromUriString("https://translate.googleapis.com/translate_a/single")
+                .queryParam("client", "gtx")
+                .queryParam("sl", "az")
+                .queryParam("tl", targetLanguage.toLowerCase())
+                .queryParam("dt", "t")
+                .queryParam("q", text)
+                .build()
+                .toUri();
 
             log.info("Google Translate Request [AZ -> {}]: '{}'", targetLanguage.toUpperCase(), text);
-            String response = restTemplate.getForObject(url, String.class);
+            String response = restTemplate.getForObject(uri, String.class);
             if (response != null) {
                 com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
                 com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(response);
@@ -104,45 +105,6 @@ public class TranslationService {
             }
         } catch (Exception e) {
             log.error("Google Translation API failed for text '{}' to '{}': {}", text, targetLanguage, e.getMessage());
-        }
-        return null;
-    }
-
-    private String translateWithLibreTranslate(String text, String targetLanguage) {
-        log.info("LibreTranslate API Request: url='{}/translate', text='{}', source='az', target='{}'", 
-            libreTranslateUrl, text, targetLanguage);
-        try {
-            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
-            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-            headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
-
-            org.springframework.util.LinkedMultiValueMap<String, String> map = new org.springframework.util.LinkedMultiValueMap<>();
-            map.add("q", text);
-            map.add("source", "az");
-            map.add("target", targetLanguage.toLowerCase());
-
-            org.springframework.http.HttpEntity<org.springframework.util.LinkedMultiValueMap<String, String>> request = 
-                new org.springframework.http.HttpEntity<>(map, headers);
-
-            String requestUrl = libreTranslateUrl + "/translate";
-            org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.postForEntity(
-                requestUrl,
-                request,
-                java.util.Map.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String translatedText = (String) response.getBody().get("translatedText");
-                log.info("LibreTranslate API Response: HTTP status={}, translatedText='{}'", 
-                    response.getStatusCode(), translatedText);
-                return translatedText;
-            } else {
-                log.warn("LibreTranslate API Response returned non-success status code: HTTP status={}, body={}", 
-                    response.getStatusCode(), response.getBody());
-            }
-        } catch (Exception e) {
-            log.error("LibreTranslate API Request FAILED: url='{}/translate', text='{}', targetLanguage='{}'. Error: {}", 
-                libreTranslateUrl, text, targetLanguage, e.getMessage(), e);
         }
         return null;
     }
