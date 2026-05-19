@@ -45,14 +45,17 @@ public class CachedIdentityGrpcClient {
         return toDto(raw);
     }
 
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
     public void updateProfileImage(Long userId, String imageUrl) {
         identityGrpcClient.updateProfileImage(userId, imageUrl);
     }
 
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
     public void updateLanguage(Long userId, String language) {
         identityGrpcClient.updateLanguage(userId, language);
     }
 
+    @CacheEvict(cacheNames = "identity_users", key = "#userId")
     public void updateSetupRequired(Long userId, boolean required) {
         identityGrpcClient.updateSetupRequired(userId, required);
     }
