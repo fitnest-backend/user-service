@@ -194,7 +194,7 @@ grpc:
   client:
     # ✅ Updated gRPC clients to -backend
     identity-backend:
-      address: ${IDENTITY_BACKEND_GRPC_ADDRESS}
+      address: ${IDENTITY_BACKEND_GRPC_ADDRESS:dns:///identity-backend:9090}
       negotiation-type: ${GRPC_CLIENT_NEGOTIATION:plaintext}
       enable-keep-alive: true
       keep-alive-without-calls: true
@@ -202,13 +202,13 @@ grpc:
       keep-alive-timeout: 5s
       deadline-after: 10s
     storage-backend:
-      address: ${STORAGE_GRPC_ADDRESS}
+      address: ${STORAGE_GRPC_ADDRESS:dns:///storage-backend:9090}
       negotiation-type: plaintext
     notifications-backend:
-      address: ${NOTIFICATIONS_BACKEND_GRPC_ADDRESS}
+      address: ${NOTIFICATIONS_BACKEND_GRPC_ADDRESS:dns:///notifications-backend:9090}
       negotiation-type: plaintext
     order-backend:
-      address: ${ORDER_BACKEND_GRPC_ADDRESS}
+      address: ${ORDER_BACKEND_GRPC_ADDRESS:dns:///order-backend:9090}
       negotiation-type: plaintext
       deadline-after: 10s
       enable-keep-alive: true
