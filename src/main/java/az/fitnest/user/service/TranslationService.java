@@ -9,10 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
 
 @Service
-@RequiredArgsConstructor
 public class TranslationService {
 
     private final TranslationRepository translationRepository;
+    private final org.springframework.web.client.RestTemplate restTemplate;
+
+    public TranslationService(TranslationRepository translationRepository) {
+        this.translationRepository = translationRepository;
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(1000);
+        factory.setReadTimeout(1500);
+        this.restTemplate = new org.springframework.web.client.RestTemplate(factory);
+    }
 
     public String getTranslatedValue(String entityType, String entityId, String fieldName, String userLanguage) {
         if (userLanguage == null || userLanguage.equalsIgnoreCase("AZ")) {
@@ -80,7 +88,6 @@ public class TranslationService {
 
     private String translateWithGoogle(String text, String targetLanguage) {
         try {
-            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
             java.net.URI uri = org.springframework.web.util.UriComponentsBuilder
                 .fromUriString("https://translate.googleapis.com/translate_a/single")
                 .queryParam("client", "gtx")
