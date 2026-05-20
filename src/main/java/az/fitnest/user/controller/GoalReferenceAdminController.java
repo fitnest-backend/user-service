@@ -30,27 +30,33 @@ public class GoalReferenceAdminController {
 
     private final GoalReferenceService goalReferenceService;
 
-    @PostMapping
-    @Operation(summary = "Hədəf yaradın (Admin)", description = "Yeni hədəf arayışı yaradır və tərcümələri hazırlayır. ADMIN rolu tələb olunur.")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Hədəf yaradın (Admin)", description = "Yeni hədəf arayışı yaradır və tərcümələri hazırlayır. Şəkil yüklənə bilər. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Hədəf uğurla yaradıldı"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Bu kodlu hədəf artıq mövcuddur")
     })
-    public ResponseEntity<ApiResponse<GoalReference>> createGoal(@Valid @RequestBody CreateGoalRequest request) {
-        GoalReference goal = goalReferenceService.createGoal(request.code(), request.title(), request.subtitle());
+    public ResponseEntity<ApiResponse<GoalReference>> createGoal(
+            @RequestParam("code") @NotBlank @jakarta.validation.constraints.Pattern(regexp = "^[A-Z0-9_-]+$", message = "error.invalid_goal_code") String code,
+            @RequestParam("title") @NotBlank String title,
+            @RequestParam(value = "subtitle", required = false) String subtitle,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+        GoalReference goal = goalReferenceService.createGoal(code, title, subtitle, image);
         return ResponseEntity.status(201).body(ApiResponse.success(goal));
     }
 
-    @PutMapping("/{code}")
-    @Operation(summary = "Hədəfi yeniləyin (Admin)", description = "Hədəf arayışının başlığını və yarımbaşlığını yeniləyir. ADMIN rolu tələb olunur.")
+    @PutMapping(path = "/{code}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Hədəfi yeniləyin (Admin)", description = "Hədəf arayışının başlığını, yarımbaşlığını və şəklini yeniləyir. ADMIN rolu tələb olunur.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla yeniləndi"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Hədəf tapılmadı")
     })
     public ResponseEntity<ApiResponse<GoalReference>> updateGoal(
             @PathVariable String code,
-            @Valid @RequestBody az.fitnest.user.dto.request.UpdateGoalRequest request) {
-        GoalReference goal = goalReferenceService.updateGoal(code, request.title(), request.subtitle());
+            @RequestParam("title") @NotBlank String title,
+            @RequestParam(value = "subtitle", required = false) String subtitle,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+        GoalReference goal = goalReferenceService.updateGoal(code, title, subtitle, image);
         return ResponseEntity.ok(ApiResponse.success(goal));
     }
 
@@ -64,22 +70,4 @@ public class GoalReferenceAdminController {
         goalReferenceService.deleteGoal(code);
         return ResponseEntity.ok(ApiResponse.success("Goal reference deleted successfully"));
     }
-
-    @PutMapping(path = "/{code}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Hədəf şəkli yükləyin (Admin)", description = "Hədəf üçün şəkli yükləyir və ya əvəzləyir. ADMIN rolu tələb olunur.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Şəkil uğurla yükləndi")
-    })
-    public ResponseEntity<Void> uploadGoalImage(
-            @PathVariable String code,
-            @Parameter(description = "Yüklənəcək şəkil faylı (Maks 5MB)") @RequestParam("file") MultipartFile file) {
-        goalReferenceService.uploadGoalImage(code, file);
-        return ResponseEntity.ok().build();
-    }
-
-    public record CreateGoalRequest(
-        @NotBlank String code,
-        @NotBlank String title,
-        String subtitle
-    ) {}
 }

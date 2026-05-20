@@ -69,7 +69,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     @Transactional
     @Override
-    public GoalReference createGoal(String code, String title, String subtitle) {
+    public GoalReference createGoal(String code, String title, String subtitle, MultipartFile image) {
         if (goalReferenceRepository.existsById(code)) {
             throw new ConflictException("error.resource_already_exists");
         }
@@ -77,6 +77,13 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         goal.setGoalCode(code);
         goal.setTitle(title);
         goal.setSubtitle(subtitle);
+
+        if (image != null && !image.isEmpty()) {
+            validateImage(image);
+            String fsId = fileStorageService.saveFile(image, "/goals");
+            goal.setImageUrl("/api/v1/goals/images/" + fsId);
+        }
+
         goalReferenceRepository.save(goal);
 
         translationService.autoTranslateAndSave("GoalReference", code, "title", title);
@@ -87,12 +94,19 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     @Transactional
     @Override
-    public GoalReference updateGoal(String code, String title, String subtitle) {
+    public GoalReference updateGoal(String code, String title, String subtitle, MultipartFile image) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
 
         goal.setTitle(title);
         goal.setSubtitle(subtitle);
+
+        if (image != null && !image.isEmpty()) {
+            validateImage(image);
+            String fsId = fileStorageService.saveFile(image, "/goals", goal.getImageUrl());
+            goal.setImageUrl("/api/v1/goals/images/" + fsId);
+        }
+
         goalReferenceRepository.save(goal);
 
         translationService.autoTranslateAndSave("GoalReference", code, "title", title);
@@ -115,19 +129,6 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         }
 
         goalReferenceRepository.deleteById(code);
-    }
-
-    @Transactional
-    @Override
-    public void uploadGoalImage(String code, MultipartFile file) {
-        GoalReference goal = goalReferenceRepository.findById(code)
-                .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
-
-        validateImage(file);
-        String fsId = fileStorageService.saveFile(file, "/goals", goal.getImageUrl());
-        String imageUrl = "/api/v1/goals/images/" + fsId;
-        goal.setImageUrl(imageUrl);
-        goalReferenceRepository.save(goal);
     }
 
     private GoalItemResponse mapToResponse(GoalReference goal, String userLanguage) {
