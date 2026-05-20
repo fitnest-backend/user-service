@@ -6,6 +6,8 @@ import az.fitnest.user.repository.TranslationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.scheduling.annotation.Async;
+
 @Service
 @RequiredArgsConstructor
 public class TranslationService {
@@ -29,6 +31,7 @@ public class TranslationService {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TranslationService.class);
 
+    @Async
     public void autoTranslateAndSave(String entityType, String entityId, String fieldName, String originalValueAz) {
         if (originalValueAz == null || originalValueAz.trim().isEmpty()) {
             log.warn("Auto-translation skipped: originalValueAz is null or empty for entityType={}, entityId={}, fieldName={}", 
