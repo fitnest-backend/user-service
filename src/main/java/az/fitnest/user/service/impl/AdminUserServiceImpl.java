@@ -208,11 +208,9 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     private List<Long> getSearchMatchedUserIds(String search, Long searchUserId, List<Long> mobileUserIds) {
-        Page<UserProfile> localMatches = userProfileRepository.searchByQuery(
-                search.trim(), searchUserId, Pageable.unpaged());
+        List<Long> localMatches = userProfileRepository.searchIdsByQuery(search.trim(), searchUserId);
 
-        java.util.Set<Long> matchedIds = new java.util.LinkedHashSet<>();
-        localMatches.getContent().forEach(p -> matchedIds.add(p.getUserId()));
+        java.util.Set<Long> matchedIds = new java.util.LinkedHashSet<>(localMatches);
         if (mobileUserIds != null) {
             matchedIds.addAll(mobileUserIds);
         }

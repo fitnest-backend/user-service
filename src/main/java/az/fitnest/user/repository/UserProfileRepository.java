@@ -28,6 +28,15 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     Page<UserProfile> searchByQuery(@Param("query") String query, @Param("userId") Long userId, Pageable pageable);
 
     @Query("""
+        SELECT u.userId FROM UserProfile u
+        WHERE (:userId IS NOT NULL AND u.userId = :userId)
+           OR LOWER(u.firstName) LIKE LOWER(CONCAT(:query, '%'))
+           OR LOWER(u.lastName) LIKE LOWER(CONCAT(:query, '%'))
+           OR LOWER(u.email) LIKE LOWER(CONCAT(:query, '%'))
+    """)
+    List<Long> searchIdsByQuery(@Param("query") String query, @Param("userId") Long userId);
+
+    @Query("""
         SELECT u FROM UserProfile u
         WHERE u.userId IN :userIds
            OR (:userId IS NOT NULL AND u.userId = :userId)
