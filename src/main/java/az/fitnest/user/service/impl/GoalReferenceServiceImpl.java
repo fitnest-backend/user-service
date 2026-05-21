@@ -71,6 +71,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     @Transactional
     @Override
+    @org.springframework.cache.annotation.CacheEvict(value = {"goals-all", "goal-by-code"}, allEntries = true)
     public GoalReference createGoal(String code, String title, String subtitle, MultipartFile image) {
         if (goalReferenceRepository.existsById(code)) {
             throw new ConflictException("error.resource_already_exists");
@@ -96,6 +97,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     @Transactional
     @Override
+    @org.springframework.cache.annotation.CacheEvict(value = {"goals-all", "goal-by-code"}, allEntries = true)
     public GoalReference updateGoal(String code, String title, String subtitle, MultipartFile image) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
@@ -119,6 +121,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
 
     @Transactional
     @Override
+    @org.springframework.cache.annotation.CacheEvict(value = {"goals-all", "goal-by-code"}, allEntries = true)
     public void deleteGoal(String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
