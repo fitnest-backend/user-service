@@ -21,15 +21,17 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager(
-                "dashboard-kpi",
-                "dashboard-growth"
-        );
-        manager.setCaffeine(
-                Caffeine.newBuilder()
-                        .expireAfterWrite(1, TimeUnit.HOURS)
-                        .maximumSize(100)
-        );
+        org.springframework.cache.support.SimpleCacheManager manager = new org.springframework.cache.support.SimpleCacheManager();
+        manager.setCaches(java.util.Arrays.asList(
+                new org.springframework.cache.caffeine.CaffeineCache("dashboard-kpi",
+                        Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).maximumSize(100).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("dashboard-growth",
+                        Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).maximumSize(100).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("admin-users",
+                        Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(200).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("user-statistics",
+                        Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(10).build())
+        ));
         return manager;
     }
 }
