@@ -16,7 +16,7 @@ public class FileStorageServiceImpl implements az.fitnest.user.service.FileStora
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
-            "image/jpeg", "image/jpg", "image/png", "image/webp"
+            "image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"
     );
 
     private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
