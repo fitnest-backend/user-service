@@ -183,7 +183,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
                 // Only fetch user profiles for the current page of user IDs
                 List<Long> pageIds = mutableIds.subList(start, end);
-                List<UserProfile> profileList = userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent();
+                List<UserProfile> profileList = new ArrayList<>(userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent());
                 // Maintain the order of pageIds
                 profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
 
