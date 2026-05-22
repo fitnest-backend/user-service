@@ -32,6 +32,17 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final az.fitnest.user.client.DevicePlatformGrpcClient devicePlatformGrpcClient;
 
+    private static final java.util.concurrent.ExecutorService grpcExecutor = 
+        java.util.concurrent.Executors.newFixedThreadPool(16, new java.util.concurrent.ThreadFactory() {
+            private final java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "grpc-client-pool-" + counter.getAndIncrement());
+                t.setDaemon(true);
+                return t;
+            }
+        });
+
     @Override
     @Transactional(readOnly = true)
     public az.fitnest.user.dto.response.AdminUserDetailResponse getUserDetail(Long userId) {
@@ -149,21 +160,35 @@ public class AdminUserServiceImpl implements AdminUserService {
                 }
             }
 
-            if (orderSort != null) {
+            boolean isIdBasedSort = sort == null 
+                    || sort.equalsIgnoreCase("newest") 
+                    || sort.equalsIgnoreCase("registrationDate_desc") 
+                    || sort.equalsIgnoreCase("registrationDate_asc");
+
+            if (orderSort != null || isIdBasedSort) {
+                List<Long> mutableIds = new java.util.ArrayList<>(filteredUserIds);
+                if (isIdBasedSort) {
+                    if (sort == null || sort.equalsIgnoreCase("newest") || sort.equalsIgnoreCase("registrationDate_desc")) {
+                        mutableIds.sort(java.util.Comparator.reverseOrder());
+                    } else {
+                        mutableIds.sort(java.util.Comparator.naturalOrder());
+                    }
+                }
+
                 int start = (int) pageable.getOffset();
-                int end = Math.min(start + pageable.getPageSize(), filteredUserIds.size());
-                if (start >= filteredUserIds.size()) {
-                    return new PaginatedResponse<>(List.of(), filteredUserIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
+                int end = Math.min(start + pageable.getPageSize(), mutableIds.size());
+                if (start >= mutableIds.size()) {
+                    return new PaginatedResponse<>(List.of(), mutableIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
                 }
 
                 // Only fetch user profiles for the current page of user IDs
-                List<Long> pageIds = filteredUserIds.subList(start, end);
+                List<Long> pageIds = mutableIds.subList(start, end);
                 List<UserProfile> profileList = userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent();
                 // Maintain the order of pageIds
                 profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
 
                 List<AdminUserResponse> items = mapToResponse(profileList);
-                return new PaginatedResponse<>(items, filteredUserIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
+                return new PaginatedResponse<>(items, mutableIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
             } else {
                 profiles = userProfileRepository.findAllByUserIdIn(filteredUserIds, pageable);
             }
@@ -199,8 +224,12 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     private List<Long> searchMobileUserIds(String search) {
+        String trimmed = search.trim();
+        if (!trimmed.matches(".*\\d.*")) {
+            return List.of();
+        }
         try {
-            return identityGrpcClient.searchUserIdsByMobile(search.trim());
+            return identityGrpcClient.searchUserIdsByMobile(trimmed);
         } catch (Exception e) {
             log.warn("Failed to search users by mobile via gRPC: {}", e.getMessage());
             return List.of();
@@ -222,7 +251,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         List<Long> userIds = profiles.stream().map(UserProfile::getUserId).collect(Collectors.toList());
 
-        // Fetch identity and order data in parallel
+        // Fetch identity and order data in parallel using dedicated grpcExecutor pool
         java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.user.grpc.UserResponse>> identityFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
             try {
                 return identityGrpcClient.getUsersByIds(userIds).stream()
@@ -231,7 +260,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 log.warn("Identity gRPC failed", e);
                 return java.util.Collections.<Long, az.fitnest.user.grpc.UserResponse>emptyMap();
             }
-        });
+        }, grpcExecutor);
 
         java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>> orderFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
             try {
@@ -240,7 +269,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 log.warn("Order gRPC failed", e);
                 return java.util.Collections.<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>emptyMap();
             }
-        });
+        }, grpcExecutor);
 
         // Wait for both to finish
         java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture).join();
