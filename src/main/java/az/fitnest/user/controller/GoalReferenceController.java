@@ -68,7 +68,7 @@ public class GoalReferenceController {
         return ResponseEntity.ok(ApiResponse.success(goalReferenceService.getGoalByCode(code)));
     }
 
-    @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @GetMapping(value = "/images/{fsId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE, "image/svg+xml"})
     @Operation(summary = "Hədəf şəklini yayımlayın", description = "Hədəf ilə əlaqəli şəkil faylını yaddaşdan yayımlayır.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Şəkil yayımı başladı"),
