@@ -36,6 +36,19 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
             if (profile.getGender() != null) {
                 builder.setGender(profile.getGender().name());
             }
+            if (profile.getFirstName() != null && !profile.getFirstName().isBlank()) {
+                builder.setFirstName(profile.getFirstName());
+            }
+            if (profile.getLastName() != null && !profile.getLastName().isBlank()) {
+                builder.setLastName(profile.getLastName());
+            }
+            if (profile.getProfileImageUrl() != null && !profile.getProfileImageUrl().isBlank()) {
+                String imgUrl = profile.getProfileImageUrl();
+                if (!imgUrl.startsWith("/") && !imgUrl.startsWith("http")) {
+                    imgUrl = "/api/v1/me/profile/images/" + imgUrl;
+                }
+                builder.setProfileImageUrl(imgUrl);
+            }
         });
 
         responseObserver.onNext(builder.build());
