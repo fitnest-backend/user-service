@@ -47,4 +47,6 @@ public interface UserProfileService {
     LanguageDto getCurrentLanguage();
 
     BmiCalculatorResponse calculateBmi(BmiCalculatorRequest request);
+
+    void deleteProfileImage();
 }
