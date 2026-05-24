@@ -150,7 +150,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 Long searchUserId = parseUserId(search);
                 List<Long> mobileUserIds = searchMobileUserIds(search);
 
-                List<Long> searchMatchIds = getSearchMatchedUserIds(search, searchUserId, mobileUserIds);
+                java.util.Set<Long> searchMatchIds = getSearchMatchedUserIds(search, searchUserId, mobileUserIds);
                 filteredUserIds = filteredUserIds.stream()
                         .filter(searchMatchIds::contains)
                         .collect(Collectors.toList());
@@ -190,7 +190,29 @@ public class AdminUserServiceImpl implements AdminUserService {
                 List<AdminUserResponse> items = mapToResponse(profileList);
                 return new PaginatedResponse<>(items, mutableIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
             } else {
-                profiles = userProfileRepository.findAllByUserIdIn(filteredUserIds, pageable);
+                // Name-based sort: sort in-memory using lightweight name projections
+                List<UserProfileRepository.UserIdNameProjection> nameList = fetchNamesInBatches(filteredUserIds);
+                final boolean asc = sort != null && sort.equalsIgnoreCase("name_asc");
+                nameList.sort((a, b) -> {
+                    String nameA = (a.getFirstName() != null ? a.getFirstName() : "") + " " + (a.getLastName() != null ? a.getLastName() : "");
+                    String nameB = (b.getFirstName() != null ? b.getFirstName() : "") + " " + (b.getLastName() != null ? b.getLastName() : "");
+                    return asc ? nameA.compareToIgnoreCase(nameB) : nameB.compareToIgnoreCase(nameA);
+                });
+
+                int start = (int) pageable.getOffset();
+                int end = Math.min(start + pageable.getPageSize(), nameList.size());
+                if (start >= nameList.size()) {
+                    return new PaginatedResponse<>(List.of(), nameList.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
+                }
+                List<Long> pageIds = nameList.subList(start, end).stream()
+                        .map(UserProfileRepository.UserIdNameProjection::getUserId)
+                        .collect(Collectors.toList());
+
+                List<UserProfile> profileList = new ArrayList<>(userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent());
+                profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
+
+                List<AdminUserResponse> items = mapToResponse(profileList);
+                return new PaginatedResponse<>(items, nameList.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
             }
         } else if (hasSearch) {
             Long searchUserId = parseUserId(search);
@@ -236,14 +258,14 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
     }
 
-    private List<Long> getSearchMatchedUserIds(String search, Long searchUserId, List<Long> mobileUserIds) {
+    private java.util.Set<Long> getSearchMatchedUserIds(String search, Long searchUserId, List<Long> mobileUserIds) {
         List<Long> localMatches = userProfileRepository.searchIdsByQuery(search.trim(), searchUserId);
 
-        java.util.Set<Long> matchedIds = new java.util.LinkedHashSet<>(localMatches);
+        java.util.Set<Long> matchedIds = new java.util.HashSet<>(localMatches);
         if (mobileUserIds != null) {
             matchedIds.addAll(mobileUserIds);
         }
-        return new java.util.ArrayList<>(matchedIds);
+        return matchedIds;
     }
 
     private List<AdminUserResponse> mapToResponse(List<UserProfile> profiles) {
@@ -334,5 +356,18 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .finishedSubscriptions(finishedSubscriptions)
                 .activeOrFrozenSubscriptions(activeOrFrozenSubscriptions)
                 .build();
+    }
+
+    private List<UserProfileRepository.UserIdNameProjection> fetchNamesInBatches(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<UserProfileRepository.UserIdNameProjection> result = new ArrayList<>();
+        int batchSize = 1000;
+        for (int i = 0; i < userIds.size(); i += batchSize) {
+            List<Long> batch = userIds.subList(i, Math.min(i + batchSize, userIds.size()));
+            result.addAll(userProfileRepository.findNamesByUserIds(batch));
+        }
+        return result;
     }
 }

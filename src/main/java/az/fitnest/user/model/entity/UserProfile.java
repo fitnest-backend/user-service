@@ -17,7 +17,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user_profiles")
+@Table(name = "user_profiles", indexes = {
+    @Index(name = "idx_user_profile_first_name", columnList = "first_name"),
+    @Index(name = "idx_user_profile_last_name", columnList = "last_name"),
+    @Index(name = "idx_user_profile_email", columnList = "email")
+})
 public class UserProfile {
 
     @Id

@@ -11,6 +11,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 
 @GrpcService
 public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserProfileRepository userProfileRepository;
     @Autowired
@@ -18,10 +20,15 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
 
     @Override
     public void getUserById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) {
-        IdentityUserResponse identity = cachedIdentityGrpcClient.getUserById(request.getUserId());
+        IdentityUserResponse identity = null;
+        try {
+            identity = cachedIdentityGrpcClient.getUserById(request.getUserId());
+        } catch (Exception e) {
+            log.warn("Failed to fetch user {} from identity-backend: {}", request.getUserId(), e.getMessage());
+        }
         UserResponse.Builder builder = UserResponse.newBuilder();
+        builder.setUserId(request.getUserId());
         if (identity != null) {
-            builder.setUserId(identity.userId() != null ? identity.userId() : 0L);
             builder.setFirstName(identity.firstName() != null ? identity.firstName() : "");
             builder.setLastName(identity.lastName() != null ? identity.lastName() : "");
             builder.setEmail(identity.email() != null ? identity.email() : "");
