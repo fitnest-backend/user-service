@@ -579,6 +579,25 @@ public class UserProfileServiceImpl implements UserProfileService {
         return new BmiCalculatorResponse(bmi, category);
     }
 
+    @CacheEvict(cacheNames = {"user_me", "user_summaries", "admin-users", "user-statistics"}, allEntries = true)
+    @Override
+    public void deleteProfileImage() {
+        Long userId = UserContext.getCurrentUserId();
+        UserProfile profile = getOrCreateProfile(userId);
+        String oldImageUrl = profile.getProfileImageUrl();
+
+        if (oldImageUrl != null && !oldImageUrl.isBlank()) {
+            try {
+                fileStorageService.deleteFile(oldImageUrl);
+            } catch (Exception e) {
+                logger.error("Failed to delete profile image from storage: {}", oldImageUrl, e);
+            }
+            profile.setProfileImageUrl(null);
+            userProfileRepository.save(profile);
+            logger.info("Deleted profile image for user {}", userId);
+        }
+    }
+
     private String formatProfileImageUrl(String profileImageUrl) {
         if (profileImageUrl == null || profileImageUrl.isBlank()) {
             return null;

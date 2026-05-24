@@ -127,6 +127,16 @@ public class UserProfileController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Profil şəklini silin", description = "İstifadəçinin profil şəklini silir.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profil şəkli uğurla silindi")
+    })
+    @DeleteMapping("/profile-image")
+    public ResponseEntity<Void> deleteProfileImage() {
+        userProfileService.deleteProfileImage();
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "İstifadəçi hədəfini yeniləyin", description = "İstifadəçinin əsas fitnes və ya sağlamlıq hədəfini yeniləyir.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Hədəf uğurla yeniləndi", content = @Content(examples = @ExampleObject(value = "null")))
