@@ -69,4 +69,13 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
         Long getCurrentTotal();
         Double getPercentageChange();
     }
+
+    interface UserIdNameProjection {
+        Long getUserId();
+        String getFirstName();
+        String getLastName();
+    }
+
+    @Query("SELECT u.userId as userId, u.firstName as firstName, u.lastName as lastName FROM UserProfile u WHERE u.userId IN :userIds")
+    List<UserIdNameProjection> findNamesByUserIds(@Param("userIds") List<Long> userIds);
 }
