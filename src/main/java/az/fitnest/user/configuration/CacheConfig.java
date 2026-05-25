@@ -30,7 +30,15 @@ public class CacheConfig {
                 new org.springframework.cache.caffeine.CaffeineCache("admin-users",
                         Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(200).build()),
                 new org.springframework.cache.caffeine.CaffeineCache("user-statistics",
-                        Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(10).build())
+                        Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(10).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("identity_users",
+                        Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).maximumSize(5000).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("user_summaries",
+                        Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(5000).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("user_me",
+                        Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(5000).build()),
+                new org.springframework.cache.caffeine.CaffeineCache("languages",
+                        Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).maximumSize(100).build())
         ));
         return manager;
     }

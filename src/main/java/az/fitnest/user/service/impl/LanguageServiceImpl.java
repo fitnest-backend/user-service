@@ -8,6 +8,8 @@ import az.fitnest.user.exception.ResourceNotFoundException;
 import az.fitnest.user.repository.LanguageRepository;
 import az.fitnest.user.service.LanguageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class LanguageServiceImpl implements LanguageService {
 
     private final LanguageRepository languageRepository;
 
+    @Cacheable(value = "languages", key = "'all'", sync = true)
     @Override
     public List<LanguageDto> getAllLanguages() {
         return languageRepository.findAll().stream()
@@ -27,6 +30,7 @@ public class LanguageServiceImpl implements LanguageService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "languages", key = "#code.toUpperCase()", sync = true)
     @Override
     public LanguageDto getLanguageByCode(String code) {
         Language language = languageRepository.findById(code)
@@ -34,6 +38,7 @@ public class LanguageServiceImpl implements LanguageService {
         return toDto(language);
     }
 
+    @CacheEvict(value = "languages", allEntries = true)
     @Transactional
     @Override
     public LanguageDto createLanguage(LanguageCreateRequest request) {
@@ -44,6 +49,7 @@ public class LanguageServiceImpl implements LanguageService {
         return toDto(language);
     }
 
+    @CacheEvict(value = "languages", allEntries = true)
     @Transactional
     @Override
     public LanguageDto updateLanguage(String code, LanguageCreateRequest request) {
@@ -58,6 +64,7 @@ public class LanguageServiceImpl implements LanguageService {
         return toDto(language);
     }
 
+    @CacheEvict(value = "languages", allEntries = true)
     @Transactional
     @Override
     public void deleteLanguage(String code) {
