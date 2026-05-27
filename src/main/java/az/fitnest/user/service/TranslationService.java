@@ -14,6 +14,16 @@ public class TranslationService {
     private final TranslationRepository translationRepository;
     private final org.springframework.web.client.RestTemplate restTemplate;
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager entityManager;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    private TranslationService self;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private TranslationEntityResolver translationEntityResolver;
+
     public TranslationService(TranslationRepository translationRepository) {
         this.translationRepository = translationRepository;
         org.springframework.http.client.SimpleClientHttpRequestFactory factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
@@ -27,7 +37,7 @@ public class TranslationService {
             return null;
         }
 
-        return translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
+        String existingValue = translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
                 entityType,
                 entityId,
                 userLanguage.toUpperCase(),
@@ -35,6 +45,49 @@ public class TranslationService {
         )
         .map(Translation::getFieldValue)
         .orElse(null);
+
+        if (existingValue != null) {
+            return existingValue;
+        }
+
+        if (entityType != null && entityType.equalsIgnoreCase("Gender")) {
+            String originalVal = null;
+            if (entityId != null && entityId.equalsIgnoreCase("MALE")) {
+                originalVal = "Kişi";
+            } else if (entityId != null && entityId.equalsIgnoreCase("FEMALE")) {
+                originalVal = "Qadın";
+            }
+
+            if (originalVal != null) {
+                String translatedValue = translateText(originalVal, userLanguage.toLowerCase());
+                if (translatedValue != null && !translatedValue.trim().isEmpty()) {
+                    self.saveOrUpdateTranslation(entityType, entityId, userLanguage, fieldName, translatedValue);
+                    return translatedValue;
+                }
+            }
+        }
+
+        try {
+            Class<?> entityClass = translationEntityResolver.getEntityClass(entityType);
+            if (entityClass != null) {
+                Object entity = entityManager.find(entityClass, entityId);
+                if (entity != null) {
+                    String originalValueAz = translationEntityResolver.extractFieldValue(entity, fieldName);
+                    if (originalValueAz != null && !originalValueAz.trim().isEmpty()) {
+                        String translatedValue = translateText(originalValueAz, userLanguage.toLowerCase());
+                        if (translatedValue != null && !translatedValue.trim().isEmpty()) {
+                            self.saveOrUpdateTranslation(entityType, entityId, userLanguage, fieldName, translatedValue);
+                            return translatedValue;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Soft fallback translation failed for entityType={}, entityId={}, fieldName={}, lang={}",
+                    entityType, entityId, fieldName, userLanguage, e);
+        }
+
+        return null;
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TranslationService.class);
@@ -119,7 +172,8 @@ public class TranslationService {
         return null;
     }
 
-    private void saveOrUpdateTranslation(String entityType, String entityId, String languageCode, String fieldName, String fieldValue) {
+    @org.springframework.transaction.annotation.Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public void saveOrUpdateTranslation(String entityType, String entityId, String languageCode, String fieldName, String fieldValue) {
         String normalizedEntityType = entityType;
         String normalizedLanguageCode = languageCode.toUpperCase();
 
