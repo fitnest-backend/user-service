@@ -188,6 +188,17 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     }
 
     private String getUserLanguage() {
+        // 1. Check current request Accept-Language header first via LocaleContextHolder
+        try {
+            String localeLang = org.springframework.context.i18n.LocaleContextHolder.getLocale().getLanguage()
+                    .toUpperCase();
+            if (localeLang.equals("EN") || localeLang.equals("RU") || localeLang.equals("AZ")) {
+                return localeLang;
+            }
+        } catch (Exception ignored) {
+        }
+
+        // 2. Fallback to GRPC User Profile language
         Long userId = UserContext.getCurrentUserId();
         if (userId != null) {
             try {
