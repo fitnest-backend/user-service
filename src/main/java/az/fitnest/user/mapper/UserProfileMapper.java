@@ -12,6 +12,7 @@ public final class UserProfileMapper {
 
     public static UserProfileResponse toUserProfileResponse(IdentityUserResponse userResponse, UserProfile profile, String profileImageUrl, String currentSubscription, String subscriptionStatus, Boolean notificationsEnabled) {
         if (userResponse == null || profile == null) return null;
+        boolean isEligible = userResponse.mobile() != null && !userResponse.mobile().trim().isEmpty();
         return UserProfileResponse.builder()
                 .userId(userResponse.userId())
                 .firstName(profile.getFirstName() != null ? profile.getFirstName() : "")
@@ -23,6 +24,7 @@ public final class UserProfileMapper {
                 .subscriptionStatus(subscriptionStatus)
                 .notificationsEnabled(notificationsEnabled)
                 .hasLocalPassword(userResponse.hasLocalPassword())
+                .isEligibleToHaveLocalPassword(isEligible)
                 .build();
     }
 
