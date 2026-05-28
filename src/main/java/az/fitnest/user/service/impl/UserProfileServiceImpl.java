@@ -13,7 +13,6 @@ import az.fitnest.user.model.entity.UserLocation;
 import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.model.entity.GoalReference;
 import az.fitnest.user.model.enums.Gender;
-import az.fitnest.user.repository.LanguageRepository;
 import az.fitnest.user.repository.UserLocationRepository;
 import az.fitnest.user.repository.UserProfileRepository;
 import az.fitnest.user.service.*;
@@ -44,7 +43,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final FileStorageService fileStorageService;
     private final UserLocationRepository userLocationRepository;
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
-    private final LanguageRepository languageRepository;
     private final TranslationService translationService;
     private final az.fitnest.user.client.StorageGrpcClient storageGrpcClient;
     private final CatalogGrpcClient catalogGrpcClient;
@@ -409,9 +407,24 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
         String upperLang = request.language().toUpperCase();
-        languageRepository.findByCode(upperLang)
-                .orElseThrow(() -> new BadRequestException("error.invalid_language_code"));
         Long userId = UserContext.getCurrentUserId();
+        
+        IdentityUserResponse identityUser = cachedIdentityClient.getUserById(userId);
+        String currentLang = identityUser.language();
+        if (currentLang == null || currentLang.isBlank()) {
+            currentLang = "AZ";
+        }
+        
+        if (upperLang.equals(currentLang.toUpperCase())) {
+            return;
+        }
+        
+        try {
+            languageService.getLanguageByCode(upperLang);
+        } catch (ResourceNotFoundException e) {
+            throw new BadRequestException("error.invalid_language_code");
+        }
+        
         cachedIdentityClient.updateLanguage(userId, upperLang);
     }
 
