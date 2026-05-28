@@ -192,7 +192,19 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     }
 
     private String getUserLanguage() {
-        // 1. Check current request Accept-Language header first via LocaleContextHolder
+        // 1. First check if user is authenticated and get language from their profile (Authorization / JWT)
+        Long userId = UserContext.getCurrentUserId();
+        if (userId != null) {
+            try {
+                String profileLang = cachedIdentityGrpcClient.getUserById(userId).language();
+                if (profileLang != null && !profileLang.trim().isEmpty()) {
+                    return profileLang.toUpperCase();
+                }
+            } catch (Exception e) {
+            }
+        }
+
+        // 2. Fallback to Accept-Language header (unauthenticated / anonymous requests)
         try {
             org.springframework.web.context.request.RequestAttributes requestAttributes = 
                     org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
@@ -211,17 +223,6 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         } catch (Exception ignored) {
         }
 
-        // 2. Fallback to GRPC User Profile language
-        Long userId = UserContext.getCurrentUserId();
-        if (userId != null) {
-            try {
-                String profileLang = cachedIdentityGrpcClient.getUserById(userId).language();
-                if (profileLang != null && !profileLang.trim().isEmpty()) {
-                    return profileLang.toUpperCase();
-                }
-            } catch (Exception e) {
-            }
-        }
         return "AZ";
     }
 
