@@ -30,6 +30,7 @@ public class TranslationService {
         factory.setConnectTimeout(1000);
         factory.setReadTimeout(1500);
         this.restTemplate = new org.springframework.web.client.RestTemplate(factory);
+        this.restTemplate.getMessageConverters().add(0, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     public String getTranslatedValue(String entityType, String entityId, String fieldName, String userLanguage) {
