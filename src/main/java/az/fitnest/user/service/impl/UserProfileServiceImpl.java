@@ -403,7 +403,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     @org.springframework.cache.annotation.Caching(evict = {
         @CacheEvict(cacheNames = "identity_users", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()"),
         @CacheEvict(cacheNames = "user_me", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()"),
-        @CacheEvict(cacheNames = "user_summaries", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
+        @CacheEvict(cacheNames = "user_summaries", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()"),
+        @CacheEvict(cacheNames = "users", key = "T(az.fitnest.user.util.UserContext).getCurrentUserId()")
     })
     @Override
     public void updateLanguage(UpdateLanguageRequest request) {
