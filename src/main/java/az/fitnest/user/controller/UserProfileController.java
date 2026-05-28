@@ -312,10 +312,19 @@ public class UserProfileController {
 
     private String getUserLanguage() {
         try {
-            String localeLang = org.springframework.context.i18n.LocaleContextHolder.getLocale().getLanguage()
-                    .toUpperCase();
-            if (localeLang.equals("EN") || localeLang.equals("RU") || localeLang.equals("AZ")) {
-                return localeLang;
+            org.springframework.web.context.request.RequestAttributes requestAttributes = 
+                    org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            if (requestAttributes instanceof org.springframework.web.context.request.ServletRequestAttributes) {
+                jakarta.servlet.http.HttpServletRequest request = 
+                        ((org.springframework.web.context.request.ServletRequestAttributes) requestAttributes).getRequest();
+                String acceptLanguage = request.getHeader("Accept-Language");
+                if (acceptLanguage != null && !acceptLanguage.trim().isEmpty()) {
+                    String localeLang = org.springframework.context.i18n.LocaleContextHolder.getLocale().getLanguage()
+                            .toUpperCase();
+                    if (localeLang.equals("EN") || localeLang.equals("RU") || localeLang.equals("AZ")) {
+                        return localeLang;
+                    }
+                }
             }
         } catch (Exception ignored) {
         }

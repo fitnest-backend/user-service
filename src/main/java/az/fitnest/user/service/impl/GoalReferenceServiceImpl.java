@@ -36,7 +36,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     private final StorageGrpcClient storageGrpcClient;
 
     @Override
-    @org.springframework.cache.annotation.Cacheable(value = "goals-all", key = "T(org.springframework.context.i18n.LocaleContextHolder).getLocale().getLanguage()")
+    @org.springframework.cache.annotation.Cacheable(value = "goals-all", key = "#root.target.resolveLanguageForCache()")
     public List<GoalItemResponse> getAllGoals() {
         String userLanguage = getUserLanguage();
         List<GoalReference> goals = goalReferenceRepository.findAllByOrderByGoalCodeAsc();
@@ -44,7 +44,7 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
     }
 
     @Override
-    @org.springframework.cache.annotation.Cacheable(value = "goal-by-code", key = "{#code, T(org.springframework.context.i18n.LocaleContextHolder).getLocale().getLanguage()}")
+    @org.springframework.cache.annotation.Cacheable(value = "goal-by-code", key = "{#code, #root.target.resolveLanguageForCache()}")
     public GoalItemResponse getGoalByCode(String code) {
         GoalReference goal = goalReferenceRepository.findById(code)
                 .orElseThrow(() -> new ResourceNotFoundException("error.goal_reference_not_found"));
@@ -187,13 +187,26 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         }
     }
 
+    public String resolveLanguageForCache() {
+        return getUserLanguage();
+    }
+
     private String getUserLanguage() {
         // 1. Check current request Accept-Language header first via LocaleContextHolder
         try {
-            String localeLang = org.springframework.context.i18n.LocaleContextHolder.getLocale().getLanguage()
-                    .toUpperCase();
-            if (localeLang.equals("EN") || localeLang.equals("RU") || localeLang.equals("AZ")) {
-                return localeLang;
+            org.springframework.web.context.request.RequestAttributes requestAttributes = 
+                    org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            if (requestAttributes instanceof org.springframework.web.context.request.ServletRequestAttributes) {
+                jakarta.servlet.http.HttpServletRequest request = 
+                        ((org.springframework.web.context.request.ServletRequestAttributes) requestAttributes).getRequest();
+                String acceptLanguage = request.getHeader("Accept-Language");
+                if (acceptLanguage != null && !acceptLanguage.trim().isEmpty()) {
+                    String localeLang = org.springframework.context.i18n.LocaleContextHolder.getLocale().getLanguage()
+                            .toUpperCase();
+                    if (localeLang.equals("EN") || localeLang.equals("RU") || localeLang.equals("AZ")) {
+                        return localeLang;
+                    }
+                }
             }
         } catch (Exception ignored) {
         }
@@ -202,7 +215,10 @@ public class GoalReferenceServiceImpl implements GoalReferenceService {
         Long userId = UserContext.getCurrentUserId();
         if (userId != null) {
             try {
-                return cachedIdentityGrpcClient.getUserById(userId).language().toUpperCase();
+                String profileLang = cachedIdentityGrpcClient.getUserById(userId).language();
+                if (profileLang != null && !profileLang.trim().isEmpty()) {
+                    return profileLang.toUpperCase();
+                }
             } catch (Exception e) {
             }
         }
