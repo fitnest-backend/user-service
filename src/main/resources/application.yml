@@ -33,13 +33,13 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: HikariCP-User
-      maximum-pool-size: ${HIKARI_MAX_POOL:20}
-      minimum-idle: ${HIKARI_MIN_IDLE:20}
+      maximum-pool-size: ${HIKARI_MAX_POOL:15}
+      minimum-idle: ${HIKARI_MIN_IDLE:5}
+      leak-detection-threshold: 30000
       connection-timeout: 20000
       idle-timeout: 30000
       max-lifetime: 1800000
       keep-alive-time: 60000
-      leak-detection-threshold: 2000
       auto-commit: false
       data-source-properties:
         reWriteBatchedInserts: true
@@ -82,6 +82,13 @@ spring:
       repositories:
         enabled: false
 
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+          max-wait: 2000ms
+        shutdown-timeout: 100ms
   # Kafka
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -151,7 +158,7 @@ app:
     jwks: ${APP_WARMUP_JWKS:true}
 
 springdoc:
-  server-url: ${SPRINGDOC_SERVER_URL:}
+  server-url: ${SPRINGDOC_SERVER_URL:https://api.fitnest.az}
   api-docs:
     path: /v3/api-docs
     cache:
