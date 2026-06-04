@@ -351,7 +351,14 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     @Cacheable(value = "user-statistics", key = "'all'")
     public UserStatisticsResponse getUserStatistics() {
-        long totalUsers = userProfileRepository.count();
+        long totalUsers = 0;
+        try {
+            List<Long> roleUserIds = identityGrpcClient.getUserIdsByRoles(List.of("ROLE_USER"));
+            totalUsers = roleUserIds.isEmpty() ? 0 : userProfileRepository.countByUserIdIn(roleUserIds);
+        } catch (Exception e) {
+            log.error("Failed to fetch count of ROLE_USER from identity-backend", e);
+            totalUsers = userProfileRepository.count(); // fallback to all
+        }
 
         long usersWithLast7Days = 0;
         long finishedSubscriptions = 0;
