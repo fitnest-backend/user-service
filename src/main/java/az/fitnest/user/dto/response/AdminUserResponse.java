@@ -22,5 +22,8 @@ public record AdminUserResponse(
     String userStatus,
 
     @Schema(description = "Abunə statusu (aktiv, dondurulmuş və s.)", example = "aktiv")
-    String subscriptionStatus
+    String subscriptionStatus,
+
+    @Schema(description = "Rol", example = "ROLE_USER")
+    String role
 ) {}

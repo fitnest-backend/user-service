@@ -57,10 +57,12 @@ public class AdminUserServiceImpl implements AdminUserService {
         String registerDate = "";
         String phoneNumber = "";
         String email = profile.getEmail();
+        String role = "";
         try {
             var identityUser = identityGrpcClient.getUserById(userId);
             registerDate = identityUser.getCreatedAt();
             phoneNumber = identityUser.getMobile();
+            role = identityUser.getRole();
             if (email == null || email.isEmpty()) {
                 email = identityUser.getEmail();
             }
@@ -101,15 +103,16 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .height(profile.getHeightCm())
                 .weight(profile.getWeightKg())
                 .bmiIndex(bmi)
+                .role(role)
                 .build();
     }
 
     // Caching strategy note: Use a short TTL (2-5 minutes) for admin-users cache in your cache configuration (e.g., Redis, Ehcache).
     // For statistics, prefer a scheduled refresh (every 10 minutes) and return cached value immediately.
     @Override
-    @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search}")
-    public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search) {
-        log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}, search={}", packageId, packageDuration, subscriptionStatus, sort, search);
+    @Cacheable(value = "admin-users", key = "{#pageable.pageNumber, #pageable.pageSize, #packageId, #packageDuration, #subscriptionStatus, #sort, #search, #roles}")
+    public PaginatedResponse<AdminUserResponse> getAllUsers(Pageable pageable, Long packageId, Integer packageDuration, String subscriptionStatus, String sort, String search, List<String> roles) {
+        log.info("Fetching all users with filters: packageId={}, duration={}, status={}, sort={}, search={}, roles={}", packageId, packageDuration, subscriptionStatus, sort, search, roles);
 
         List<Long> filteredUserIds = null;
         String orderSort = null;
@@ -135,6 +138,16 @@ public class AdminUserServiceImpl implements AdminUserService {
                 log.info("Filtered user IDs from order-backend: {}", filteredUserIds.size());
             } catch (Exception e) {
                 log.error("Failed to fetch filtered user IDs from order-backend", e);
+            }
+        }
+
+        if (roles != null && !roles.isEmpty()) {
+            try {
+                List<Long> roleUserIds = identityGrpcClient.getUserIdsByRoles(roles);
+                filteredUserIds = intersect(filteredUserIds, roleUserIds);
+                log.info("Filtered user IDs by roles {}: {}", roles, roleUserIds.size());
+            } catch (Exception e) {
+                log.error("Failed to fetch user IDs by roles from identity-backend", e);
             }
         }
 
@@ -303,12 +316,14 @@ public class AdminUserServiceImpl implements AdminUserService {
                     String userStatus = "UNKNOWN";
                     String phoneNumber = "";
                     String createdAt = "";
+                    String role = "";
 
                     var identityUser = identityUsersMap.get(profile.getUserId());
                     if (identityUser != null) {
                         userStatus = identityUser.getStatus();
                         phoneNumber = identityUser.getMobile();
                         createdAt = identityUser.getCreatedAt();
+                        role = identityUser.getRole();
                     }
 
                     String subscriptionStatus = "";
@@ -326,7 +341,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                             phoneNumber,
                             profile.getEmail(),
                             userStatus,
-                            subscriptionStatus
+                            subscriptionStatus,
+                            role
                     );
                 })
                 .collect(Collectors.toList());
@@ -369,5 +385,15 @@ public class AdminUserServiceImpl implements AdminUserService {
             result.addAll(userProfileRepository.findNamesByUserIds(batch));
         }
         return result;
+    }
+
+    private List<Long> intersect(List<Long> list1, List<Long> list2) {
+        if (list1 == null)
+            return list2;
+        if (list2 == null)
+            return list1;
+        List<Long> mutable = new ArrayList<>(list1);
+        mutable.retainAll(list2);
+        return mutable;
     }
 }

@@ -51,9 +51,10 @@ public class AdminUserController {
                             "finishDate_asc", "finishDate_desc",
                             "registrationDate_desc",
                             "registrationDate_asc" })) @RequestParam(required = false) String sort,
-            @Parameter(description = "İstifadəçi ID-si, tam adı, e-poçt ünvanı və ya telefon nömrəsi ilə axtar") @RequestParam(required = false) String search) {
+            @Parameter(description = "İstifadəçi ID-si, tam adı, e-poçt ünvanı və ya telefon nömrəsi ilə axtar") @RequestParam(required = false) String search,
+            @Parameter(description = "İstifadəçi rolları ilə filtrlə") @RequestParam(required = false) java.util.List<String> roles) {
         return ResponseEntity.ok(adminUserService.getAllUsers(PageRequest.of(page, size), packageId, packageDuration,
-                subscriptionStatus, sort, search));
+                subscriptionStatus, sort, search, roles));
     }
 
     @Operation(summary = "İstifadəçi statistikasını gətir", description = "Ümumi istifadəçi, aktiv/dondurulmuş, bitmiş və tezliklə bitəcək abunəliklərin sayını qaytarır.")

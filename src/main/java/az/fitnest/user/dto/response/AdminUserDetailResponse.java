@@ -38,5 +38,8 @@ public record AdminUserDetailResponse(
     Double weight,
 
     @Schema(description = "BMI İndeksi", example = "26.2")
-    Double bmiIndex
+    Double bmiIndex,
+
+    @Schema(description = "Rol", example = "ROLE_USER")
+    String role
 ) {}

@@ -22,6 +22,7 @@ service UserService {
   rpc ConfirmMobileChange(ConfirmMobileChangeRequest) returns (UserResponse);
   rpc SearchUserIdsByMobile(SearchUserIdsByMobileRequest) returns (SearchUserIdsByMobileResponse);
   rpc GetUsersByIds(GetUsersByIdsRequest) returns (GetUsersByIdsResponse);
+  rpc GetUserIdsByRoles(GetUserIdsByRolesRequest) returns (GetUserIdsByRolesResponse);
 }
 
 message GetUsersByIdsRequest {
@@ -51,6 +52,15 @@ message UserResponse {
   bool account_locked = 12;
   string session_status = 13;
   bool has_local_password = 14;
+  string role = 15;
+}
+
+message GetUserIdsByRolesRequest {
+  repeated string role_names = 1;
+}
+
+message GetUserIdsByRolesResponse {
+  repeated int64 user_ids = 1;
 }
 
 message UpdateUserProfileRequest {

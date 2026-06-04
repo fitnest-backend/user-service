@@ -118,4 +118,11 @@ public class IdentityGrpcClient {
         az.fitnest.user.grpc.SearchUserIdsByMobileResponse response = withDeadline().searchUserIdsByMobile(request);
         return response.getUserIdsList();
     }
+
+    public java.util.List<Long> getUserIdsByRoles(java.util.List<String> roleNames) {
+        az.fitnest.user.grpc.GetUserIdsByRolesRequest request = az.fitnest.user.grpc.GetUserIdsByRolesRequest.newBuilder()
+                .addAllRoleNames(roleNames)
+                .build();
+        return withDeadline().getUserIdsByRoles(request).getUserIdsList();
+    }
 }
