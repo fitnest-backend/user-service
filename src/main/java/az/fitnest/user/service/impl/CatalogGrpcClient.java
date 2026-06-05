@@ -17,9 +17,15 @@ public class CatalogGrpcClient {
         return gymServiceStub.getMainPageGyms(request);
     }
 
-    public az.fitnest.catalog.grpc.GetGymAdminsByUsersResponse getGymAdminsByUsers(java.util.List<Long> userIds) {
+    public az.fitnest.catalog.grpc.GetGymAdminsByUsersResponse getGymAdminsByUsers(
+            java.util.List<Long> userIds,
+            java.util.List<String> phoneNumbers,
+            java.util.List<String> emails
+    ) {
         az.fitnest.catalog.grpc.GetGymAdminsByUsersRequest request = az.fitnest.catalog.grpc.GetGymAdminsByUsersRequest.newBuilder()
                 .addAllUserIds(userIds)
+                .addAllPhoneNumbers(phoneNumbers)
+                .addAllEmails(emails)
                 .build();
         return gymServiceStub.getGymAdminsByUsers(request);
     }

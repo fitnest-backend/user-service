@@ -315,26 +315,39 @@ public class AdminUserServiceImpl implements AdminUserService {
             orderFuture = java.util.concurrent.CompletableFuture.completedFuture(java.util.Collections.emptyMap());
         }
 
-        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail>> catalogFuture;
+        java.util.concurrent.CompletableFuture<java.util.List<az.fitnest.catalog.grpc.GymAdminDetail>> catalogFuture;
         if (fetchGymAdmins) {
-            catalogFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+            catalogFuture = identityFuture.thenApplyAsync(identityMap -> {
+                List<String> phoneNumbers = identityMap.values().stream()
+                        .map(az.fitnest.user.grpc.UserResponse::getMobile)
+                        .filter(p -> p != null && !p.isBlank())
+                        .collect(Collectors.toList());
+                List<String> emails = new ArrayList<>(profiles.stream()
+                        .map(UserProfile::getEmail)
+                        .filter(e -> e != null && !e.isBlank())
+                        .collect(Collectors.toList()));
+                identityMap.values().stream()
+                        .map(az.fitnest.user.grpc.UserResponse::getEmail)
+                        .filter(e -> e != null && !e.isBlank())
+                        .forEach(emails::add);
+                List<String> finalEmails = emails.stream().distinct().collect(Collectors.toList());
+
                 try {
-                    return catalogGrpcClient.getGymAdminsByUsers(userIds).getAdminsList().stream()
-                            .collect(Collectors.toMap(admin -> admin.getUserId(), admin -> admin, (existing, replacement) -> existing));
+                    return catalogGrpcClient.getGymAdminsByUsers(userIds, phoneNumbers, finalEmails).getAdminsList();
                 } catch (Exception e) {
                     log.warn("Catalog gRPC failed", e);
-                    return java.util.Collections.<Long, az.fitnest.catalog.grpc.GymAdminDetail>emptyMap();
+                    return java.util.Collections.emptyList();
                 }
             }, grpcExecutor);
         } else {
-            catalogFuture = java.util.concurrent.CompletableFuture.completedFuture(java.util.Collections.emptyMap());
+            catalogFuture = java.util.concurrent.CompletableFuture.completedFuture(java.util.Collections.emptyList());
         }
 
         // Wait for all to finish
         java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture, catalogFuture).join();
         java.util.Map<Long, az.fitnest.user.grpc.UserResponse> identityUsersMap = identityFuture.join();
         java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> subscriptionMap = orderFuture.join();
-        java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail> gymAdminsMap = catalogFuture.join();
+        java.util.List<az.fitnest.catalog.grpc.GymAdminDetail> gymAdminsList = catalogFuture.join();
 
         return profiles.stream()
                 .map(profile -> {
@@ -361,7 +374,26 @@ public class AdminUserServiceImpl implements AdminUserService {
                                      (profile.getLastName() != null ? " " + profile.getLastName() : "");
 
                     String gymName = null;
-                    var gymAdmin = gymAdminsMap.get(profile.getUserId());
+                    final Long currentUserId = profile.getUserId();
+                    final String currentPhone = identityUser != null ? identityUser.getMobile() : "";
+                    final String currentEmail = profile.getEmail() != null ? profile.getEmail() : (identityUser != null ? identityUser.getEmail() : "");
+
+                    az.fitnest.catalog.grpc.GymAdminDetail gymAdmin = gymAdminsList.stream()
+                            .filter(admin -> {
+                                if (admin.getUserId() > 0 && admin.getUserId() == currentUserId) {
+                                    return true;
+                                }
+                                if (currentPhone != null && !currentPhone.isBlank() && currentPhone.equalsIgnoreCase(admin.getPhoneNumber())) {
+                                    return true;
+                                }
+                                if (currentEmail != null && !currentEmail.isBlank() && currentEmail.equalsIgnoreCase(admin.getEmail())) {
+                                    return true;
+                                }
+                                return false;
+                            })
+                            .findFirst()
+                            .orElse(null);
+
                     if (gymAdmin != null) {
                         gymName = gymAdmin.getGymName();
                         String gymRole = gymAdmin.getRole();

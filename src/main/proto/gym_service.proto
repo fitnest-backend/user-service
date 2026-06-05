@@ -241,6 +241,8 @@ message ActivePartnersKpiResponse {
 
 message GetGymAdminsByUsersRequest {
   repeated int64 user_ids = 1;
+  repeated string phone_numbers = 2;
+  repeated string emails = 3;
 }
 
 message GetGymAdminsByUsersResponse {
@@ -251,4 +253,6 @@ message GymAdminDetail {
   int64 user_id = 1;
   string gym_name = 2;
   string role = 3;
+  string phone_number = 4;
+  string email = 5;
 }
