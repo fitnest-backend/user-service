@@ -201,7 +201,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 // Maintain the order of pageIds
                 profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
 
-                List<AdminUserResponse> items = mapToResponse(profileList);
+                List<AdminUserResponse> items = mapToResponse(profileList, roles);
                 return new PaginatedResponse<>(items, mutableIds.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
             } else {
                 // Name-based sort: sort in-memory using lightweight name projections
@@ -225,7 +225,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 List<UserProfile> profileList = new ArrayList<>(userProfileRepository.findAllByUserIdIn(pageIds, Pageable.unpaged()).getContent());
                 profileList.sort(java.util.Comparator.comparingInt(p -> pageIds.indexOf(p.getUserId())));
 
-                List<AdminUserResponse> items = mapToResponse(profileList);
+                List<AdminUserResponse> items = mapToResponse(profileList, roles);
                 return new PaginatedResponse<>(items, nameList.size(), pageable.getPageNumber() + 1, pageable.getPageSize());
             }
         } else if (hasSearch) {
@@ -241,7 +241,7 @@ public class AdminUserServiceImpl implements AdminUserService {
             profiles = userProfileRepository.findAll(pageable);
         }
 
-        List<AdminUserResponse> items = mapToResponse(profiles.getContent());
+        List<AdminUserResponse> items = mapToResponse(profiles.getContent(), roles);
 
         return new PaginatedResponse<>(
                 items,
@@ -282,10 +282,13 @@ public class AdminUserServiceImpl implements AdminUserService {
         return matchedIds;
     }
 
-    private List<AdminUserResponse> mapToResponse(List<UserProfile> profiles) {
+    private List<AdminUserResponse> mapToResponse(List<UserProfile> profiles, List<String> roles) {
         if (profiles.isEmpty()) return List.of();
 
         List<Long> userIds = profiles.stream().map(UserProfile::getUserId).collect(Collectors.toList());
+
+        boolean fetchSubscriptions = (roles == null || roles.isEmpty() || roles.contains("ROLE_USER"));
+        boolean fetchGymAdmins = (roles == null || roles.isEmpty() || roles.contains("ROLE_GYM_ADMIN") || roles.contains("ROLE_GYM_SUPER_ADMIN"));
 
         // Fetch identity, order and catalog data in parallel using dedicated grpcExecutor pool
         java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.user.grpc.UserResponse>> identityFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
@@ -298,24 +301,34 @@ public class AdminUserServiceImpl implements AdminUserService {
             }
         }, grpcExecutor);
 
-        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>> orderFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
-            try {
-                return orderGrpcClient.getActiveSubscriptions(userIds);
-            } catch (Exception e) {
-                log.warn("Order gRPC failed", e);
-                return java.util.Collections.<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>emptyMap();
-            }
-        }, grpcExecutor);
+        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>> orderFuture;
+        if (fetchSubscriptions) {
+            orderFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+                try {
+                    return orderGrpcClient.getActiveSubscriptions(userIds);
+                } catch (Exception e) {
+                    log.warn("Order gRPC failed", e);
+                    return java.util.Collections.<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse>emptyMap();
+                }
+            }, grpcExecutor);
+        } else {
+            orderFuture = java.util.concurrent.CompletableFuture.completedFuture(java.util.Collections.emptyMap());
+        }
 
-        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail>> catalogFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
-            try {
-                return catalogGrpcClient.getGymAdminsByUsers(userIds).getAdminsList().stream()
-                        .collect(Collectors.toMap(admin -> admin.getUserId(), admin -> admin, (existing, replacement) -> existing));
-            } catch (Exception e) {
-                log.warn("Catalog gRPC failed", e);
-                return java.util.Collections.<Long, az.fitnest.catalog.grpc.GymAdminDetail>emptyMap();
-            }
-        }, grpcExecutor);
+        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail>> catalogFuture;
+        if (fetchGymAdmins) {
+            catalogFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+                try {
+                    return catalogGrpcClient.getGymAdminsByUsers(userIds).getAdminsList().stream()
+                            .collect(Collectors.toMap(admin -> admin.getUserId(), admin -> admin, (existing, replacement) -> existing));
+                } catch (Exception e) {
+                    log.warn("Catalog gRPC failed", e);
+                    return java.util.Collections.<Long, az.fitnest.catalog.grpc.GymAdminDetail>emptyMap();
+                }
+            }, grpcExecutor);
+        } else {
+            catalogFuture = java.util.concurrent.CompletableFuture.completedFuture(java.util.Collections.emptyMap());
+        }
 
         // Wait for all to finish
         java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture, catalogFuture).join();
