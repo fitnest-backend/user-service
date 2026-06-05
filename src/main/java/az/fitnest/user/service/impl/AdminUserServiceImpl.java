@@ -31,6 +31,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final OrderGrpcClient orderGrpcClient;
     private final az.fitnest.user.repository.GoalReferenceRepository goalReferenceRepository;
     private final az.fitnest.user.client.DevicePlatformGrpcClient devicePlatformGrpcClient;
+    private final CatalogGrpcClient catalogGrpcClient;
 
     private static final java.util.concurrent.ExecutorService grpcExecutor = 
         java.util.concurrent.Executors.newFixedThreadPool(16, new java.util.concurrent.ThreadFactory() {
@@ -286,7 +287,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         List<Long> userIds = profiles.stream().map(UserProfile::getUserId).collect(Collectors.toList());
 
-        // Fetch identity and order data in parallel using dedicated grpcExecutor pool
+        // Fetch identity, order and catalog data in parallel using dedicated grpcExecutor pool
         java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.user.grpc.UserResponse>> identityFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
             try {
                 return identityGrpcClient.getUsersByIds(userIds).stream()
@@ -306,10 +307,21 @@ public class AdminUserServiceImpl implements AdminUserService {
             }
         }, grpcExecutor);
 
-        // Wait for both to finish
-        java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture).join();
+        java.util.concurrent.CompletableFuture<java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail>> catalogFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+            try {
+                return catalogGrpcClient.getGymAdminsByUsers(userIds).getAdminsList().stream()
+                        .collect(Collectors.toMap(admin -> admin.getUserId(), admin -> admin, (existing, replacement) -> existing));
+            } catch (Exception e) {
+                log.warn("Catalog gRPC failed", e);
+                return java.util.Collections.<Long, az.fitnest.catalog.grpc.GymAdminDetail>emptyMap();
+            }
+        }, grpcExecutor);
+
+        // Wait for all to finish
+        java.util.concurrent.CompletableFuture.allOf(identityFuture, orderFuture, catalogFuture).join();
         java.util.Map<Long, az.fitnest.user.grpc.UserResponse> identityUsersMap = identityFuture.join();
         java.util.Map<Long, az.fitnest.order.grpc.ActiveSubscriptionResponse> subscriptionMap = orderFuture.join();
+        java.util.Map<Long, az.fitnest.catalog.grpc.GymAdminDetail> gymAdminsMap = catalogFuture.join();
 
         return profiles.stream()
                 .map(profile -> {
@@ -335,6 +347,18 @@ public class AdminUserServiceImpl implements AdminUserService {
                     String fullName = (profile.getFirstName() != null ? profile.getFirstName() : "") +
                                      (profile.getLastName() != null ? " " + profile.getLastName() : "");
 
+                    String gymName = null;
+                    var gymAdmin = gymAdminsMap.get(profile.getUserId());
+                    if (gymAdmin != null) {
+                        gymName = gymAdmin.getGymName();
+                        String gymRole = gymAdmin.getRole();
+                        if ("Super admin".equalsIgnoreCase(gymRole)) {
+                            role = "ROLE_GYM_SUPER_ADMIN";
+                        } else if ("Admin".equalsIgnoreCase(gymRole)) {
+                            role = "ROLE_GYM_ADMIN";
+                        }
+                    }
+
                     return new AdminUserResponse(
                             profile.getUserId(),
                             fullName.trim(),
@@ -342,7 +366,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                             profile.getEmail(),
                             userStatus,
                             subscriptionStatus,
-                            role
+                            role,
+                            gymName
                     );
                 })
                 .collect(Collectors.toList());

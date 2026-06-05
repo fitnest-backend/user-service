@@ -25,5 +25,8 @@ public record AdminUserResponse(
     String subscriptionStatus,
 
     @Schema(description = "Rol", example = "ROLE_USER")
-    String role
+    String role,
+
+    @Schema(description = "Zal adı", example = "FİTnest Club")
+    String gymName
 ) {}

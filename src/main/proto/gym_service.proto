@@ -22,6 +22,7 @@ service GymService {
   rpc PutGymImage(PutGymImageRequest) returns (PutGymImageResponse);
   rpc GymSupportsPlan(catalog.GymSupportsPlanRequest) returns (catalog.GymSupportsPlanResponse);
   rpc GetActivePartnersKpi(GetActivePartnersKpiRequest) returns (ActivePartnersKpiResponse); // ← əlavə et
+  rpc GetGymAdminsByUsers(GetGymAdminsByUsersRequest) returns (GetGymAdminsByUsersResponse);
 }
 
 message GetGymDetailRequest {
@@ -236,4 +237,18 @@ message GetActivePartnersKpiRequest {}
 message ActivePartnersKpiResponse {
   int64  total_active_partners = 1;
   double percentage_change     = 2;
+}
+
+message GetGymAdminsByUsersRequest {
+  repeated int64 user_ids = 1;
+}
+
+message GetGymAdminsByUsersResponse {
+  repeated GymAdminDetail admins = 1;
+}
+
+message GymAdminDetail {
+  int64 user_id = 1;
+  string gym_name = 2;
+  string role = 3;
 }

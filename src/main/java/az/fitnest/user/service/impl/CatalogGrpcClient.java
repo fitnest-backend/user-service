@@ -24,4 +24,11 @@ public class CatalogGrpcClient {
         GetMainPageGymsRequest request = GetMainPageGymsRequest.newBuilder().build();
         return gymServiceStub.getMainPageGyms(request);
     }
+
+    public az.fitnest.catalog.grpc.GetGymAdminsByUsersResponse getGymAdminsByUsers(java.util.List<Long> userIds) {
+        az.fitnest.catalog.grpc.GetGymAdminsByUsersRequest request = az.fitnest.catalog.grpc.GetGymAdminsByUsersRequest.newBuilder()
+                .addAllUserIds(userIds)
+                .build();
+        return gymServiceStub.getGymAdminsByUsers(request);
+    }
 }
