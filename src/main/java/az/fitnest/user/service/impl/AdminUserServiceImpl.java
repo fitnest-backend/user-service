@@ -319,16 +319,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (fetchGymAdmins) {
             catalogFuture = java.util.concurrent.CompletableFuture.supplyAsync(() -> {
                 try {
-                    var resp = catalogGrpcClient.getGymAdminsByUsers(userIds);
-                    System.out.println("DEBUG: Catalog gRPC returned admins count: " + resp.getAdminsCount());
-                    for (var admin : resp.getAdminsList()) {
-                        System.out.println("DEBUG: catalog admin details: userId=" + admin.getUserId() + ", gymName=" + admin.getGymName() + ", role=" + admin.getRole());
-                    }
-                    return resp.getAdminsList().stream()
+                    return catalogGrpcClient.getGymAdminsByUsers(userIds).getAdminsList().stream()
                             .collect(Collectors.toMap(admin -> admin.getUserId(), admin -> admin, (existing, replacement) -> existing));
                 } catch (Exception e) {
-                    System.err.println("DEBUG: Catalog gRPC call failed in user-backend!");
-                    e.printStackTrace();
                     log.warn("Catalog gRPC failed", e);
                     return java.util.Collections.<Long, az.fitnest.catalog.grpc.GymAdminDetail>emptyMap();
                 }

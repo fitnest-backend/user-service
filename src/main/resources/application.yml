@@ -220,3 +220,6 @@ grpc:
       enable-keep-alive: true
       keep-alive-time: 30s
       keep-alive-timeout: 5s
+    catalog-backend:
+      address: ${CATALOG_BACKEND_GRPC_ADDRESS:dns:///catalog-backend:9090}
+      negotiation-type: plaintext
