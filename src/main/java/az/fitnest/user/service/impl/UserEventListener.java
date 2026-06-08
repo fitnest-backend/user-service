@@ -29,6 +29,8 @@ public class UserEventListener {
                 evictCache("identity_users", userId);
                 evictCache("user_summaries", userId);
                 evictCache("user_me", userId);
+                Optional.ofNullable(cacheManager.getCache("admin-users"))
+                        .ifPresent(org.springframework.cache.Cache::clear);
             }
         }
     }
