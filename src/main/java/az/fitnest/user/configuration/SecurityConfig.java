@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/bmi/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/goals/images/**").permitAll()
+                        .requestMatchers("/api/v1/me/profile/images/**").permitAll()
                         .requestMatchers("/actuator/**", "/health/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
