@@ -1,10 +1,10 @@
 package az.fitnest.user.grpc;
 
 import az.fitnest.user.client.CachedIdentityGrpcClient;
-import az.fitnest.user.model.entity.UserProfile;
 import az.fitnest.user.repository.UserProfileRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import az.fitnest.user.dto.response.IdentityUserResponse;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -17,6 +17,9 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
     private UserProfileRepository userProfileRepository;
     @Autowired
     private CachedIdentityGrpcClient cachedIdentityGrpcClient;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Override
     public void getUserById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) {
@@ -51,10 +54,14 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
             }
             if (profile.getProfileImageUrl() != null && !profile.getProfileImageUrl().isBlank()) {
                 String imgUrl = profile.getProfileImageUrl();
-                if (!imgUrl.startsWith("/") && !imgUrl.startsWith("http")) {
-                    imgUrl = "/api/v1/me/profile/images/" + imgUrl;
+                if (imgUrl.startsWith("http")) {
+                    builder.setProfileImageUrl(imgUrl);
+                } else {
+                    if (!imgUrl.startsWith("/")) {
+                        imgUrl = "/api/v1/me/profile/images/" + imgUrl;
+                    }
+                    builder.setProfileImageUrl(baseUrl + imgUrl);
                 }
-                builder.setProfileImageUrl(imgUrl);
             }
         });
 

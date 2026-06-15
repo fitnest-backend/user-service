@@ -156,6 +156,7 @@ app:
     enabled: ${APP_WARMUP_ENABLED:true}
     db: ${APP_WARMUP_DB:true}
     jwks: ${APP_WARMUP_JWKS:true}
+  base-url: https://api.fitnest.az
 
 springdoc:
   server-url: ${SPRINGDOC_SERVER_URL:https://api.fitnest.az}
