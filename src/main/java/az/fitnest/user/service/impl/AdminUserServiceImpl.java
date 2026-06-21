@@ -422,8 +422,9 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Cacheable(value = "user-statistics", key = "'all'")
     public UserStatisticsResponse getUserStatistics() {
         long totalUsers = 0;
+        List<Long> roleUserIds = List.of();
         try {
-            List<Long> roleUserIds = identityGrpcClient.getUserIdsByRoles(List.of("ROLE_USER"));
+            roleUserIds = identityGrpcClient.getUserIdsByRoles(List.of("ROLE_USER"));
             totalUsers = roleUserIds.isEmpty() ? 0 : userProfileRepository.countByUserIdIn(roleUserIds);
         } catch (Exception e) {
             log.error("Failed to fetch count of ROLE_USER from identity-backend", e);
@@ -434,13 +435,19 @@ public class AdminUserServiceImpl implements AdminUserService {
         long finishedSubscriptions = 0;
         long activeOrFrozenSubscriptions = 0;
 
-        try {
-            var stats = orderGrpcClient.getSubscriptionStatistics();
-            usersWithLast7Days = stats.getUsersLast7Days();
-            finishedSubscriptions = stats.getUsersFinished();
-            activeOrFrozenSubscriptions = stats.getUsersActiveOrFrozen();
-        } catch (Exception e) {
-            log.error("Failed to fetch subscription statistics from order-backend", e);
+        if (!roleUserIds.isEmpty()) {
+            try {
+                final java.util.Set<Long> roleUserIdSet = new java.util.HashSet<>(roleUserIds);
+                List<Long> last7DaysIds = orderGrpcClient.getFilteredUserIds(null, null, "LAST_7_DAYS", null);
+                List<Long> finishedIds  = orderGrpcClient.getFilteredUserIds(null, null, "FINISHED", null);
+                List<Long> activeIds    = orderGrpcClient.getFilteredUserIds(null, null, "ACTIVE", null);
+
+                usersWithLast7Days          = last7DaysIds.stream().filter(roleUserIdSet::contains).distinct().count();
+                finishedSubscriptions       = finishedIds.stream().filter(roleUserIdSet::contains).distinct().count();
+                activeOrFrozenSubscriptions = activeIds.stream().filter(roleUserIdSet::contains).distinct().count();
+            } catch (Exception e) {
+                log.error("Failed to fetch filtered subscription statistics from order-backend", e);
+            }
         }
 
         return UserStatisticsResponse.builder()
