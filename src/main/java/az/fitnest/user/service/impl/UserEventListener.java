@@ -15,24 +15,41 @@ import java.util.Optional;
 public class UserEventListener {
 
     private final CacheManager cacheManager;
+    private final az.fitnest.user.repository.UserProfileRepository userProfileRepository;
+    private final az.fitnest.user.repository.UserLocationRepository userLocationRepository;
+    private final az.fitnest.user.repository.RecentSearchRepository recentSearchRepository;
 
     @KafkaListener(topics = "user-events", groupId = "user-backend")
+    @org.springframework.transaction.annotation.Transactional
     public void handleUserEvent(Map<String, Object> event) {
         String eventType = (String) event.get("eventType");
         Object userIdObj = event.get("userId");
 
-        if ("USER_UPDATED".equals(eventType) && userIdObj != null) {
+        if (userIdObj != null) {
             Long userId = parseUserId(userIdObj);
             if (userId != null) {
-                log.info("Received USER_UPDATED event for userId: {}. Evicting caches.", userId);
-
-                evictCache("identity_users", userId);
-                evictCache("user_summaries", userId);
-                evictCache("user_me", userId);
-                Optional.ofNullable(cacheManager.getCache("admin-users"))
-                        .ifPresent(org.springframework.cache.Cache::clear);
+                if ("USER_UPDATED".equals(eventType)) {
+                    log.info("Received USER_UPDATED event for userId: {}. Evicting caches.", userId);
+                    evictCaches(userId);
+                } else if ("USER_HARD_DELETED".equals(eventType)) {
+                    log.warn("Received USER_HARD_DELETED event for userId: {}. Deleting user data and evicting caches.", userId);
+                    
+                    recentSearchRepository.deleteByUserId(userId);
+                    userLocationRepository.deleteById(userId);
+                    userProfileRepository.deleteById(userId);
+                    
+                    evictCaches(userId);
+                }
             }
         }
+    }
+
+    private void evictCaches(Long userId) {
+        evictCache("identity_users", userId);
+        evictCache("user_summaries", userId);
+        evictCache("user_me", userId);
+        Optional.ofNullable(cacheManager.getCache("admin-users"))
+                .ifPresent(org.springframework.cache.Cache::clear);
     }
 
     private void evictCache(String cacheName, Long userId) {
