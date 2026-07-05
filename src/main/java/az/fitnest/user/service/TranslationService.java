@@ -51,6 +51,10 @@ public class TranslationService {
             return existingValue;
         }
 
+        if (entityType != null && (entityType.equalsIgnoreCase("GoalReference") || entityType.equalsIgnoreCase("Goal"))) {
+            return null;
+        }
+
         if (entityType != null && entityType.equalsIgnoreCase("Gender")) {
             String originalVal = null;
             if (entityId != null && entityId.equalsIgnoreCase("MALE")) {
@@ -95,6 +99,9 @@ public class TranslationService {
 
     @Async
     public void autoTranslateAndSave(String entityType, String entityId, String fieldName, String originalValueAz) {
+        if (entityType != null && (entityType.equalsIgnoreCase("GoalReference") || entityType.equalsIgnoreCase("Goal"))) {
+            return;
+        }
         if (originalValueAz == null || originalValueAz.trim().isEmpty()) {
             log.warn("Auto-translation skipped: originalValueAz is null or empty for entityType={}, entityId={}, fieldName={}", 
                 entityType, entityId, fieldName);

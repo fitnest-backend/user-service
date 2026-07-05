@@ -95,4 +95,54 @@ import java.util.List;
          translationRepository.deleteById(id);
          return ResponseEntity.noContent().build();
      }
+
+     @PutMapping
+     @PreAuthorize("hasRole('ADMIN')")
+     public ResponseEntity<az.fitnest.user.dto.ApiResponse<Translation>> saveOrUpdateTranslation(@RequestBody CreateTranslationRequest request) {
+         Translation existing = translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
+                 request.entityType(), request.entityId(), request.languageCode().toUpperCase(), request.fieldName()
+         ).orElse(null);
+
+         Translation saved;
+         if (existing != null) {
+             existing.setFieldValue(request.fieldValue());
+             saved = translationRepository.save(existing);
+         } else {
+             Translation translation = Translation.builder()
+                     .entityType(request.entityType())
+                     .entityId(request.entityId())
+                     .languageCode(request.languageCode().toUpperCase())
+                     .fieldName(request.fieldName())
+                     .fieldValue(request.fieldValue())
+                     .build();
+             saved = translationRepository.save(translation);
+         }
+         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(saved));
+     }
+
+     @PostMapping("/bulk")
+     @PreAuthorize("hasRole('ADMIN')")
+     public ResponseEntity<az.fitnest.user.dto.ApiResponse<List<Translation>>> saveOrUpdateTranslationsBulk(@RequestBody List<CreateTranslationRequest> requests) {
+         List<Translation> savedList = requests.stream()
+                 .map(request -> {
+                     Translation existing = translationRepository.findByEntityTypeAndEntityIdAndLanguageCodeAndFieldName(
+                             request.entityType(), request.entityId(), request.languageCode().toUpperCase(), request.fieldName()
+                     ).orElse(null);
+                     if (existing != null) {
+                         existing.setFieldValue(request.fieldValue());
+                         return translationRepository.save(existing);
+                     } else {
+                         Translation translation = Translation.builder()
+                                 .entityType(request.entityType())
+                                 .entityId(request.entityId())
+                                 .languageCode(request.languageCode().toUpperCase())
+                                 .fieldName(request.fieldName())
+                                 .fieldValue(request.fieldValue())
+                                 .build();
+                         return translationRepository.save(translation);
+                     }
+                 })
+                 .toList();
+         return ResponseEntity.ok(az.fitnest.user.dto.ApiResponse.success(savedList));
+     }
  }
