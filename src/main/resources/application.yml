@@ -182,12 +182,12 @@ springdoc:
 
 logging:
   level:
-    root: ${LOGGING_LEVEL_ROOT:INFO}
-    az.fitnest.user: ${LOGGING_LEVEL_AZ_FITNEST_USER:DEBUG}
-    az.fitnest.order: ${LOGGING_LEVEL_AZ_FITNEST_ORDER:DEBUG}
-    az.fitnest: ${LOGGING_LEVEL_AZ_FITNEST:DEBUG}
-    org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY:DEBUG}
-    feign.Logger: ${LOGGING_LEVEL_FEIGN_LOGGER:OFF}
+    root: WARN
+    az.fitnest.user: WARN
+    az.fitnest.order: WARN
+    az.fitnest: WARN
+    org.springframework.security: WARN
+    feign.Logger: OFF
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
   file:
