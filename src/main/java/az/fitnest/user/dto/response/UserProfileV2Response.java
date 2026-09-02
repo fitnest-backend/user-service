@@ -5,6 +5,7 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 public record UserProfileV2Response(
@@ -21,8 +22,10 @@ public record UserProfileV2Response(
     @JsonProperty("is_eligible_to_have_local_password") Boolean isEligibleToHaveLocalPassword,
     @JsonProperty("coin_balance") BigDecimal coinBalance,
     @JsonProperty("coin_azn_equivalent") BigDecimal coinAznEquivalent,
-    @JsonProperty("coin_validity_date") LocalDateTime coinValidityDate
+    @JsonProperty("coin_validity_date") String coinValidityDate
 ) {
+    private static final DateTimeFormatter VALIDITY_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
     public static UserProfileV2Response from(
             UserProfileResponse profile,
             BigDecimal coinBalance,
@@ -43,7 +46,7 @@ public record UserProfileV2Response(
                 .isEligibleToHaveLocalPassword(profile.isEligibleToHaveLocalPassword())
                 .coinBalance(coinBalance != null ? coinBalance : BigDecimal.ZERO)
                 .coinAznEquivalent(coinAznEquivalent != null ? coinAznEquivalent : BigDecimal.ZERO)
-                .coinValidityDate(coinValidityDate)
+                .coinValidityDate(coinValidityDate != null ? coinValidityDate.format(VALIDITY_DATE_FORMAT) : null)
                 .build();
     }
 }
