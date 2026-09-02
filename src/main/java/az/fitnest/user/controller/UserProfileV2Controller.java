@@ -1,7 +1,7 @@
 package az.fitnest.user.controller;
 
 import az.fitnest.user.dto.ApiResponse;
-import az.fitnest.user.dto.response.ErrorResponse;
+import az.fitnest.user.dto.ErrorResponse;
 import az.fitnest.user.dto.response.UserProfileV2Response;
 import az.fitnest.user.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
