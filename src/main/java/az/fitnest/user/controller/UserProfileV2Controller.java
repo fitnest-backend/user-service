@@ -34,7 +34,7 @@ public class UserProfileV2Controller {
                     description = "Profil uğurla əldə edildi",
                     content = @Content(
                             schema = @Schema(implementation = UserProfileV2Response.class),
-                            examples = @ExampleObject(value = "{\"user_id\":1,\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"john.doe@example.com\",\"mobile\":\"+994500000000\",\"profile_image_url\":null,\"current_subscription\":\"Bronze\",\"subscription_status\":\"ACTIVE\",\"coin_balance\":320.00,\"coin_azn_equivalent\":32.00,\"coin_validity_date\":\"2027-09-01T12:00:00\"}")
+                            examples = @ExampleObject(value = "{\"user_id\":1,\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"john.doe@example.com\",\"mobile\":\"+994500000000\",\"profile_image_url\":null,\"current_subscription\":\"Bronze\",\"subscription_status\":\"ACTIVE\",\"coin_balance\":320.00,\"coin_azn_equivalent\":32.00,\"coin_validity_date\":\"01.09.2027\"}")
                     )
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
