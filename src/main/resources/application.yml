@@ -224,3 +224,10 @@ grpc:
     catalog-backend:
       address: ${CATALOG_BACKEND_GRPC_ADDRESS:dns:///catalog-backend:9090}
       negotiation-type: plaintext
+    payment-backend:
+      address: ${PAYMENT_BACKEND_GRPC_ADDRESS:dns:///payment-backend:9090}
+      negotiation-type: plaintext
+      deadline-after: 5s
+      enable-keep-alive: true
+      keep-alive-time: 30s
+      keep-alive-timeout: 5s
